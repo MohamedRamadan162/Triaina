@@ -7,3 +7,4 @@ k8s/**/*-secret.yaml
 terraform/*.lock.hcl
 terraform/.terraform/
 terraform/*.tfstate*
+terraform/secret.auto.tfvars
