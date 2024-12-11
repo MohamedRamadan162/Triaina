@@ -29,3 +29,7 @@ module "elasticache" {
   source                        = "./modules/elasticache"
   elasticache_security_group_id = module.security_groups.elasticache_security_group_id
 }
+
+module "s3-buckets" {
+  source = "./modules/s3-buckets"
+}

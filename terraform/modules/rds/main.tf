@@ -6,7 +6,7 @@ resource "aws_db_subnet_group" "db-subnet-group" {
   }
 }
 
-resource "aws_db_instance" "user" {
+resource "aws_db_instance" "users" {
   identifier        = "triaina-user-db-cluster"
   allocated_storage = 20
   engine            = "postgres"
