@@ -33,3 +33,10 @@ module "elasticache" {
 module "s3-buckets" {
   source = "./modules/s3-buckets"
 }
+
+module "iam" {
+  source           = "./modules/iam"
+  s3-arns          = [module.s3-buckets.s3_course_content_bucket_arn, module.s3-buckets.s3_course_content_bucket_arn]
+  rds-arns         = [module.rds.rds_instance_arn]
+  elasticache-arns = [module.elasticache.elasticache_cluster_arn]
+}
