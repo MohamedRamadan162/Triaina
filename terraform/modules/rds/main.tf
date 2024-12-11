@@ -7,11 +7,13 @@ resource "aws_db_subnet_group" "db-subnet-group" {
 }
 
 resource "aws_db_instance" "user" {
+  identifier        = "triaina-user-db-cluster"
   allocated_storage = 20
   engine            = "postgres"
   engine_version    = 17.2
   instance_class    = "db.t4g.micro"
   storage_type      = "gp2"
+  db_name           = "users"
   username          = var.user_db_username
   password          = var.user_db_password
 
