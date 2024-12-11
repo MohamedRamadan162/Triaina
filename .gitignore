@@ -8,3 +8,4 @@ terraform/*.lock.hcl
 terraform/.terraform/
 terraform/*.tfstate*
 terraform/secret.auto.tfvars
+terraform/localstack_providers_override.tf
