@@ -40,3 +40,10 @@ module "iam" {
   rds-arns         = [module.rds.rds_instance_arn]
   elasticache-arns = [module.elasticache.elasticache_cluster_arn]
 }
+
+module "eks" {
+  source             = "./modules/eks"
+  eks-role-arn       = module.iam.eks-role-arn
+  private-subnet-ids = module.vpc.private_subnet_ids
+  security-group-id  = module.security_groups.eks_security_group_id
+}

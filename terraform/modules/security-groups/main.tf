@@ -49,3 +49,29 @@ resource "aws_security_group" "elasticache_sg" {
     Name = "Cache Security Group"
   }
 }
+
+resource "aws_security_group" "eks_sec_group" {
+  name        = "eks-sec-group"
+  description = "EKS security group"
+  vpc_id      = var.vpc_id
+
+  # Allow inbound traffic from within the VPC
+  ingress {
+    from_port   = 443
+    to_port     = 443
+    protocol    = "tcp"
+    cidr_blocks = var.private_subnet_cidr_blocks
+  }
+
+  # Allow outbound traffic
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = var.private_subnet_cidr_blocks
+  }
+
+  tags = {
+    Name = "EKS Security Group"
+  }
+}
