@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: aws-configmap
+data:
+  AWS_DEFAULT_REGION: eu-west-3
+  AWS_ENDPOINT: https://localhost.localstack.cloud:4566 ## For local dev

@@ -2,7 +2,10 @@ variable "eks-role-arn" {
   description = "The ARN of the EKS role"
   type        = string
 }
-
+variable "eks-worker-role-arn" {
+  description = "The ARN of the EKS worker role"
+  type        = string
+}
 variable "private-subnet-ids" {
   description = "List of private subnet IDs"
   type        = list(string)

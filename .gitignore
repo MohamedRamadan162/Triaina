@@ -1,11 +1,23 @@
+## Settings
 .vscode/
+
 ## For K8S secret files
 k8s/**/*-secret.yaml
+k8s/connection-test
+
 ## For env files just in case
-*.env
+**/*.env
+**/*-secret.yaml
+
 ## Terraform files
 terraform/*.lock.hcl
 terraform/.terraform/
 terraform/*.tfstate*
 terraform/secret.auto.tfvars
 terraform/localstack_providers_override.tf
+
+## Localstack
+localstack/volume
+
+## Other
+connection-test/

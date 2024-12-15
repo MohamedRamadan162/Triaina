@@ -4,14 +4,16 @@ metadata:
   name: triaina-backend
 build:
   artifacts:
-    ## user-service
-    - image: user-service
-      context: ./user-service
+    ## connection testing
+    - image: ghcr.io/ossamatammam/connection-test
+      context: ./connection-test
       docker:
         dockerfile: Dockerfile
   local:
-    push: false # Don't push to a container registry, use local images (may change)
+    push: true
 deploy:
   kubectl:
     manifests:
-      - k8s/user-service/*.yaml
+      - k8s/*.yaml ## For AWS settings and secrets
+      ## Microservices
+      - k8s/connection-test/*.yaml

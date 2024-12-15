@@ -42,8 +42,9 @@ module "iam" {
 }
 
 module "eks" {
-  source             = "./modules/eks"
-  eks-role-arn       = module.iam.eks-role-arn
-  private-subnet-ids = module.vpc.private_subnet_ids
-  security-group-id  = module.security_groups.eks_security_group_id
+  source              = "./modules/eks"
+  eks-role-arn        = module.iam.eks-role-arn
+  eks-worker-role-arn = module.iam.eks-worker-role-arn
+  private-subnet-ids  = module.vpc.private_subnet_ids
+  security-group-id   = module.security_groups.eks_security_group_id
 }

@@ -80,3 +80,33 @@ resource "aws_iam_role_policy_attachment" "elasticache_policy_attachment" {
   role       = aws_iam_role.eks_role.name
 }
 
+resource "aws_iam_role" "eks_worker_role" {
+  name = "EKSWorkerRole"
+  assume_role_policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Effect = "Allow"
+        Action = "sts:AssumeRole"
+        Principal = {
+          Service = "ec2.amazonaws.com"
+        }
+      }
+    ]
+  })
+}
+
+resource "aws_iam_role_policy_attachment" "worker_s3_policy_attachment" {
+  policy_arn = aws_iam_policy.s3_access_policy.arn
+  role       = aws_iam_role.eks_worker_role.name
+}
+
+resource "aws_iam_role_policy_attachment" "worker_rds_policy_attachment" {
+  policy_arn = aws_iam_policy.rds_access_policy.arn
+  role       = aws_iam_role.eks_worker_role.name
+}
+
+resource "aws_iam_role_policy_attachment" "worker_elasticache_policy_attachment" {
+  policy_arn = aws_iam_policy.elasticache_access_policy.arn
+  role       = aws_iam_role.eks_worker_role.name
+}
