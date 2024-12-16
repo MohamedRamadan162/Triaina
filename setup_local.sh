@@ -16,6 +16,11 @@ cd terraform || {
     exit 1
 }
 
+# Start loclstack
+echo "Starting localstack..."
+localstack start -d -e ENFORCE_IAM=1
+echo "Localstack started."
+
 # Run tflocal apply and display the output
 echo "Running tflocal apply..."
 tflocal apply --auto-approve
