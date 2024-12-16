@@ -155,7 +155,7 @@ Start skaffold instead using
 ```bash
 skaffold dev
 ```
-
+Use [localstack web app](https://app.localstack.cloud) to view your localstack resources
 ---
 ## Troubleshooting
 
