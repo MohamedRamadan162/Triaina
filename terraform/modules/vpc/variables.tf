@@ -10,7 +10,7 @@ variable "vpc_name" {
   default     = "Triaina VPC"
 }
 
-variable "azs" {
+variable "availability_zones" {
   type        = list(string)
   description = "List of availability zones"
   default     = ["eu-west-3a", "eu-west-3b", "eu-west-3c"]

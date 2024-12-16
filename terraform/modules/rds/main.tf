@@ -1,23 +1,15 @@
-resource "aws_db_subnet_group" "db-subnet-group" {
-  name       = "db-subnet"
-  subnet_ids = var.private_subnet_ids
-  tags = {
-    Name = "DB Subnet Group"
-  }
-}
-
 resource "aws_db_instance" "users" {
-  identifier        = "triaina-user-db-cluster"
+  identifier        = "triaina-user-db"
   allocated_storage = 20
   engine            = "postgres"
   engine_version    = 17.2
   instance_class    = "db.t4g.micro"
   storage_type      = "gp2"
   db_name           = "users"
-  username          = var.user_db_username
-  password          = var.user_db_password
+  username          = var.db_username
+  password          = var.db_password
 
-  db_subnet_group_name   = aws_db_subnet_group.db-subnet-group.name
+  db_subnet_group_name   = var.private_subnet_group_name
   vpc_security_group_ids = [var.rds_security_group_id]
 
   backup_retention_period = 7                     # Number of days to retain automated backups

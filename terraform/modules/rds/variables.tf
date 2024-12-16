@@ -1,9 +1,9 @@
-variable "user_db_username" {
+variable "db_username" {
   description = "User DB Username"
   type        = string
 }
 
-variable "user_db_password" {
+variable "db_password" {
   description = "User DB Password"
   type        = string
   sensitive   = true
@@ -12,6 +12,11 @@ variable "user_db_password" {
 variable "private_subnet_ids" {
   description = "Private subnets CIDR blocks"
   type        = list(string)
+}
+
+variable "private_subnet_group_name" {
+  description = "Privates subnets group name"
+  type        = string
 }
 
 variable "rds_security_group_id" {

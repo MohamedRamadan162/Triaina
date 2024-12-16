@@ -7,6 +7,7 @@ output "elasticache_security_group_id" {
   description = "The ID of the Redis ElastiCache security group"
   value       = aws_security_group.elasticache_sg.id
 }
+
 output "eks_security_group_id" {
   description = "The ID of the EKS cluster security group"
   value       = aws_security_group.eks_sec_group.id

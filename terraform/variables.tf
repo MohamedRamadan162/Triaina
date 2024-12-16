@@ -1,15 +1,22 @@
-# variable "aws_region" {
-#   description = "The region of triaina app"
-#   type        = string
-# }
-
-variable "user_db_username" {
-  description = "User DB Username"
+variable "region" {
+  description = "AWS Region"
   type        = string
 }
 
-variable "user_db_password" {
-  description = "User DB Password"
+variable "db_username" {
+  description = "DB Username"
+  type        = string
+}
+
+variable "db_password" {
+  description = "DB Password"
   type        = string
   sensitive   = true
 }
+
+# For later use
+# variable "cache_password" {
+#   description = "Cache Password"
+#   type        = string
+#   sensitive   = true
+# }

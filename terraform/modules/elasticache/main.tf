@@ -8,5 +8,6 @@ resource "aws_elasticache_cluster" "triaina-cache" {
   apply_immediately    = true
   port                 = 6379
 
+  subnet_group_name  = var.private_subnet_group_name
   security_group_ids = [var.elasticache_security_group_id]
 }
