@@ -18,7 +18,7 @@ cd terraform || {
 
 # Start loclstack
 echo "Starting localstack..."
-localstack start -d -e ENFORCE_IAM=1
+localstack start -d -e ENFORCE_IAM=1 -e EKS_K3S_IMAGE_TAG=v1.29.12-rc1-k3s1
 echo "Localstack started."
 
 # Run tflocal apply and display the output
