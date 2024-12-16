@@ -9,6 +9,8 @@ build:
       context: ./connection-test
       docker:
         dockerfile: Dockerfile
+  tagPolicy:
+    gitCommit: {}
   local:
     push: true
 manifests:
