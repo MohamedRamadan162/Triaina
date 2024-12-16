@@ -8,6 +8,7 @@ k8s/connection-test
 ## For env files just in case
 **/*.env
 **/*-secret.yaml
+secrets_files.zip
 
 ## Terraform files
 terraform/*.lock.hcl
