@@ -155,18 +155,19 @@ Start skaffold instead using
 ```bash
 skaffold dev
 ```
+
+After starting the server you need to forward port ```32069:80``` using
+```bash
+kubectl port-forward service/kong-gateway-proxy 32069:80 -n kong
+```
+to access the EKS cluster in local dev on ```localhost:32069```
+
 Use [localstack web app](https://app.localstack.cloud) to view your localstack resources
 ---
 ## Troubleshooting
 
 - **Docker Desktop not running**:
   - Ensure Docker Desktop is running. Start it manually from the application if necessary.
-
-- **LocalStack container issues**:
-  - Check Docker logs to ensure there are no issues with the LocalStack container:
-    ```bash
-    docker logs $(docker ps -q -f name=localstack)
-    ```
 
 - **AWS CLI command errors with awslocal**:
   - Make sure LocalStack is running and accessible on the correct endpoint.

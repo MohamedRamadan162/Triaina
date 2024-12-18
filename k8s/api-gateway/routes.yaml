@@ -1,0 +1,24 @@
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+  name: user-service-route
+  annotations:
+    konghq.com/strip-path: "true"
+    ## For future use (placeholder values for now) / Rate limiting is done per client IP so here every client IP gets 10 req/sec and 100 req/min
+    konghq.com/plugins: rate-limiting # Apply the rate-limiting plugin
+    konghq.com/rate-limiting-second: "10" # 10 requests per second
+    konghq.com/rate-limiting-minute: "100" # 100 requests per minute
+spec:
+  parentRefs:
+    - name: kong-gateway
+      namespace: kong
+  rules:
+    - matches:
+        - path:
+            type: PathPrefix
+            value: /users
+      backendRefs:
+        ## Placeholder values
+        - name: user-service
+          port: 8080
+          kind: Service
