@@ -63,3 +63,13 @@ module "eks" {
 
   depends_on = [module.security_groups]
 }
+
+
+## MSK cluster
+module "msk" {
+  source             = "./modules/msk"
+  private_subnet_ids = module.vpc.private_subnet_ids
+  msk_security_group_id  = module.security_groups.msk_security_group_id
+
+  depends_on = [module.security_groups]
+}

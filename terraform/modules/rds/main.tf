@@ -8,6 +8,7 @@ resource "aws_db_instance" "users" {
   db_name           = "users"
   username          = var.db_username
   password          = var.db_password
+  port              = 4512
 
   db_subnet_group_name   = var.private_subnet_group_name
   vpc_security_group_ids = [var.rds_security_group_id]
