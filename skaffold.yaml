@@ -4,8 +4,8 @@ metadata:
   name: triaina-backend
 build:
   artifacts:
-    - image: ghcr.io/ossamatammam/connection-test
-      context: ./connection-test
+    - image: ghcr.io/ossamatammam/triaina-auth-module
+      context: ./auth-service
       docker:
         dockerfile: Dockerfile
   tagPolicy:
@@ -15,9 +15,10 @@ build:
 
 manifests:
   rawYaml:
+    - https://github.com/kubernetes-sigs/metrics-server/releases/latest/download/components.yaml
     - k8s/*.yaml
     - k8s/api-gateway/*.yaml
-    - k8s/connection-test/*.yaml
+    - k8s/auth-service/*.yaml
 
 deploy:
   helm:
