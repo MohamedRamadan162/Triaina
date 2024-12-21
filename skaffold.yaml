@@ -4,8 +4,8 @@ metadata:
   name: triaina-backend
 build:
   artifacts:
-    - image: ghcr.io/ossamatammam/triaina-auth-module
-      context: ./auth-service
+    - image: 000000000000.dkr.ecr.us-west-1.localhost.localstack.cloud:4566/triaina-auth-module
+      context: ./services/auth-service
       docker:
         dockerfile: Dockerfile
   tagPolicy:
@@ -15,30 +15,41 @@ build:
 
 manifests:
   rawYaml:
-    - https://github.com/kubernetes-sigs/metrics-server/releases/latest/download/components.yaml
+    # - https://github.com/kubernetes-sigs/metrics-server/releases/latest/download/components.yaml
+    - k8s/triaina-namespace.yaml
     - k8s/*.yaml
     - k8s/api-gateway/*.yaml
     - k8s/auth-service/*.yaml
 
 deploy:
-  helm:
-    releases:
-      - name: kong
-        remoteChart: ingress
-        repo: https://charts.konghq.com
-        namespace: kong
-        createNamespace: true
-        valuesFiles:
-          ## Config for the gateway
-          - k8s/api-gateway/config/kong-values.yaml
-        wait: true
-    hooks:
-      before:
-        - host:
-            command:
-              [
-                "kubectl",
-                "apply",
-                "-f",
-                "https://github.com/kubernetes-sigs/gateway-api/releases/download/v1.2.0/standard-install.yaml",
-              ]
+  # helm:
+  #   releases:
+  #     - name: kong
+  #       # chartPath: ./k8s/.charts/ingress
+  #       remoteChart: ingress
+  #       repo: https://charts.konghq.com
+  #       namespace: kong
+  #       createNamespace: true
+  #       valuesFiles:
+  #         ## Config for the gateway
+  #         - k8s/api-gateway/config/kong-values.yaml
+  #       wait: true
+  #   hooks:
+  #     before:
+  #       - host:
+  #           command:
+  #             [
+  #               "kubectl",
+  #               "apply",
+  #               "-f",
+  #               "https://github.com/kubernetes-sigs/gateway-api/releases/download/v1.2.0/standard-install.yaml",
+  #             ]
+  kubectl: {}
+  logs:
+    prefix: auto
+portForward:
+  - resourceType: Service
+    resourceName: kong-gateway-proxy
+    namespace: kong
+    port: 80
+    localPort: 32069

@@ -1,0 +1,151 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: auth-module
+  namespace: triaina
+  labels:
+    app: auth-module
+    component: authentication-authorization
+spec:
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1 # Create max one extra pod at a time to roll an update to
+      maxUnavailable: 0 # No down pods
+  selector:
+    matchLabels:
+      app: auth-module
+  template:
+    metadata:
+      labels:
+        app: auth-module
+        component: authentication-authorization
+    spec:
+      # imagePullSecrets:
+      #   - name: ghcr-secret
+      containers:
+        - name: auth-module
+          image: 000000000000.dkr.ecr.us-west-1.localhost.localstack.cloud:4566/triaina-auth-module
+          envFrom:
+            - configMapRef:
+                name: aws-configmap
+            - secretRef:
+                name: aws-secret
+          resources:
+            requests:
+              memory: "64Mi"
+              cpu: "250m"
+            limits:
+              memory: "128Mi"
+              cpu: "500m"
+          ports:
+            - containerPort: 3000
+          ## Determine if this container is alive and healthy
+          # livenessProbe:
+          #   httpGet:
+          #     path: /health
+          #     port: 3000
+          #   initialDelaySeconds: 30
+          #   periodSeconds: 10
+          #   timeoutSeconds: 5
+          #   failureThreshold: 3
+          # ## Determine if this container is ready to receive traffic (for starting up the container)
+          # readinessProbe:
+          #   httpGet:
+          #     path: /health
+          #     port: 3000
+          #   initialDelaySeconds: 5
+          #   periodSeconds: 5
+          #   timeoutSeconds: 3
+          #   failureThreshold: 3
+      ## Spread out our pods across different zones
+      affinity:
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+            ## Different AZs for higher availability
+            - weight: 100
+              podAffinityTerm:
+                labelSelector:
+                  matchLabels:
+                    app: auth-module
+                topologyKey: kubernetes.io/zone
+            ## Different nodes for fault tolerance and parallelism on the machine
+            - weight: 70
+              podAffinityTerm:
+                labelSelector:
+                  matchLabels:
+                    app: auth-module
+                topologyKey: kubernetes.io/hostname
+---
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: auth-module-hpa
+  namespace: triaina
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: auth-module
+  minReplicas: 3
+  maxReplicas: 10
+  metrics:
+    - type: Resource
+      resource:
+        name: cpu
+        target:
+          type: Utilization
+          averageUtilization: 80
+  behavior:
+    ## React instantly to high loads
+    scaleUp:
+      stabilizationWindowSeconds: 0
+      policies:
+        - type: Percent
+          value: 100
+          periodSeconds: 15
+        - type: Pods
+          value: 4 # But not more than 4 at once
+          periodSeconds: 15
+      selectPolicy: Max
+    ## Wait 5 minutes before scaling down in case high load continues in these 5 minutes
+    scaleDown:
+      stabilizationWindowSeconds: 300
+      policies:
+        - type: Percent
+          value: 100
+          periodSeconds: 30
+        - type: Pods
+          value: 2 # But not more than 2 at once
+          periodSeconds: 30
+      selectPolicy: Min # Use whichever removes fewer pods
+---
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata:
+  name: auth-module-pdb
+  namespace: triaina
+spec:
+  ## 100% of pods must be up at all times (auth service is critical for the app)
+  minAvailable: "100%"
+  selector:
+    matchLabels:
+      app: auth-module
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: auth-service
+  namespace: triaina
+  labels:
+    app: auth-module
+    component: authentication-authorization
+spec:
+  type: ClusterIP
+  selector:
+    app: auth-module
+  ports:
+    - name: http
+      port: 80 # Port exposed by the service
+      targetPort: 3000 # Port exposed by the pod to the service (Rails Port)
+  sessionAffinity: None # We may use this if we want sticky sessions (if state arises)

@@ -2,12 +2,14 @@ apiVersion: gateway.networking.k8s.io/v1
 kind: HTTPRoute
 metadata:
   name: user-service-route
+  namespace: triaina
   annotations:
     konghq.com/strip-path: "true"
     ## For future use (placeholder values for now) / Rate limiting is done per client IP so here every client IP gets 10 req/sec and 100 req/min
     konghq.com/plugins: rate-limiting # Apply the rate-limiting plugin
     konghq.com/rate-limiting-second: "10" # 10 requests per second
     konghq.com/rate-limiting-minute: "100" # 100 requests per minute
+    konghq.com/load-balancer-strategy: "round-robin"
 spec:
   parentRefs:
     - name: kong-gateway
@@ -16,9 +18,10 @@ spec:
     - matches:
         - path:
             type: PathPrefix
-            value: /users
+            value: /auth
       backendRefs:
-        ## Placeholder values
-        - name: user-service
-          port: 8080
+        - name: auth-service
+          namespace: triaina
+          port: 80
+          weight: 1
           kind: Service
