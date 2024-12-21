@@ -18,7 +18,7 @@ terraform/secret.auto.tfvars
 terraform/localstack_providers_override.tf
 
 ## Localstack
-localstack/volume
+/localstack/localstack-volume
 
 ## Other
 connection-test/

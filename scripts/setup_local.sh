@@ -1,10 +1,10 @@
 #!/bin/bash
 
 # Load environment variables from container_registry.env file
-ROOT_DIR="$(dirname "$0")" # The parent directory of the directory where the script resides
+ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 echo "ROOT_DIR is set to $ROOT_DIR"
 if [ -f $ROOT_DIR/container_registry.env ]; then
-    source container_registry.env
+    source $ROOT_DIR/container_registry.env
     echo "Loaded environment variables from container_registry.env"
 else
     echo "container_registry.env file not found!"
@@ -13,12 +13,13 @@ fi
 
 # Start localstack
 echo "Starting localstack..."
-localstack start -d -e ENFORCE_IAM=1 -e EKS_K3S_IMAGE_TAG=v1.29.12-rc1-k3s1 -e DEBUG=1 -e PERSISTENCE=1
+LOCALSTACK_AUTH_TOKEN=$LOCALSTACK_AUTH docker compose -f $ROOT_DIR/../localstack/localstack.docker-compose.yaml up -d
 echo "Localstack started."
 
 # Run tflocal apply and display the output
 echo "Running tflocal apply..."
-cd ../terraform
+cd $ROOT_DIR/../terraform
+tflocal init --upgrade
 tflocal apply --auto-approve
 echo "tflocal apply completed."
 
@@ -62,4 +63,4 @@ kubectl apply -f https://github.com/kubernetes-sigs/metrics-server/releases/late
 kubectl apply -f https://github.com/kubernetes-sigs/gateway-api/releases/download/v1.2.0/standard-install.yaml
 helm repo add kong https://charts.konghq.com
 helm repo update
-helm install kong/kong -f "${ROOT_DIR}/../k8s/api-gateway/config/kong-values.yaml" --namespace kong --generate-name --set ingressController.installCRDs=false
+helm install kong kong/ingress -f "${ROOT_DIR}/../k8s/api-gateway/config/kong-values.yaml" --namespace kong --create-namespace --wait

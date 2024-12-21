@@ -5,7 +5,7 @@ metadata:
 build:
   artifacts:
     - image: 000000000000.dkr.ecr.us-west-1.localhost.localstack.cloud:4566/triaina-auth-module
-      context: ./services/auth-service
+      context: ./services/connection-test
       docker:
         dockerfile: Dockerfile
   tagPolicy:
