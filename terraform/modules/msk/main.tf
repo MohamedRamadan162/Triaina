@@ -11,26 +11,26 @@ resource "aws_msk_cluster" "triaina_msk" {
     security_groups = [var.msk_security_group_id]
   }
 
-  configuration_info {
-    arn      = aws_msk_configuration.kafka_config.arn
-    revision = aws_msk_configuration.kafka_config.latest_revision
-  }
-  
+  # configuration_info {
+  #   arn      = aws_msk_configuration.kafka_config.arn
+  #   revision = aws_msk_configuration.kafka_config.latest_revision
+  # }
+
   ## This is initial the rest of the config should follow as soon as it is more clear as the project matures
 }
 
-resource "aws_msk_configuration" "kafka_config" {
-  name              = "kafka-config"
-  kafka_versions    = ["3.6.1"]
-  server_properties = <<PROPERTIES
-# Default Kafka port
-port=9092
-# TLS port
-ssl.port=9094
-# SASL port
-sasl.port=9096
-# Inter-broker communication port
-inter.broker.listener.name=INTERNAL
-inter.broker.port=9093
-PROPERTIES
-}
+# resource "aws_msk_configuration" "kafka_config" {
+#   name              = "kafka-config"
+#   kafka_versions    = ["3.6.1"]
+#   server_properties = <<PROPERTIES
+# # Default Kafka port
+# port=9092
+# # TLS port
+# ssl.port=9094
+# # SASL port
+# sasl.port=9096
+# # Inter-broker communication port
+# inter.broker.listener.name=INTERNAL
+# inter.broker.port=9093
+# PROPERTIES
+# }
