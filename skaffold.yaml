@@ -8,6 +8,18 @@ build:
       context: ./services/connection-test
       docker:
         dockerfile: Dockerfile
+    - image: 000000000000.dkr.ecr.us-west-1.localhost.localstack.cloud:4566/triaina-user-module
+      context: ./services/user-service
+      docker:
+        dockerfile: Dockerfile
+    - image: 000000000000.dkr.ecr.us-west-1.localhost.localstack.cloud:4566/triaina-course-module
+      context: ./services/course-service
+      docker:
+        dockerfile: Dockerfile
+    - image: 000000000000.dkr.ecr.us-west-1.localhost.localstack.cloud:4566/triaina-static-content-module
+      context: ./services/static-content-service
+      docker:
+        dockerfile: Dockerfile
   tagPolicy:
     gitCommit: {}
   local:
