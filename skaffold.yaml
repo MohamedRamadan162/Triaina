@@ -5,21 +5,21 @@ metadata:
 build:
   artifacts:
     - image: 000000000000.dkr.ecr.us-west-1.localhost.localstack.cloud:4566/triaina-auth-module
-      context: ./services/connection-test
+      context: ./services/auth-service
       docker:
         dockerfile: Dockerfile
-    - image: 000000000000.dkr.ecr.us-west-1.localhost.localstack.cloud:4566/triaina-user-module
-      context: ./services/user-service
-      docker:
-        dockerfile: Dockerfile
-    - image: 000000000000.dkr.ecr.us-west-1.localhost.localstack.cloud:4566/triaina-course-module
-      context: ./services/course-service
-      docker:
-        dockerfile: Dockerfile
-    - image: 000000000000.dkr.ecr.us-west-1.localhost.localstack.cloud:4566/triaina-static-content-module
-      context: ./services/static-content-service
-      docker:
-        dockerfile: Dockerfile
+    # - image: 000000000000.dkr.ecr.us-west-1.localhost.localstack.cloud:4566/triaina-user-module
+    #   context: ./services/user-service
+    #   docker:
+    #     dockerfile: Dockerfile
+    # - image: 000000000000.dkr.ecr.us-west-1.localhost.localstack.cloud:4566/triaina-course-module
+    #   context: ./services/course-service
+    #   docker:
+    #     dockerfile: Dockerfile
+    # - image: 000000000000.dkr.ecr.us-west-1.localhost.localstack.cloud:4566/triaina-static-content-module
+    #   context: ./services/static-content-service
+    #   docker:
+    #     dockerfile: Dockerfile
   tagPolicy:
     gitCommit: {}
   local:
@@ -32,6 +32,9 @@ manifests:
     - k8s/*.yaml
     - k8s/api-gateway/*.yaml
     - k8s/auth-service/*.yaml
+    # - k8s/user-service/*.yaml
+    # - k8s/course-service/*.yaml
+    # - k8s/static-content-service/*.yaml
 
 deploy:
   # helm:
