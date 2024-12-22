@@ -4,8 +4,8 @@
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 echo "ROOT_DIR is set to $ROOT_DIR"
 if [ -f $ROOT_DIR/.env ]; then
-    source $ROOT_DIR/container_registry.env
-    echo "Loaded environment variables from container_registry.env"
+    source $ROOT_DIR/.env
+    echo "Loaded environment variables from .env"
 else
     echo "container_registry.env file not found!"
     exit 1
@@ -29,19 +29,20 @@ awslocal eks update-kubeconfig --name triaina-eks-cluster
 echo "Kubeconfig update completed."
 
 # Create the Docker registry secret in Kubernetes
-echo "Creating Docker registry secret..."
+echo "Creating/Updating Docker registry secret..."
 kubectl create secret docker-registry ghcr-secret \
     --docker-server=$SERVER \
     --docker-username=$USERNAME \
     --docker-password=$PASSWORD \
-    --docker-email=$EMAIL
-echo "Docker registry secret created."
+    --docker-email=$EMAIL \
+    --dry-run=client -o yaml | kubectl apply -f -
+echo "Docker registry secret created/updated."
 
 # Define repository names in an array
 repo_names=(
-    "triaina-auth-module",
-    "triaina-user-module",
-    "triaina-course-module",
+    "triaina-auth-module"
+    "triaina-user-module"
+    "triaina-course-module"
     "triaina-static-content-module"
 )
 
@@ -66,4 +67,10 @@ kubectl apply -f https://github.com/kubernetes-sigs/metrics-server/releases/late
 kubectl apply -f https://github.com/kubernetes-sigs/gateway-api/releases/download/v1.2.0/standard-install.yaml
 helm repo add kong https://charts.konghq.com
 helm repo update
-helm install kong kong/ingress -f "${ROOT_DIR}/../k8s/api-gateway/config/kong-values.yaml" --namespace kong --create-namespace --wait
+if helm ls --namespace kong | grep -q 'kong'; then
+    echo "Kong is already installed. Upgrading the installation..."
+    helm upgrade kong kong/ingress -f "${ROOT_DIR}/../k8s/api-gateway/config/kong-values.yaml" --namespace kong --wait
+else
+    echo "Kong is not installed. Installing..."
+    helm install kong kong/ingress -f "${ROOT_DIR}/../k8s/api-gateway/config/kong-values.yaml" --namespace kong --create-namespace --wait
+fi

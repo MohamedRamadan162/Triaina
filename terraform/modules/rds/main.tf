@@ -1,11 +1,11 @@
-resource "aws_db_instance" "users" {
-  identifier        = "triaina-user-db"
+resource "aws_db_instance" "triaina_db" {
+  identifier        = "triaina-db"
   allocated_storage = 20
   engine            = "postgres"
   engine_version    = 17.2
   instance_class    = "db.t4g.micro"
   storage_type      = "gp2"
-  db_name           = "users"
+  db_name           = "triaina"
   username          = var.db_username
   password          = var.db_password
   port              = 4512
