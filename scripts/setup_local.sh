@@ -3,7 +3,7 @@
 # Load environment variables from container_registry.env file
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 echo "ROOT_DIR is set to $ROOT_DIR"
-if [ -f $ROOT_DIR/container_registry.env ]; then
+if [ -f $ROOT_DIR/.env ]; then
     source $ROOT_DIR/container_registry.env
     echo "Loaded environment variables from container_registry.env"
 else
@@ -39,7 +39,10 @@ echo "Docker registry secret created."
 
 # Define repository names in an array
 repo_names=(
-    "triaina-auth-module"
+    "triaina-auth-module",
+    "triaina-user-module",
+    "triaina-course-module",
+    "triaina-static-content-module"
 )
 
 for repo_name in "${repo_names[@]}"; do
