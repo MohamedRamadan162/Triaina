@@ -3,6 +3,7 @@ source "https://rubygems.org"
 gem "rails", "~> 8.0.1"
 gem "pg", "~> 1.1"
 gem "puma", ">= 5.0"
+gem "redis", "~> 5.2.0"
 
 gem "solid_cache"
 gem "solid_queue"
@@ -15,7 +16,8 @@ gem "kamal", require: false
 
 gem "thruster", require: false
 
-gem 'aws-sdk-rds'
+gem "aws-sdk-rds"
+gem "aws-sdk-elasticache"
 
 # Use Active Storage variants [https://guides.rubyonrails.org/active_storage_overview.html#transforming-images]
 # gem "image_processing", "~> 1.2"
@@ -33,5 +35,3 @@ group :development, :test do
   # Omakase Ruby styling [https://github.com/rails/rubocop-rails-omakase/]
   gem "rubocop-rails-omakase", require: false
 end
-
-
