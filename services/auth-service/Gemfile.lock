@@ -155,6 +155,8 @@ GEM
     marcel (1.0.4)
     mini_mime (1.1.5)
     minitest (5.25.4)
+    mocha (2.7.1)
+      ruby2_keywords (>= 0.0.5)
     msgpack (1.7.5)
     net-imap (0.5.3)
       date
@@ -272,6 +274,7 @@ GEM
       rubocop-performance
       rubocop-rails
     ruby-progressbar (1.13.0)
+    ruby2_keywords (0.0.5)
     securerandom (0.4.1)
     solid_cable (3.0.5)
       actioncable (>= 7.2)
@@ -337,6 +340,7 @@ DEPENDENCIES
   debug
   dotenv-rails
   kamal
+  mocha
   pg (~> 1.1)
   puma (>= 5.0)
   rails (~> 8.0.1)

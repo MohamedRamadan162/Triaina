@@ -30,3 +30,11 @@ production:
     <<: *primary_production
     database: auth_service_production_cable
     migrations_paths: db/cable_migrate
+
+test:
+  <<: *default
+  database: triaina
+  host: <%= ENV.fetch("RDS_HOST", "localhost") %>
+  port: <%= ENV.fetch("RDS_PORT", "4512") %>
+  username: <%= ENV.fetch("DB_USERNAME") %>
+  password: <%= ENV.fetch("DB_PASSWORD") %>
