@@ -7,7 +7,7 @@ build:
     - image: 000000000000.dkr.ecr.us-west-1.localhost.localstack.cloud:4566/triaina-auth-module
       context: ./services/auth-service
       docker:
-        dockerfile: Dockerfile
+        dockerfile: Dockerfile.dev
     # - image: 000000000000.dkr.ecr.us-west-1.localhost.localstack.cloud:4566/triaina-user-module
     #   context: ./services/user-service
     #   docker:
@@ -28,8 +28,9 @@ build:
 manifests:
   rawYaml:
     # - https://github.com/kubernetes-sigs/metrics-server/releases/latest/download/components.yaml
-    - k8s/triaina-namespace.yaml
     - k8s/*.yaml
+    - k8s/configmaps/*.yaml
+    - k8s/secrets/*.yaml
     - k8s/api-gateway/*.yaml
     - k8s/auth-service/*.yaml
     # - k8s/user-service/*.yaml

@@ -1,5 +1,5 @@
 ## Settings
-.vscode/
+**/.vscode/
 
 ## For K8S secret files
 k8s/**/*-secret.yaml

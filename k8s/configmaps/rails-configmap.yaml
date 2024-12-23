@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: rails-configmap
+  namespace: triaina
+data:
+  RAILS_ENV: development

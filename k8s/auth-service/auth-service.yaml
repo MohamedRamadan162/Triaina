@@ -30,7 +30,11 @@ spec:
             - configMapRef:
                 name: aws-configmap
             - secretRef:
-                name: aws-secret
+                name: aws-credentials
+            - configMapRef:
+                name: rails-configmap
+            - secretRef:
+                name: triaina-db-credentials
           resources:
             requests:
               memory: "64Mi"
