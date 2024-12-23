@@ -8,22 +8,24 @@ build:
       context: ./services/auth-service
       docker:
         dockerfile: Dockerfile.dev
-    # - image: 000000000000.dkr.ecr.us-west-1.localhost.localstack.cloud:4566/triaina-user-module
-    #   context: ./services/user-service
-    #   docker:
-    #     dockerfile: Dockerfile
-    # - image: 000000000000.dkr.ecr.us-west-1.localhost.localstack.cloud:4566/triaina-course-module
-    #   context: ./services/course-service
-    #   docker:
-    #     dockerfile: Dockerfile
-    # - image: 000000000000.dkr.ecr.us-west-1.localhost.localstack.cloud:4566/triaina-static-content-module
-    #   context: ./services/static-content-service
-    #   docker:
-    #     dockerfile: Dockerfile
+    - image: 000000000000.dkr.ecr.us-west-1.localhost.localstack.cloud:4566/triaina-user-module
+      context: ./services/user-service
+      docker:
+        dockerfile: Dockerfile.dev
+    - image: 000000000000.dkr.ecr.us-west-1.localhost.localstack.cloud:4566/triaina-course-module
+      context: ./services/course-service
+      docker:
+        dockerfile: Dockerfile.dev
+    - image: 000000000000.dkr.ecr.us-west-1.localhost.localstack.cloud:4566/triaina-static-content-module
+      context: ./services/static-content-service
+      docker:
+        dockerfile: Dockerfile.dev
   tagPolicy:
     gitCommit: {}
   local:
     push: true
+    concurrency: 0
+    useDockerCLI: true
 
 manifests:
   rawYaml:
@@ -33,9 +35,9 @@ manifests:
     - k8s/secrets/*.yaml
     - k8s/api-gateway/*.yaml
     - k8s/auth-service/*.yaml
-    # - k8s/user-service/*.yaml
-    # - k8s/course-service/*.yaml
-    # - k8s/static-content-service/*.yaml
+    - k8s/user-service/*.yaml
+    - k8s/course-service/*.yaml
+    - k8s/static-content-service/*.yaml
 
 deploy:
   # helm:

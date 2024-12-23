@@ -28,5 +28,6 @@ module UserService
     # Middleware like session, flash, cookies can be added back manually.
     # Skip views, helpers and assets when generating a new resource.
     config.api_only = true
+    config.cache_store = :redis_cache_store, { url: ENV["REDIS_ENDPOINT"], namespace: "auth_service_cache", expires_in: 1.day }
   end
 end
