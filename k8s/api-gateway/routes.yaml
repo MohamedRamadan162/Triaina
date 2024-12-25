@@ -25,3 +25,33 @@ spec:
           port: 80
           weight: 1
           kind: Service
+    - matches:
+        - path:
+            type: PathPrefix
+            value: /users
+      backendRefs:
+        - name: user-service
+          namespace: triaina
+          port: 80
+          weight: 1
+          kind: Service
+    - matches:
+        - path:
+            type: PathPrefix
+            value: /courses
+      backendRefs:
+        - name: course-service
+          namespace: triaina
+          port: 80
+          weight: 1
+          kind: Service
+    - matches:
+        - path:
+            type: PathPrefix
+            value: /content
+      backendRefs:
+        - name: static-content-service
+          namespace: triaina
+          port: 80
+          weight: 1
+          kind: Service
