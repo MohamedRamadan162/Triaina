@@ -5,13 +5,21 @@ resource "aws_iam_role" "eks_role" {
     Statement = [
       {
         Effect = "Allow"
-        Action = "sts:AssumeRole"
+        Action = [
+          "sts:AssumeRole",
+          "sts:TagSession"
+        ]
         Principal = {
           Service = "eks.amazonaws.com"
         }
       }
     ]
   })
+}
+
+resource "aws_iam_role_policy_attachment" "cluster_AmazonEKSClusterPolicy" {
+  policy_arn = "arn:aws:iam::aws:policy/AmazonEKSClusterPolicy"
+  role       = aws_iam_role.eks_role.name
 }
 
 resource "aws_eks_cluster" "triaina_eks_cluster" {
@@ -22,4 +30,7 @@ resource "aws_eks_cluster" "triaina_eks_cluster" {
     subnet_ids         = var.private_subnet_ids[*]
     security_group_ids = [var.security_group_id]
   }
+
+  depends_on = [aws_iam_role_policy_attachment.cluster_AmazonEKSClusterPolicy]
 }
+

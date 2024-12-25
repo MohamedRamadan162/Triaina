@@ -1,10 +1,11 @@
-resource "aws_security_group" "rds_sg" {
-  name        = "rds-security-group"
-  description = "Allow access to RDS PostgreSQL DB"
+resource "aws_security_group" "rds_security_group" {
+  name_prefix        = "rds-security-group-"
+  description = "Security group for RDS PostgreSQL"
   vpc_id      = var.vpc_id
 
   # Allow inbound traffic from within the VPC
   ingress {
+    description = "PostgreSQL access from private subnets"
     from_port   = 5432 # PostgreSQL default port
     to_port     = 5432
     protocol    = "tcp"
@@ -13,6 +14,7 @@ resource "aws_security_group" "rds_sg" {
 
   # Allow outbound traffic
   egress {
+    description = "HTTPS access from private subnets"
     from_port   = 0
     to_port     = 0
     protocol    = "-1"
@@ -22,15 +24,20 @@ resource "aws_security_group" "rds_sg" {
   tags = {
     Name = "DB Security Group"
   }
+
+  lifecycle {
+    create_before_destroy = true
+  }
 }
 
-resource "aws_security_group" "elasticache_sg" {
-  name        = "elasticache-security-group"
-  description = "Allow access to Redis ElastiCache Cluster"
+resource "aws_security_group" "elasticache_security_group" {
+  name_prefix        = "elasticache-security-group-"
+  description = "Security group for Redis ElastiCache"
   vpc_id      = var.vpc_id
 
   # Allow inbound traffic from within the VPC
   ingress {
+    description = "Redis access from private subnets"
     from_port   = 6379 # Redis default port
     to_port     = 6379
     protocol    = "tcp"
@@ -39,6 +46,7 @@ resource "aws_security_group" "elasticache_sg" {
 
   # Allow outbound traffic
   egress {
+    description = "Allow outbound to private subnets"
     from_port   = 0
     to_port     = 0
     protocol    = "-1"
@@ -48,15 +56,20 @@ resource "aws_security_group" "elasticache_sg" {
   tags = {
     Name = "Cache Security Group"
   }
+
+  lifecycle {
+    create_before_destroy = true
+  }
 }
 
-resource "aws_security_group" "eks_sec_group" {
-  name        = "eks-sec-group"
-  description = "EKS security group"
+resource "aws_security_group" "eks_security_group" {
+  name_prefix        = "eks-sec-group-"
+  description = "Security group for EKS cluster"
   vpc_id      = var.vpc_id
 
   # Allow inbound traffic from within the VPC
   ingress {
+    description = "HTTPS access from private subnets"
     from_port   = 443
     to_port     = 443
     protocol    = "tcp"
@@ -65,6 +78,7 @@ resource "aws_security_group" "eks_sec_group" {
 
   # Allow outbound traffic
   egress {
+    description = "Allow outbound to private subnets"
     from_port   = 0
     to_port     = 0
     protocol    = "-1"
@@ -74,45 +88,38 @@ resource "aws_security_group" "eks_sec_group" {
   tags = {
     Name = "EKS Security Group"
   }
+
+  lifecycle {
+    create_before_destroy = true
+  }
 }
 
-resource "aws_security_group" "msk_sec_group" {
-  name        = "msk_sec_group"
-  description = "MSK security group"
+resource "aws_security_group" "msk_security_group" {
+  name_prefix        = "msk_sec_group-"
+  description = "Security group for MSK cluster"
   vpc_id      = var.vpc_id
 
   # Allow inbound traffic from within the VPC
   ingress {
+    description = "Kafka broker access"
     from_port   = 9092
     to_port     = 9092
-    protocol    = "tcp"
-    cidr_blocks = var.private_subnet_cidr_blocks
-  }
-  # Allow inbound traffic from within the VPC
-  ingress {
-    from_port   = 4511
-    to_port     = 4511
     protocol    = "tcp"
     cidr_blocks = var.private_subnet_cidr_blocks
   }
 
   # Allow communication between brokers (port 9093) if necessary (for multiple brokers)
   ingress {
+    description = "Inter-broker communication"
     from_port   = 9093
     to_port     = 9093
     protocol    = "tcp"
     cidr_blocks = var.private_subnet_cidr_blocks
   }
-  ingress {
-    from_port   = 4510
-    to_port     = 4510
-    protocol    = "tcp"
-    cidr_blocks = var.private_subnet_cidr_blocks
-  }
-
 
   # Allow outbound traffic
   egress {
+    description = "Allow outbound to private subnets"
     from_port   = 0
     to_port     = 0
     protocol    = "-1"
@@ -122,5 +129,8 @@ resource "aws_security_group" "msk_sec_group" {
   tags = {
     Name = "MSK Security Group"
   }
-
+  
+  lifecycle {
+    create_before_destroy = true
+  }
 }

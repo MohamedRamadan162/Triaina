@@ -3,6 +3,11 @@ variable "region" {
   type        = string
 }
 
+variable "environment" {
+  default = "Development"
+  type    = string
+}
+
 variable "db_username" {
   description = "DB Username"
   type        = string
