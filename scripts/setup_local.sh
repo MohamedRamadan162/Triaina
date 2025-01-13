@@ -28,16 +28,6 @@ echo "Updating kubeconfig for EKS cluster..."
 awslocal eks update-kubeconfig --name triaina-eks-cluster
 echo "Kubeconfig update completed."
 
-# Create the Docker registry secret in Kubernetes
-echo "Creating/Updating Docker registry secret..."
-kubectl create secret docker-registry ghcr-secret \
-    --docker-server=$SERVER \
-    --docker-username=$USERNAME \
-    --docker-password=$PASSWORD \
-    --docker-email=$EMAIL \
-    --dry-run=client -o yaml | kubectl apply -f -
-echo "Docker registry secret created/updated."
-
 # Define repository names in an array
 repo_names=(
     "triaina-auth-module"

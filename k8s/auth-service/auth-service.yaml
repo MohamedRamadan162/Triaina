@@ -109,10 +109,6 @@ spec:
         - type: Percent
           value: 100
           periodSeconds: 15
-        - type: Pods
-          value: 4 # But not more than 4 at once
-          periodSeconds: 15
-      selectPolicy: Max
     ## Wait 5 minutes before scaling down in case high load continues in these 5 minutes
     scaleDown:
       stabilizationWindowSeconds: 300

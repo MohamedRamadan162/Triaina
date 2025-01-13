@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Set the working directory to the current directory where the script is located
-ROOT_DIR="$(dirname "$0")/.."     # The parent directory of the directory where the script resides
+ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/.."
 OUTPUT_TAR="secrets_files.tar.gz" # Name of the output tar.gz file
 
 # Change to the directory where the script resides
