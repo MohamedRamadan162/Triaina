@@ -25,8 +25,9 @@ data "aws_availability_zones" "available_zones" {}
 
 ## VPC Module
 module "vpc" {
-  source             = "./modules/vpc"
-  availability_zones = data.aws_availability_zones.available_zones.names
+  source = "./modules/vpc"
+  # only 2 AZs 
+  availability_zones = slice(data.aws_availability_zones.available_zones.names, 0, 2)
 }
 
 ## All security groups

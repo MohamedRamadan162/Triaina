@@ -56,7 +56,7 @@ resource "aws_eip" "nat" {
 
 # NAT Gateway (Allow instances in private subnets to initiate outbound traffic but prevent inbound public traffic)
 resource "aws_nat_gateway" "nat_gateway" {
-  allocation_id = aws_eip.nat.id
+  allocation_id = aws_eip.nat.allocation_id
   subnet_id     = element(aws_subnet.public_subnets.*.id, 0)
 
   tags = {

@@ -17,7 +17,7 @@ resource "aws_db_instance" "triaina_db" {
   db_name           = "triaina"
   username          = var.db_username
   password          = var.db_password
-  port              = 4512
+  port              = 5432
 
   db_subnet_group_name   = aws_db_subnet_group.triaina_db_subnet_group.name
   vpc_security_group_ids = toset([var.rds_security_group_id])
@@ -28,7 +28,16 @@ resource "aws_db_instance" "triaina_db" {
 
   # Enable automated backups
   skip_final_snapshot       = false
-  final_snapshot_identifier = "triaina-db-snap"
-  deletion_protection       = true
+  final_snapshot_identifier = "triaina-db-snap-${timestamp()}"
+  deletion_protection       = false
+
+  performance_insights_enabled          = true
+  performance_insights_retention_period = 7
+  
+  # For High Availability
+  multi_az = true
+
+  depends_on = [aws_db_subnet_group.triaina_db_subnet_group]
 }
 
+## To scale reads create an instance replica

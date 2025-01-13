@@ -1,5 +1,5 @@
 resource "aws_security_group" "rds_security_group" {
-  name_prefix        = "rds-security-group-"
+  name_prefix = "rds-security-group-"
   description = "Security group for RDS PostgreSQL"
   vpc_id      = var.vpc_id
 
@@ -18,7 +18,7 @@ resource "aws_security_group" "rds_security_group" {
     from_port   = 0
     to_port     = 0
     protocol    = "-1"
-    cidr_blocks = ["0.0.0.0/0"]
+    cidr_blocks = var.private_subnet_cidr_blocks
   }
 
   tags = {
@@ -31,7 +31,7 @@ resource "aws_security_group" "rds_security_group" {
 }
 
 resource "aws_security_group" "elasticache_security_group" {
-  name_prefix        = "elasticache-security-group-"
+  name_prefix = "elasticache-security-group-"
   description = "Security group for Redis ElastiCache"
   vpc_id      = var.vpc_id
 
@@ -63,7 +63,7 @@ resource "aws_security_group" "elasticache_security_group" {
 }
 
 resource "aws_security_group" "eks_security_group" {
-  name_prefix        = "eks-sec-group-"
+  name_prefix = "eks-sec-group-"
   description = "Security group for EKS cluster"
   vpc_id      = var.vpc_id
 
@@ -95,7 +95,7 @@ resource "aws_security_group" "eks_security_group" {
 }
 
 resource "aws_security_group" "msk_security_group" {
-  name_prefix        = "msk_sec_group-"
+  name_prefix = "msk_sec_group-"
   description = "Security group for MSK cluster"
   vpc_id      = var.vpc_id
 
@@ -129,7 +129,7 @@ resource "aws_security_group" "msk_security_group" {
   tags = {
     Name = "MSK Security Group"
   }
-  
+
   lifecycle {
     create_before_destroy = true
   }
