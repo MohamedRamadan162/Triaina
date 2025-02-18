@@ -1,6 +1,9 @@
 ## Settings
 **/.vscode/
 
+## Python env files
+venv
+
 ## For K8S secret files
 k8s/**/*-secret.yaml
 k8s/connection-test
