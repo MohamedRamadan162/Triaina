@@ -7,10 +7,10 @@ default: &default
 development:
   <<: *default
   database: triaina
-  host: <%= ENV.fetch("RDS_HOST", "localhost.localhost.cloud") %> # Default to localhost for development
-  port: <%= ENV.fetch("RDS_PORT", "4512") %>
-  username: <%= ENV.fetch("DB_USERNAME") %>
-  password: <%= ENV.fetch("DB_PASSWORD") %>
+  host: <%= ENV.fetch("POSTGRES_HOST", "localhost") %>
+  port: <%= ENV.fetch("POSTGRES_PORT", "5432") %>
+  username: <%= ENV.fetch("POSTGRES_USERNAME") %>
+  password: <%= ENV.fetch("POSTGRES_PASSWORD") %>
 
 production:
   primary: &primary_production
@@ -34,7 +34,7 @@ production:
 test:
   <<: *default
   database: triaina
-  host: <%= ENV.fetch("RDS_HOST", "localhost") %>
-  port: <%= ENV.fetch("RDS_PORT", "4512") %>
-  username: <%= ENV.fetch("DB_USERNAME") %>
-  password: <%= ENV.fetch("DB_PASSWORD") %>
+  host: <%= ENV.fetch("POSTGRES_HOST", "localhost") %>
+  port: <%= ENV.fetch("POSTGRES_PORT", "5432") %>
+  username: <%= ENV.fetch("POSTGRES_USERNAME") %>
+  password: <%= ENV.fetch("POSTGRES_PASSWORD") %>

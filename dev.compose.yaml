@@ -1,14 +1,13 @@
 services:
   auth-module:
-    build: 
+    build:
       context: ./services/auth-service
       dockerfile: Dockerfile.dev
     restart: always
     ports:
       - 3001:3000
     env_file:
-      - ./env/aws-credentials.env
-      - ./env/triaina-db.env
+      - ./env/aws.env
     networks:
       - triaina-network
     develop:
@@ -20,17 +19,18 @@ services:
             - Gemfile.lock
         - action: rebuild
           path: ./services/auth-service/Gemfile
+        - action: rebuild
+          path: ./services/auth-service/config
 
   user-module:
-    build: 
+    build:
       context: ./services/user-service
       dockerfile: Dockerfile.dev
     restart: always
     ports:
       - 3002:3000
     env_file:
-      - ./env/aws-credentials.env
-      - ./env/triaina-db.env
+      - ./env/aws.env
     networks:
       - triaina-network
     develop:
@@ -44,15 +44,14 @@ services:
           path: ./services/user-service/Gemfile
 
   course-module:
-    build: 
+    build:
       context: ./services/course-service
       dockerfile: Dockerfile.dev
     restart: always
     ports:
       - 3003:3000
     env_file:
-      - ./env/aws-credentials.env
-      - ./env/triaina-db.env
+      - ./env/aws.env
     networks:
       - triaina-network
     develop:
@@ -64,17 +63,16 @@ services:
             - Gemfile.lock
         - action: rebuild
           path: ./services/course-service/Gemfile
-            
+
   static-content-module:
-    build: 
+    build:
       context: ./services/static-content-service
       dockerfile: Dockerfile.dev
     restart: always
-    ports: 
+    ports:
       - 3004:3000
     env_file:
-      - ./env/aws-credentials.env
-      - ./env/triaina-db.env
+      - ./env/aws.env
     networks:
       - triaina-network
     develop:
@@ -95,7 +93,7 @@ services:
     volumes:
       - ./dev-data/redis:/data
     command: redis-server --save 60 1 --loglevel warning
-    networks: 
+    networks:
       - triaina-network
 
   postgres-db:
@@ -106,7 +104,7 @@ services:
     env_file:
       - ./env/postgres.env
     volumes:
-      - ./dev-data/postgres:/var/lib/postgresql/data 
+      - ./dev-data/postgres:/var/lib/postgresql/data
     networks:
       - triaina-network
 
@@ -122,9 +120,8 @@ services:
     networks:
       - triaina-network
 
-  kafka:
+  kafka-broker:
     image: bitnami/kafka:3.6.0
-    container_name: kafka-broker
     restart: always
     depends_on:
       - zookeeper
@@ -134,11 +131,11 @@ services:
       KAFKA_BROKER_ID: 1
       KAFKA_CFG_ZOOKEEPER_CONNECT: "zookeeper:2181"
       KAFKA_CFG_LISTENERS: "PLAINTEXT://:9092"
-      KAFKA_CFG_ADVERTISED_LISTENERS: "PLAINTEXT://localhost:9092"
+      KAFKA_CFG_ADVERTISED_LISTENERS: "PLAINTEXT://kafka-broker:9092"
       KAFKA_CFG_AUTO_CREATE_TOPICS_ENABLE: "true"
       ALLOW_PLAINTEXT_LISTENER: "yes"
     volumes:
-      - ./dev-data/kafka:/bitnami/kafka 
+      - ./dev-data/kafka:/bitnami/kafka
     networks:
       - triaina-network
 
@@ -148,8 +145,8 @@ services:
     networks:
       - triaina-network
     ports:
-      - "8000:8000"  # Public API Gateway Port
-      - "8001:8001"  # Admin API
+      - "8000:8000" # Public API Gateway Port
+      - "8001:8001" # Admin API
     volumes:
       - ./api-gateway.yml:/kong/kong.yml
     environment:
@@ -159,7 +156,7 @@ services:
       KONG_ADMIN_ACCESS_LOG: "/dev/stdout"
       KONG_PROXY_ERROR_LOG: "/dev/stderr"
       KONG_ADMIN_ERROR_LOG: "/dev/stderr"
-      
+
 networks:
   triaina-network:
     driver: bridge
