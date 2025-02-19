@@ -4,7 +4,27 @@ services:
   - name: auth-service
     url: http://auth-module:3000
     routes:
+      - name: auth-route
+        paths:
+          - /auth
 
   - name: user-service
     url: http://user-module:3000
     routes:
+      - name: users-route
+        paths:
+          - /users
+
+  - name: course-service
+    url: http://course-module:3000
+    routes:
+      - name: courses-route
+        paths:
+          - /courses
+
+  - name: static-content-service
+    url: http://static-content-module:3000
+    routes:
+      - name: static-courses-route
+        paths:
+          - /static-content
