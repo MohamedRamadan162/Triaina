@@ -1,0 +1,112 @@
+services:
+  auth-module:
+    build: 
+      context: ./services/auth-service
+      dockerfile: Dockerfile.dev
+    restart: always
+    ports:
+      - 3001:3000
+    env_file:
+      - ./env/aws-credentials.env
+      - ./env/triaina-db.env
+    networks:
+      - triaina-network
+
+  user-module:
+    build: 
+      context: ./services/user-service
+      dockerfile: Dockerfile.dev
+    restart: always
+    ports:
+      - 3002:3000
+    env_file:
+      - ./env/aws-credentials.env
+      - ./env/triaina-db.env
+    networks:
+      - triaina-network
+
+  course-module:
+    build: 
+      context: ./services/course-service
+      dockerfile: Dockerfile.dev
+    restart: always
+    ports:
+      - 3003:3000
+    env_file:
+      - ./env/aws-credentials.env
+      - ./env/triaina-db.env
+    networks:
+      - triaina-network
+
+  static-content-module:
+    build: 
+      context: ./services/static-content-service
+      dockerfile: Dockerfile.dev
+    restart: always
+    ports: 
+      - 3004:3000
+    env_file:
+      - ./env/aws-credentials.env
+      - ./env/triaina-db.env
+    networks:
+      - triaina-network
+
+
+  redis-cache:
+    image: redis:7.2-alpine
+    restart: always
+    ports:
+      - 6379:6379
+    volumes:
+      - ./dev-data/redis:/data
+    command: redis-server --save 60 1 --loglevel warning
+    networks: 
+      - triaina-network
+
+  postgres-db:
+    image: postgres:17.3-alpine3.20
+    restart: always
+    ports:
+      - 5432:5432
+    env_file:
+      - ./env/postgres.env
+    volumes:
+      - ./dev-data/postgres:/var/lib/postgresql/data 
+    networks:
+      - triaina-network
+
+  zookeeper:
+    image: bitnami/zookeeper
+    restart: always
+    environment:
+      ALLOW_ANONYMOUS_LOGIN: "yes"
+    ports:
+      - "2181:2181"
+    volumes:
+      - ./dev-data/zookeeper:/bitnami/zookeeper
+    networks:
+      - triaina-network
+
+  kafka:
+    image: bitnami/kafka:3.6.0
+    container_name: kafka-broker
+    restart: always
+    depends_on:
+      - zookeeper
+    ports:
+      - "9092:9092"
+    environment:
+      KAFKA_BROKER_ID: 1
+      KAFKA_CFG_ZOOKEEPER_CONNECT: "zookeeper:2181"
+      KAFKA_CFG_LISTENERS: "PLAINTEXT://:9092"
+      KAFKA_CFG_ADVERTISED_LISTENERS: "PLAINTEXT://localhost:9092"
+      KAFKA_CFG_AUTO_CREATE_TOPICS_ENABLE: "true"
+      ALLOW_PLAINTEXT_LISTENER: "yes"
+    volumes:
+      - ./dev-data/kafka:/bitnami/kafka 
+    networks:
+      - triaina-network
+
+networks:
+  triaina-network:
+    driver: bridge

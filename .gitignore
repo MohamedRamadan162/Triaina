@@ -4,6 +4,9 @@
 ## Python env files
 venv
 
+## Docker compose dev env
+dev-data
+
 ## For K8S secret files
 k8s/**/*-secret.yaml
 k8s/connection-test
