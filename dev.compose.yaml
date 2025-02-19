@@ -18,6 +18,8 @@ services:
           target: /rails
           ignore:
             - Gemfile.lock
+        - action: rebuild
+          path: ./services/auth-service/Gemfile
 
   user-module:
     build: 
@@ -38,6 +40,8 @@ services:
           target: /rails
           ignore:
             - Gemfile.lock
+        - action: rebuild
+          path: ./services/user-service/Gemfile
 
   course-module:
     build: 
@@ -58,6 +62,8 @@ services:
           target: /rails
           ignore:
             - Gemfile.lock
+        - action: rebuild
+          path: ./services/course-service/Gemfile
             
   static-content-module:
     build: 
@@ -78,6 +84,8 @@ services:
           target: /rails
           ignore:
             - Gemfile.lock
+        - action: rebuild
+          path: ./services/static-content-service/Gemfile
 
   redis-cache:
     image: redis:7.2-alpine
