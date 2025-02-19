@@ -142,6 +142,24 @@ services:
     networks:
       - triaina-network
 
+  api-gateway:
+    image: kong/kong-gateway:latest
+    restart: always
+    networks:
+      - triaina-network
+    ports:
+      - "8000:8000"  # Public API Gateway Port
+      - "8001:8001"  # Admin API
+    volumes:
+      - ./api-gateway.yml:/kong/kong.yml
+    environment:
+      KONG_DATABASE: "off"
+      KONG_DECLARATIVE_CONFIG: "/kong/kong.yml"
+      KONG_PROXY_ACCESS_LOG: "/dev/stdout"
+      KONG_ADMIN_ACCESS_LOG: "/dev/stdout"
+      KONG_PROXY_ERROR_LOG: "/dev/stderr"
+      KONG_ADMIN_ERROR_LOG: "/dev/stderr"
+      
 networks:
   triaina-network:
     driver: bridge

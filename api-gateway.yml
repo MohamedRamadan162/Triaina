@@ -1,0 +1,10 @@
+_format_version: "3.0"
+
+services:
+  - name: auth-service
+    url: http://auth-module:3000
+    routes:
+
+  - name: user-service
+    url: http://user-module:3000
+    routes:
