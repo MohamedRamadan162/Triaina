@@ -9,5 +9,6 @@ Rails.application.routes.draw do
   # root "posts#index"
 
   # All users routing
-  resources "users"
+  get "/" => "users#getAllUsers"
+  get "/:username" => "users#getUser"
 end
