@@ -46,7 +46,7 @@ class UsersController < ApplicationController
   #
   # @return [void]
   def getUser
-    # Check if username exists
+    # Check if username exists (better safe than sorry)
     if params[:username].blank?
       render json: { error: "Username is required" }, status: :bad_request
     end

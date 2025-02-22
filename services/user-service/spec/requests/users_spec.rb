@@ -36,27 +36,21 @@ RSpec.describe UsersController, type: :request do
     end
   end
 
-  # describe 'GET /:username' do
-  #   let(:user) { create(:user) }
+  describe 'GET /:username' do
+    let(:user) { create(:user) }
 
-  #   it 'returns user when found' do
-  #     get "/users/#{user.username}"
+    it 'returns user when found' do
+      get "/#{user.username}"
 
-  #     expect(response).to have_http_status(:ok)
-  #     json_response = JSON.parse(response.body)
-  #     expect(json_response['user']['username']).to eq(user.username)
-  #   end
+      expect(response).to have_http_status(:ok)
+      json_response = JSON.parse(response.body)
+      expect(json_response['user']['username']).to eq(user.username)
+    end
 
-  #   it 'returns error when username is missing' do
-  #     get '/users', params: { username: '' }
-  #     expect(response).to have_http_status(:bad_request)
-  #     expect(JSON.parse(response.body)['error']).to eq('Username is required')
-  #   end
-
-  #   it 'returns not found when user does not exist' do
-  #     get '/users/nonexistent_user'
-  #     expect(response).to have_http_status(:not_found)
-  #     expect(JSON.parse(response.body)['error']).to eq('User not found')
-  #   end
-  # end
+    it 'returns not found when user does not exist' do
+      get '/nonexistent_user'
+      expect(response).to have_http_status(:not_found)
+      expect(JSON.parse(response.body)['error']).to eq('User not found')
+    end
+  end
 end
