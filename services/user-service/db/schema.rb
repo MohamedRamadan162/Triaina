@@ -10,10 +10,23 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_02_22_133638) do
+ActiveRecord::Schema[8.0].define(version: 2025_02_22_141044) do
   create_schema "auth_service"
+  create_schema "user_service"
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
+  create_table "users", primary_key: "user_id", id: :uuid, default: nil, force: :cascade do |t|
+    t.string "username", null: false
+    t.string "name", null: false
+    t.string "email", null: false
+    t.boolean "email_verified"
+    t.string "avatar_url"
+    t.datetime "deleted_at", precision: nil
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["email"], name: "index_users_on_email", unique: true
+    t.index ["username"], name: "index_users_on_username", unique: true
+  end
 end

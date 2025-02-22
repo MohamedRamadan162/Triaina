@@ -2,7 +2,7 @@ default: &default
   adapter: postgresql
   encoding: unicode
   pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
-  schema_search_path: 'user_service,public'
+  schema_search_path: "user_service,public"
 
 development:
   <<: *default
@@ -33,7 +33,7 @@ production:
 
 test:
   <<: *default
-  database: triaina
+  database: triaina_test
   host: <%= ENV.fetch("POSTGRES_HOST", "localhost") %>
   port: <%= ENV.fetch("POSTGRES_PORT", "5432") %>
   username: <%= ENV.fetch("POSTGRES_USERNAME") %>
