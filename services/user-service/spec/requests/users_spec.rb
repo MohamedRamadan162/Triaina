@@ -55,6 +55,10 @@ RSpec.describe UsersController, type: :request do
   end
 
   describe 'POST /' do
+    before do
+      create_list(:user, 250)
+    end
+
     let(:validParams) {
       {
         username: "test_user",
@@ -72,6 +76,8 @@ RSpec.describe UsersController, type: :request do
         expect(response).to have_http_status(:created)
         json_response = JSON.parse(response.body)
         expect(json_response['user']['username']).to eq('test_user')
+        expect(json_response['user']['name']).to eq('test user')
+        expect(json_response['user']['email']).to eq('test@email.com')
       end
     end
 
@@ -95,6 +101,40 @@ RSpec.describe UsersController, type: :request do
 
         expect(response).to have_http_status(:bad_request)
         expect(JSON.parse(response.body)).to eq({ "error" => "Email is required" })
+      end
+    end
+
+    context "duplicate entry" do
+      let!(:existingUser) { create(:user, validParams) }
+
+      it "returns an error when the username is already taken" do
+        post "/", params: { username: existingUser.username, name: "New Name", email: "new@email.com" }
+
+        expect(response).to have_http_status(:unprocessable_entity)
+        expect(JSON.parse(response.body)).to eq({ "errors" => [ "Username has already been taken" ] })
+      end
+
+      it "returns an error when the email is already registered" do
+        post "/", params: { username: "new_user", name: "New Name", email: existingUser.email }
+
+        expect(response).to have_http_status(:unprocessable_entity)
+        expect(JSON.parse(response.body)).to eq({ "errors" => [ "Email has already been taken" ] })
+      end
+    end
+
+    context "invalid input form" do
+      it "returns an error when email is in an invalid format" do
+        post "/", params: { username: "new_user", name: "New name", email: "wrong_email" }
+
+        expect(response).to have_http_status(:unprocessable_entity)
+        expect(JSON.parse(response.body)).to eq({ "errors" => [ "Email must be a valid email format" ] })
+      end
+
+      it "returns an error when username is in an invalid format" do
+        post "/", params: { username: "new", name: "New name", email: "test@email.com" }
+
+        expect(response).to have_http_status(:unprocessable_entity)
+        expect(JSON.parse(response.body)).to eq({ "errors" => [ "Username is too short (minimum is 4 characters)" ] })
       end
     end
   end

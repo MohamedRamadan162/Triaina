@@ -80,7 +80,7 @@ class UsersController < ApplicationController
     # If persisted write to db and cache
     if newUser.save
       Rails.cache.write("users/#{newUser.username}", newUser)
-      render json: { user: { username: newUser.username } }, status: :created
+      render json: { user: { name: newUser.name, username: newUser.username, email: newUser.email } }, status: :created
     else
       render json: { errors: newUser.errors.full_messages }, status: :unprocessable_entity
     end
