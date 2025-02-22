@@ -11,4 +11,5 @@ Rails.application.routes.draw do
   # All users routing
   get "/" => "users#getAllUsers"
   get "/:username" => "users#getUser"
+  post "/" => "users#createUser"
 end

@@ -53,4 +53,49 @@ RSpec.describe UsersController, type: :request do
       expect(JSON.parse(response.body)['error']).to eq('User not found')
     end
   end
+
+  describe 'POST /' do
+    let(:validParams) {
+      {
+        username: "test_user",
+        email: "test@email.com",
+        name: "test user"
+      }
+    }
+
+    context "When parameters are valid" do
+      it "return 201 and creates new user in db" do
+        expect {
+          post "/", params: validParams
+        }.to change(User, :count).by(1)
+
+        expect(response).to have_http_status(:created)
+        json_response = JSON.parse(response.body)
+        expect(json_response['user']['username']).to eq('test_user')
+      end
+    end
+
+    context "missing parameters" do
+      it "returns an error when username is missing" do
+        post "/", params: { name: "test user", email: "test@email.com" }
+
+        expect(response).to have_http_status(:bad_request)
+        expect(JSON.parse(response.body)).to eq({ "error" => "Username is required" })
+      end
+
+      it "returns an error when name is missing" do
+        post "/", params: { username: "test_user", email: "test@email.com" }
+
+        expect(response).to have_http_status(:bad_request)
+        expect(JSON.parse(response.body)).to eq({ "error" => "Name is required" })
+      end
+
+      it "returns an error when email is missing" do
+        post "/", params: { username: "test_user", name: "test user" }
+
+        expect(response).to have_http_status(:bad_request)
+        expect(JSON.parse(response.body)).to eq({ "error" => "Email is required" })
+      end
+    end
+  end
 end

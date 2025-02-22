@@ -61,4 +61,28 @@ class UsersController < ApplicationController
 
     render json: { user: }, status: :ok
   end
+
+  # Creates a new user, writes it to the db and cache and returns JSON
+  #
+  # @return [void]
+  def createUser
+    # Permit only the following params
+    userParams = params.permit(:username, :name, :email)
+
+    # Check all input is not present
+    return render json: { error: "Username is required" }, status: :bad_request if params[:username].blank?
+    return render json: { error: "Name is required" }, status: :bad_request if params[:name].blank?
+    return render json: { error: "Email is required" }, status: :bad_request if params[:email].blank?
+
+    # Create new user
+    newUser = User.new(userParams)
+
+    # If persisted write to db and cache
+    if newUser.save
+      Rails.cache.write("users/#{newUser.username}", newUser)
+      render json: { user: { username: newUser.username } }, status: :created
+    else
+      render json: { errors: newUser.errors.full_messages }, status: :unprocessable_entity
+    end
+  end
 end
