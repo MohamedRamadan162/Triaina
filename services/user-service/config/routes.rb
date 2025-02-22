@@ -7,4 +7,7 @@ Rails.application.routes.draw do
   get "ready" => "health_check#dependencies", as: :ready_check
   # Defines the root path route ("/")
   # root "posts#index"
+
+  # All users routing
+  resources "users"
 end
