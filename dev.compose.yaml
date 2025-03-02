@@ -8,6 +8,8 @@ services:
       - 3001:3000
     env_file:
       - ./env/aws.env
+    volumes:
+      - ./services/auth-service:/rails
     networks:
       - triaina-network
     develop:
@@ -31,6 +33,8 @@ services:
       - 3002:3000
     env_file:
       - ./env/aws.env
+    volumes:
+      - ./services/user-service:/rails
     networks:
       - triaina-network
     develop:
@@ -42,6 +46,8 @@ services:
             - Gemfile.lock
         - action: rebuild
           path: ./services/user-service/Gemfile
+        - action: rebuild
+          path: ./services/user-service/config
 
   course-module:
     build:
@@ -52,6 +58,8 @@ services:
       - 3003:3000
     env_file:
       - ./env/aws.env
+    volumes:
+      - ./services/course-service:/rails
     networks:
       - triaina-network
     develop:
@@ -73,6 +81,8 @@ services:
       - 3004:3000
     env_file:
       - ./env/aws.env
+    volumes:
+      - ./services/static-content-service:/rails
     networks:
       - triaina-network
     develop:
