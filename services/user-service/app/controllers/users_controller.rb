@@ -1,29 +1,39 @@
-require "pagy/extras/metadata"
-include Pagy::Backend
-
-class UsersController < ApplicationController
-  def paginatedUsers(page = 1, limit = 100)
-    pagy, users = pagy(User.all, items: limit, page: page)
-    return users, pagy
+# UsersController handles user-related actions such as fetching paginated users and retrieving a specific user by username.
+class UsersController < ApiController
+  # List all users and render them as JSON.
+  # GET /
+  def index
+    # List all users
+    users = list(User)
+    render_success(users: serializer(users))
   end
 
-  def getAllUsers
-    # Get page and number params variables
-    page = params[:page].to_i > 0 ? params[:page].to_i : 1
+  # Retrieves a user by id
+  # Get /:id
+  def show
+    user = list(User).find_by(id: params[:id])
+    render_success(user: serializer(user))
+  end
 
-    # Return paginated users with metadata
-    users, pagy = paginatedUsers(page)
+  # Creates a new user, writes it to the db and cache and returns JSON
+  # POST /
+  def create
+    user = User.create!(user_params)
+    render_success(user: serializer(user))
+  end
 
-    render json: {
-      users:,
-      pagination: {
-      count: pagy.count,
-      users_per_page: pagy.limit,
-      curr_page: pagy.page,
-      prev_page: pagy.prev,
-      next_page: pagy.next,
-      num_pages: pagy.pages
-      }
-    }, status: :ok
+  # Deletes a user by id
+  # DELETE /:id
+  def delete
+    user = list(User).find_by(id: params[:id])
+    user.destroy!
+    render_success({ user: serializer(user) }, :no_content)
+  end
+
+  private
+
+  # permitted user params for create action
+  def user_params
+    params.permit(:username, :email, :name)
   end
 end

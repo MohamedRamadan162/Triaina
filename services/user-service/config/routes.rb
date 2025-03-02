@@ -9,6 +9,8 @@ Rails.application.routes.draw do
   # root "posts#index"
 
   # All users routing
-  get "/" => "users#getAllUsers"
-  get "/:username" => "users#getUser"
+  get "/" => "users#index"
+  get "/:username" => "users#show"
+  post "/" => "users#create"
+  delete "/:id" => "users#delete"
 end

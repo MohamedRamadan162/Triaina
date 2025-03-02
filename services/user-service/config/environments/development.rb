@@ -5,7 +5,7 @@ Rails.application.configure do
 
   # Allow requests from any host in development
   config.hosts.clear
-  
+
   # Make code changes take effect immediately without server restart.
   config.enable_reloading = true
 
