@@ -26,7 +26,7 @@ RSpec.describe UsersController, type: :request do
       expect(jsonResponse['pagination']['count']).to eq(User.count)
     end
 
-    it "returns empty page when out of limit page" do
+    it 'returns empty page when out of limit page' do
       get '/', params: { page: 4 }
 
       expect(response).to have_http_status(:ok)
@@ -59,19 +59,19 @@ RSpec.describe UsersController, type: :request do
       create_list(:user, 250)
     end
 
-    let(:validParams) {
+    let(:validParams) do
       {
-        username: "test_user",
-        email: "test@email.com",
-        name: "test user"
+        username: 'test_user',
+        email: 'test@email.com',
+        name: 'test user'
       }
-    }
+    end
 
-    context "When parameters are valid" do
-      it "return 201 and creates new user in db" do
-        expect {
-          post "/", params: validParams
-        }.to change(User, :count).by(1)
+    context 'When parameters are valid' do
+      it 'return 201 and creates new user in db' do
+        expect do
+          post '/', params: validParams
+        end.to change(User, :count).by(1)
 
         expect(response).to have_http_status(:created)
         json_response = JSON.parse(response.body)
@@ -81,60 +81,60 @@ RSpec.describe UsersController, type: :request do
       end
     end
 
-    context "missing parameters" do
-      it "returns an error when username is missing" do
-        post "/", params: { name: "test user", email: "test@email.com" }
+    context 'missing parameters' do
+      it 'returns an error when username is missing' do
+        post '/', params: { name: 'test user', email: 'test@email.com' }
 
         expect(response).to have_http_status(:bad_request)
-        expect(JSON.parse(response.body)).to eq({ "error" => "Username is required" })
+        expect(JSON.parse(response.body)).to eq({ 'error' => 'Username is required' })
       end
 
-      it "returns an error when name is missing" do
-        post "/", params: { username: "test_user", email: "test@email.com" }
+      it 'returns an error when name is missing' do
+        post '/', params: { username: 'test_user', email: 'test@email.com' }
 
         expect(response).to have_http_status(:bad_request)
-        expect(JSON.parse(response.body)).to eq({ "error" => "Name is required" })
+        expect(JSON.parse(response.body)).to eq({ 'error' => 'Name is required' })
       end
 
-      it "returns an error when email is missing" do
-        post "/", params: { username: "test_user", name: "test user" }
+      it 'returns an error when email is missing' do
+        post '/', params: { username: 'test_user', name: 'test user' }
 
         expect(response).to have_http_status(:bad_request)
-        expect(JSON.parse(response.body)).to eq({ "error" => "Email is required" })
+        expect(JSON.parse(response.body)).to eq({ 'error' => 'Email is required' })
       end
     end
 
-    context "duplicate entry" do
+    context 'duplicate entry' do
       let!(:existingUser) { create(:user, validParams) }
 
-      it "returns an error when the username is already taken" do
-        post "/", params: { username: existingUser.username, name: "New Name", email: "new@email.com" }
+      it 'returns an error when the username is already taken' do
+        post '/', params: { username: existingUser.username, name: 'New Name', email: 'new@email.com' }
 
         expect(response).to have_http_status(:unprocessable_entity)
-        expect(JSON.parse(response.body)).to eq({ "errors" => [ "Username has already been taken" ] })
+        expect(JSON.parse(response.body)).to eq({ 'errors' => ['Username has already been taken'] })
       end
 
-      it "returns an error when the email is already registered" do
-        post "/", params: { username: "new_user", name: "New Name", email: existingUser.email }
+      it 'returns an error when the email is already registered' do
+        post '/', params: { username: 'new_user', name: 'New Name', email: existingUser.email }
 
         expect(response).to have_http_status(:unprocessable_entity)
-        expect(JSON.parse(response.body)).to eq({ "errors" => [ "Email has already been taken" ] })
+        expect(JSON.parse(response.body)).to eq({ 'errors' => ['Email has already been taken'] })
       end
     end
 
-    context "invalid input form" do
-      it "returns an error when email is in an invalid format" do
-        post "/", params: { username: "new_user", name: "New name", email: "wrong_email" }
+    context 'invalid input form' do
+      it 'returns an error when email is in an invalid format' do
+        post '/', params: { username: 'new_user', name: 'New name', email: 'wrong_email' }
 
         expect(response).to have_http_status(:unprocessable_entity)
-        expect(JSON.parse(response.body)).to eq({ "errors" => [ "Email must be a valid email format" ] })
+        expect(JSON.parse(response.body)).to eq({ 'errors' => ['Email must be a valid email format'] })
       end
 
-      it "returns an error when username is in an invalid format" do
-        post "/", params: { username: "new", name: "New name", email: "test@email.com" }
+      it 'returns an error when username is in an invalid format' do
+        post '/', params: { username: 'new', name: 'New name', email: 'test@email.com' }
 
         expect(response).to have_http_status(:unprocessable_entity)
-        expect(JSON.parse(response.body)).to eq({ "errors" => [ "Username is too short (minimum is 4 characters)" ] })
+        expect(JSON.parse(response.body)).to eq({ 'errors' => ['Username is too short (minimum is 4 characters)'] })
       end
     end
   end
