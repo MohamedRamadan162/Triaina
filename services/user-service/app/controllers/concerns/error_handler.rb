@@ -5,7 +5,6 @@ module ErrorHandler
 
   ################### Custom Error Subclasses ####################
 
-
   included do
     rescue_from ActiveRecord::RecordInvalid, with: :unprocessable_entity
     rescue_from ActiveModel::StrictValidationFailed, with: :general_bad_request
@@ -13,7 +12,7 @@ module ErrorHandler
 
     rescue_from ActiveRecord::RecordNotDestroyed do |err|
       render(
-        json: { success: false, message: err.record.errors.full_messages.join(" ") },
+        json: { success: false, message: err.record.errors.full_messages.join(' ') },
         status: :not_found
       )
     end

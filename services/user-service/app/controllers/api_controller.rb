@@ -10,7 +10,7 @@ class ApiController < ApplicationController
   # end
 
   # List and filter records
-  def list(model, filtering_params: filtering_params(), multiselection_filtering_params: multiselection_filtering_params(), ordering_params: ordering_params())
+  def list(model, filtering_params: filtering_params, multiselection_filtering_params: multiselection_filtering_params, ordering_params: ordering_params)
     records = model.filter_by(filtering_params, multiselection_filtering_params).order_by(ordering_params)
     @pagy, records = pagy(records) unless params[:page].to_i == -1
     records
@@ -33,8 +33,8 @@ class ApiController < ApplicationController
     { order_by_created_at: :desc }
   end
 
-  def serializer(objects, params: {}, serializer_class: serializer_class())
-  serializer_class.render(objects, params)
+  def serializer(objects, params: {}, serializer_class: serializer_class)
+    serializer_class.render(objects, params)
   end
 
   def controller_model
