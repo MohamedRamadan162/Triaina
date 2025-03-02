@@ -220,6 +220,11 @@ GEM
       racc (~> 1.4)
     nokogiri (1.18.3-x86_64-linux-musl)
       racc (~> 1.4)
+    oj (3.16.10)
+      bigdecimal (>= 3.0)
+      ostruct (>= 0.2)
+    oj_serializers (2.0.3)
+      oj (>= 3.14.0)
     ostruct (0.6.1)
     pagy (9.3.3)
     parallel (1.26.3)
@@ -235,6 +240,8 @@ GEM
       stringio
     puma (6.6.0)
       nio4r (~> 2.0)
+    pundit (2.4.0)
+      activesupport (>= 3.0.0)
     raabro (1.4.0)
     racc (1.8.1)
     rack (3.1.10)
@@ -412,9 +419,11 @@ DEPENDENCIES
   faker
   kamal
   karafka (~> 2.4)
+  oj_serializers
   pagy (~> 9.3)
   pg (~> 1.1)
   puma (>= 5.0)
+  pundit
   rails (~> 8.0.1)
   redis (~> 5.2.0)
   rspec-rails

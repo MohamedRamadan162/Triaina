@@ -1,17 +1,17 @@
 class User < ApplicationRecord
-  self.table_name = "user_service.users"
+  include Constants
+  include Verifiable
 
-  before_validation :normalizeInput
-
+  ######################### Validations #########################
   validates :username, presence: true, uniqueness: true, length: { minimum: 4 }
   validates :name, presence: true
-  validates :email, presence: true, uniqueness: true, format: {
-    with: URI::MailTo::EMAIL_REGEXP, message: "must be a valid email format"
-  }
+  validates :email, presence: true, uniqueness: true, format: EMAIL_REGEX, if: -> { email.present? }
 
-  private
-  def normalizeInput
-    self.email = email.strip.downcase if email.present?
-    self.name = name.strip if name.present?
+  ############################ Hooks ############################
+  before_validation :sanitize_attributes
+
+  ############################ Methods ##########################
+  def is_verified?
+    email_verified
   end
 end

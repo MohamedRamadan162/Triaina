@@ -17,13 +17,12 @@ ActiveRecord::Schema[8.0].define(version: 2025_02_22_141044) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
-  create_table "users", primary_key: "user_id", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+  create_table "users", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.string "username", null: false
     t.string "name", null: false
     t.string "email", null: false
-    t.boolean "email_verified"
+    t.boolean "email_verified", default: false, null: false
     t.string "avatar_url"
-    t.datetime "deleted_at", precision: nil
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["email"], name: "index_users_on_email", unique: true

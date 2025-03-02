@@ -13,7 +13,7 @@
 # Pagy::DEFAULT[:limit]       = 20                    # default
 # Pagy::DEFAULT[:size]        = 7                     # default
 # Pagy::DEFAULT[:ends]        = true                  # default
-# Pagy::DEFAULT[:page_param]  = :page                 # default
+Pagy::DEFAULT[:page_param]  = :page                 # default
 # Pagy::DEFAULT[:count_args]  = []                    # example for non AR ORMs
 # Pagy::DEFAULT[:max_pages]   = 3000                  # example
 
@@ -37,7 +37,7 @@
 
 # Array extra: Paginate arrays efficiently, avoiding expensive array-wrapping and without overriding
 # See https://ddnexus.github.io/pagy/docs/extras/array
-# require 'pagy/extras/array'
+require "pagy/extras/array"
 
 # Calendar extra: Add pagination filtering by calendar time unit (year, quarter, month, week, day)
 # See https://ddnexus.github.io/pagy/docs/extras/calendar
@@ -73,11 +73,11 @@
 
 # Headers extra: http response headers (and other helpers) useful for API pagination
 # See https://ddnexus.github.io/pagy/docs/extras/headers
-# require 'pagy/extras/headers'
-# Pagy::DEFAULT[:headers] = { page: 'Current-Page',
-#                            limit: 'Page-Items',
-#                            count: 'Total-Count',
-#                            pages: 'Total-Pages' }     # default
+require "pagy/extras/headers"
+Pagy::DEFAULT[:headers] = { page: "Current-Page",
+                           limit: "Page-Items",
+                           count: "Total-Count",
+                           pages: "Total-Pages" }     # default
 
 # Keyset extra: Paginate with the Pagy keyset pagination technique
 # See https://ddnexus.github.io/pagy/docs/extras/keyset
@@ -151,7 +151,7 @@
 
 # Overflow extra: Allow for easy handling of overflowing pages
 # See https://ddnexus.github.io/pagy/docs/extras/overflow
-# require 'pagy/extras/overflow'
+require "pagy/extras/overflow"
 # Pagy::DEFAULT[:overflow] = :empty_page    # default  (other options: :last_page and :exception)
 
 # Trim extra: Remove the page=1 param from links

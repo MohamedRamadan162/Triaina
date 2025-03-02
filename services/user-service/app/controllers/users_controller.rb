@@ -1,88 +1,39 @@
-include Pagy::Backend
-
 # UsersController handles user-related actions such as fetching paginated users and retrieving a specific user by username.
-class UsersController < ApplicationController
-  # Fetches a paginated list of users.
-  #
-  # @param page [Integer] the page number to fetch, defaults to 1.
-  # @param limit [Integer] the number of users per page, defaults to 100.
-  # @return [Array] an array containing the paginated users and pagination metadata.
-  def paginatedUsers(page = 1, limit = 100)
-    begin
-    pagy, users = pagy(User.all, page: page, limit: limit)
-
-    # Out of bounds page
-    rescue Pagy::OverflowError
-      pagy = Pagy.new(count: User.count, limit: limit)
-      return [], pagy
-    end
-    return users, pagy
+class UsersController < ApiController
+  # List all users and render them as JSON.
+  # GET /
+  def index
+    # List all users
+    users = list(User)
+    render_success(users: serializer(users))
   end
 
-  # Retrieves a paginated list of users filtered by request params and renders it as JSON.
-  #
-  # @return [void]
-  def getAllUsers
-    # Get page and number params variables
-    page = params[:page].to_i > 0 ? params[:page].to_i : 1
-
-    # Return paginated users with metadata
-    users, pagy = paginatedUsers(page)
-
-    render json: {
-      users:,
-      pagination: {
-      count: pagy.count,
-      users_per_page: pagy.limit,
-      curr_page: users.empty? ? page: pagy.page,
-      prev_page: pagy.prev,
-      next_page: pagy.next,
-      num_pages: pagy.pages
-      }
-    }, status: :ok
-  end
-
-  # Retrieves a user by username and renders it as JSON.
-  #
-  # @return [void]
-  def getUser
-    # Check if username exists (better safe than sorry)
-    if params[:username].blank?
-      render json: { error: "Username is required" }, status: :bad_request
-    end
-
-    # Check cache for user if not exist query db
-    user = Rails.cache.fetch("users/#{params[:username]}") do
-      User.find_by(username: params[:username])
-    end
-
-    # If user doesn't exist return and send a JSON error
-    return render json: { error: "User not found" }, status: :not_found if user.nil?
-
-    render json: { user: }, status: :ok
+  # Retrieves a user by id
+  # Get /:id
+  def show
+    user = list(User).find_by(id: params[:id])
+    render_success(user: serializer(user))
   end
 
   # Creates a new user, writes it to the db and cache and returns JSON
-  #
-  # @return [void]
-  def createUser
-    # Permit only the following params
-    userParams = params.permit(:username, :name, :email)
+  # POST /
+  def create
+    user = User.create!(user_params)
+    render_success(user: serializer(user))
+  end
 
-    # Check all input is not present
-    return render json: { error: "Username is required" }, status: :bad_request if params[:username].blank?
-    return render json: { error: "Name is required" }, status: :bad_request if params[:name].blank?
-    return render json: { error: "Email is required" }, status: :bad_request if params[:email].blank?
+  # Deletes a user by id
+  # DELETE /:id
+  def delete
+    user = list(User).find_by(id: params[:id])
+    user.destroy!
+    render_success({ user: serializer(user) }, :no_content)
+  end
 
-    # Create new user
-    newUser = User.new(userParams)
+  private
 
-    # If persisted write to db and cache
-    if newUser.save
-      Rails.cache.write("users/#{newUser.username}", newUser)
-      render json: { user: { name: newUser.name, username: newUser.username, email: newUser.email } }, status: :created
-    else
-      render json: { errors: newUser.errors.full_messages }, status: :unprocessable_entity
-    end
+  # permitted user params for create action
+  def user_params
+    params.permit(:username, :email, :name)
   end
 end
