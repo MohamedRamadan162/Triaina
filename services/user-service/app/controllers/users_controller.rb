@@ -1,5 +1,8 @@
+# frozen_string_literal: true
+
 # UsersController handles user-related actions such as fetching paginated users and retrieving a specific user by username.
 class UsersController < ApiController
+  include UserEventProducer
   # List all users and render them as JSON.
   # GET /
   def index
@@ -19,7 +22,8 @@ class UsersController < ApiController
   # POST /
   def create
     user = User.create!(user_params)
-    render_success(user: serializer(user))
+    UserEventProducer.publish_create_user(user)
+    render_success({ user: serializer(user) }, :created)
   end
 
   # Deletes a user by id
@@ -27,6 +31,7 @@ class UsersController < ApiController
   def delete
     user = list(User).find_by(id: params[:id])
     user.destroy!
+    UserEventProducer.publish_delete_user(user)
     render_success({ user: serializer(user) }, :no_content)
   end
 
