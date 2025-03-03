@@ -1,14 +1,14 @@
 class ApplicationRecord < ActiveRecord::Base
   self.abstract_class = true
 
-    scope :filter_by, lambda { |filtering_params, multiselection_filtering_params|
+  scope :filter_by, lambda { |filtering_params, multiselection_filtering_params|
     obj = self
     filtering_params.each do |key, value|
       obj = obj.send("filter_by_#{key}", value) if value.present?
     end
 
     multiselection_filtering_params.each do |key, value|
-      obj = obj.send("filter_by_#{key}", value.split(",")) if value.present? || value == false
+      obj = obj.send("filter_by_#{key}", value.split(',')) if value.present? || value == false
     end
     obj
   }

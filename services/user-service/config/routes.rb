@@ -10,7 +10,8 @@ Rails.application.routes.draw do
 
   # All users routing
   get "/" => "users#index"
-  get "/:username" => "users#show"
+  get "/:id" => "users#show"
   post "/" => "users#create"
   delete "/:id" => "users#delete"
+  patch "/:id" => "users#update"
 end

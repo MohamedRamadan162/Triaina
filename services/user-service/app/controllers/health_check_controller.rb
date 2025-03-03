@@ -1,6 +1,6 @@
 class HealthCheckController < ApplicationController
   def show
-    render json: { status: "Server is up" }, status: :ok
+    render json: { status: 'Server is up' }, status: :ok
   end
 
   def dependencies
@@ -13,23 +13,23 @@ class HealthCheckController < ApplicationController
     checks[:cache] = check_cache
 
     # Determine overall status
-    overall_status = checks.values.all? { |check| check[:status] == "ok" } ? "ok" : "fail"
+    overall_status = checks.values.all? { |check| check[:status] == 'ok' } ? 'ok' : 'fail'
 
-    render json: { status: overall_status, checks: checks }, status: overall_status == "ok" ? :ok : :service_unavailable
+    render json: { status: overall_status, checks: checks }, status: overall_status == 'ok' ? :ok : :service_unavailable
   end
 
   private
 
   def check_database
-    ActiveRecord::Base.connection.execute("SELECT 1")
-    { status: "ok" }
-  rescue => e
-    { status: "fail", message: e.message }
+    ActiveRecord::Base.connection.execute('SELECT 1')
+    { status: 'ok' }
+  rescue StandardError => e
+    { status: 'fail', message: e.message }
   end
 
   def check_cache
-    Rails.cache.fetch("health_check_status") { "ok" } ? { status: "ok" } : { status: "fail", message: "Cache not responding" }
-  rescue => e
-    { status: "fail", message: e.message }
+    Rails.cache.fetch('health_check_status') { 'ok' } ? { status: 'ok' } : { status: 'fail', message: 'Cache not responding' }
+  rescue StandardError => e
+    { status: 'fail', message: e.message }
   end
 end

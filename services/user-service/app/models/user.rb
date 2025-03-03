@@ -10,6 +10,11 @@ class User < ApplicationRecord
   ############################ Hooks ############################
   before_validation :sanitize_attributes
 
+  ############################ ٍScopes ##########################
+  scope :filter_by_id, ->(id) { where(id: id) }
+  scope :filter_by_username, ->(username) { where('username ILIKE ?', "%#{username}%") }
+  scope :filter_by_email, ->(email) { where('email ILIKE ?', "%#{email}%") }
+
   ############################ Methods ##########################
   def is_verified?
     email_verified

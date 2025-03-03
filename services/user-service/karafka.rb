@@ -2,7 +2,7 @@
 
 class KarafkaApp < Karafka::App
   setup do |config|
-    config.kafka = { 'bootstrap.servers': ENV['KAFKA_BROKERS'] }
+    config.kafka = { 'bootstrap.servers': ENV.fetch('KAFKA_BROKERS', nil) }
     config.client_id = 'user_service'
     # Recreate consumers with each batch. This will allow Rails code reload to work in the
     # development mode. Otherwise Karafka process would not be aware of code changes
