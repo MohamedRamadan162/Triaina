@@ -3,17 +3,17 @@ class User < ApplicationRecord
   include Verifiable
 
   ######################### Validations #########################
-  validates :username, presence: true, uniqueness: true, length: { minimum: 4 }
+  validates :username, presence: true, uniqueness: { case_sensitive: false }, length: { minimum: 4 }
   validates :name, presence: true
-  validates :email, presence: true, uniqueness: true, format: EMAIL_REGEX, if: -> { email.present? }
+  validates :email, presence: true, uniqueness: { case_sensitive: false }, format: EMAIL_REGEX
 
   ############################ Hooks ############################
   before_validation :sanitize_attributes
 
   ############################ ٍScopes ##########################
   scope :filter_by_id, ->(id) { where(id: id) }
-  scope :filter_by_username, ->(username) { where('username ILIKE ?', "%#{username}%") }
-  scope :filter_by_email, ->(email) { where('email ILIKE ?', "%#{email}%") }
+  scope :filter_by_username, ->(username) { where("username ILIKE ?", "%#{username}%") }
+  scope :filter_by_email, ->(email) { where("email ILIKE ?", "%#{email}%") }
 
   ############################ Methods ##########################
   def is_verified?
