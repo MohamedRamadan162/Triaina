@@ -2,5 +2,6 @@
 
 module Constants
   KAFKA_EVENT_VERSION = '1.0'
-  EMAIL_REGEX = /\b[A-Z0-9._%a-z\-]+@(?:[A-Z0-9a-z\-]+\.)+[A-Za-z]{2,4}\z/
+  PASSWORD_REGEX = /\A(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[\W_]).{8,}\z/
+  EMAIL_REGEX = /\A[^@\s]+@[^@\s]+\z/
 end
