@@ -1,8 +1,12 @@
 FactoryBot.define do
   factory :user do
-    user_id { SecureRandom.uuid }
-    sequence(:username) { |n| "user#{n}" }
+    email { Faker::Internet.unique.email }
+    username { Faker::Internet.unique.username(specifier: 5..10) }
     name { Faker::Name.name }
-    sequence(:email) { |n| "user#{n}@example.com" }
+    email_verified { false } # Default to false unless specified
+
+    trait :verified do
+      email_verified { true }
+    end
   end
 end
