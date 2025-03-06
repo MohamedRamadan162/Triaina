@@ -31,5 +31,8 @@ module UserService
 
     # Configure Redis cache
     config.cache_store = :redis_cache_store, { url: ENV["REDIS_ENDPOINT"], namespace: "user_service_cache", expires_in: 1.day }
+
+    # Use cookies
+    config.middleware.use ActionDispatch::Cookies
   end
 end

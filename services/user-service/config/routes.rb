@@ -14,4 +14,7 @@ Rails.application.routes.draw do
   post "/" => "users#create"
   delete "/:id" => "users#delete"
   patch "/:id" => "users#update"
+
+  post "/signup" => "auth#sign_up"
+  post "/login" => "auth#log_in"
 end
