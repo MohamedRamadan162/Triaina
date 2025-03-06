@@ -4,4 +4,5 @@ class ApplicationController < ActionController::API
   include Pundit::Authorization
   include Pagy::Backend
   include ActionController::Cookies
+  include UserEventProducer
 end

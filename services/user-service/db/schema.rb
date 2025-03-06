@@ -11,7 +11,6 @@
 # It's strongly recommended that you check this file into your version control system.
 
 ActiveRecord::Schema[8.0].define(version: 2025_03_05_205453) do
-  create_schema "auth_service"
   create_schema "user_service"
 
   # These are extensions that must be enabled in order to support this database
@@ -24,6 +23,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_03_05_205453) do
     t.datetime "expires_at", precision: nil, default: -> { "(CURRENT_TIMESTAMP + 'P30D'::interval)" }, null: false
     t.datetime "revoked_at", precision: nil
     t.uuid "replaced_by"
+    t.index ["hashed_token"], name: "index_refresh_tokens_on_hashed_token", unique: true
     t.index ["user_id"], name: "index_refresh_tokens_on_user_id"
   end
 
@@ -46,7 +46,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_03_05_205453) do
     t.index ["username"], name: "index_users_on_username", unique: true
   end
 
-  add_foreign_key "refresh_tokens", "refresh_tokens", column: "replaced_by"
-  add_foreign_key "refresh_tokens", "users"
-  add_foreign_key "user_securities", "users"
+  add_foreign_key "refresh_tokens", "refresh_tokens", column: "replaced_by", on_delete: :nullify
+  add_foreign_key "refresh_tokens", "users", on_delete: :cascade
+  add_foreign_key "user_securities", "users", on_delete: :cascade
 end

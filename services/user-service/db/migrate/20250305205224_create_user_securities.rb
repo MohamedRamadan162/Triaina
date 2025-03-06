@@ -7,6 +7,6 @@ class CreateUserSecurities < ActiveRecord::Migration[8.0]
       t.timestamps
     end
 
-    add_foreign_key :user_securities, :users, column: :user_id
+    add_foreign_key :user_securities, :users, column: :user_id, on_delete: :cascade
   end
 end

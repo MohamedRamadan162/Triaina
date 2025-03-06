@@ -9,9 +9,10 @@ class CreateRefreshTokens < ActiveRecord::Migration[8.0]
       t.uuid :replaced_by
     end
 
-    add_foreign_key :refresh_tokens, :users, column: :user_id
-    add_foreign_key :refresh_tokens, :refresh_tokens, column: :replaced_by
+    add_foreign_key :refresh_tokens, :users, column: :user_id, on_delete: :cascade
+    add_foreign_key :refresh_tokens, :refresh_tokens, column: :replaced_by, on_delete: :nullify
 
+    add_index :refresh_tokens, :hashed_token, unique: true
     add_index :refresh_tokens, :user_id
   end
 end

@@ -5,18 +5,22 @@ module UserEventProducer
   include Constants
 
   def self.publish_create_user(user)
-    publish_event('user_created', user)
+    publish_event("user.created", user)
   end
 
   def self.publish_delete_user(user)
-    publish_event('user_deleted', user)
+    publish_event("user.deleted", user)
   end
 
   def self.publish_update_user(user)
-    publish_event('user_updated', user)
+    publish_event("user.updated", user)
   end
 
-  def self.publish_event(event_name, user)
+  def self.publish_sign_up(user)
+    publish_event("user.signed_up", user)
+  end
+
+  def self.publish_event(event_name, user, extra_params: {})
     payload = {
       id: user.id,
       email: user.email,
@@ -24,7 +28,7 @@ module UserEventProducer
       updated_at: user.updated_at,
       event_version: KAFKA_EVENT_VERSION,
       timestamp: Time.now.utc
-    }.to_json
+    }.merge(extra_params)
 
     KafkaEventProducer.publish(event_name, payload)
   end
