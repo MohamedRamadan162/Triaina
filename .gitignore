@@ -28,4 +28,5 @@ terraform/localstack_providers_override.tf
 
 ## Other
 connection-test/
-**/supervisor.*
+**/supervisord.log
+**/supervisord.pid
