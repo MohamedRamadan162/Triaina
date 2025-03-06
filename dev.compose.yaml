@@ -1,29 +1,4 @@
 services:
-  auth-module:
-    build:
-      context: ./services/auth-service
-      dockerfile: Dockerfile.dev
-    restart: always
-    ports:
-      - 3001:3000
-    env_file:
-      - ./env/aws.env
-    volumes:
-      - ./services/auth-service:/rails
-    networks:
-      - triaina-network
-    develop:
-      watch:
-        - action: sync
-          path: ./services/auth-service/
-          target: /rails
-          ignore:
-            - Gemfile.lock
-        - action: rebuild
-          path: ./services/auth-service/Gemfile
-        - action: rebuild
-          path: ./services/auth-service/config
-
   user-module:
     build:
       context: ./services/user-service
@@ -39,11 +14,6 @@ services:
       - triaina-network
     develop:
       watch:
-        - action: sync
-          path: ./services/user-service/
-          target: /rails
-          ignore:
-            - Gemfile.lock
         - action: rebuild
           path: ./services/user-service/Gemfile
         - action: rebuild
