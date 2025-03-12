@@ -30,3 +30,4 @@ terraform/localstack_providers_override.tf
 connection-test/
 **/supervisord.log
 **/supervisord.pid
+.byebug_history
