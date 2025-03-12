@@ -1,73 +1,23 @@
 services:
-  user-module:
+  triaina-backend:
     build:
-      context: ./services/user-service
+      context: ./services/triaina
       dockerfile: Dockerfile.dev
     restart: always
     ports:
-      - 3002:3000
+      - 3000:3000
     env_file:
       - ./env/aws.env
     volumes:
-      - ./services/user-service:/rails
+      - ./services/triaina:/rails
     networks:
       - triaina-network
     develop:
       watch:
         - action: rebuild
-          path: ./services/user-service/Gemfile
+          path: ./services/triaina/Gemfile
         - action: rebuild
-          path: ./services/user-service/config
-
-  # course-module:
-  #   build:
-  #     context: ./services/course-service
-  #     dockerfile: Dockerfile.dev
-  #   restart: always
-  #   ports:
-  #     - 3003:3000
-  #   env_file:
-  #     - ./env/aws.env
-  #   volumes:
-  #     - ./services/course-service:/rails
-  #   networks:
-  #     - triaina-network
-  #   develop:
-  #     watch:
-  #       - action: sync
-  #         path: ./services/course-service/
-  #         target: /rails
-  #         ignore:
-  #           - Gemfile.lock
-  #       - action: rebuild
-  #         path: ./services/course-service/Gemfile
-  #       - action: rebuild
-  #         path: ./services/course-service/config
-
-  # static-content-module:
-  #   build:
-  #     context: ./services/static-content-service
-  #     dockerfile: Dockerfile.dev
-  #   restart: always
-  #   ports:
-  #     - 3004:3000
-  #   env_file:
-  #     - ./env/aws.env
-  #   volumes:
-  #     - ./services/static-content-service:/rails
-  #   networks:
-  #     - triaina-network
-  #   develop:
-  #     watch:
-  #       - action: sync
-  #         path: ./services/static-content-service/
-  #         target: /rails
-  #         ignore:
-  #           - Gemfile.lock
-  #       - action: rebuild
-  #         path: ./services/static-content-service/Gemfile
-  #       - action: rebuild
-  #         path: ./services/static-content-service/config
+          path: ./services/user-triaina/config
 
   redis-cache:
     image: redis:7.2-alpine
