@@ -2,8 +2,8 @@ require 'rails_helper'
 
 RSpec.describe UserSecurity, type: :model do
   let(:user) { create(:user) }
-  let(:user_security) { build(:user_security, user: user, password: "SecurePass123!") }
-  let(:invalid_user_security) { build(:user_security, user: user, password: "123") } # Invalid password
+  let(:user_security) { build(:user_security, user: user, password: TestConstants::DEFAULT_PASSWORD) }
+  let(:invalid_user_security) { build(:user_security, user: user, password: "123") }
 
   describe "associations" do
     it { should belong_to(:user) }

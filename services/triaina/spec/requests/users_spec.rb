@@ -2,28 +2,17 @@ require 'rails_helper'
 
 RSpec.describe "Api::V1::UsersController", type: :request do
   let(:user) { create(:user, email: 'john@example.com', username: "johndoe", name: "John Doe") }
-  let(:user_security) { create(:user_security, user: user, password: 'Password@123', password_confirmation: 'Password@123') }
   let(:refresh_token) { create(:refresh_token, user: user) }
-  byebug
+  let(:user_password) {TestConstants::DEFAULT_PASSWORD}
 
   describe "GET /api/v1/users/me" do
-    before do
-      # Perform login request
-      post "/api/v1/auth/login", params: { email: user.email, password: 'Password@123' }
-
-      byebug
-      @jwt_cookie = response.cookies["jwt"]
-      @refresh_token_cookie = response.cookies["refresh_token"]
-    end
-
     context "when authenticated" do
       before do
-        byebug
-        get "/api/v1/users/me", headers: { "Cookie" => "jwt=#{@jwt_cookie}; refresh_token=#{@refresh_token_cookie}" }
+        post "/api/v1/auth/login", params: { email: user.email, password: user_password }
+        get "/api/v1/users/me"
       end
 
       it "returns the current user's details" do
-        byebug
         expect(response).to have_http_status(:ok)
         json = JSON.parse(response.body)
         expect(json["success"]).to be true
@@ -32,7 +21,9 @@ RSpec.describe "Api::V1::UsersController", type: :request do
     end
 
     context "when not authenticated" do
-      before { get "/api/v1/users/me" }
+      before do
+        get "/api/v1/users/me"
+      end
 
       it "returns an unauthorized error" do
         expect(response).to have_http_status(:unauthorized)
@@ -47,7 +38,8 @@ RSpec.describe "Api::V1::UsersController", type: :request do
 
     context "when authenticated" do
       before do
-        patch "/api/v1/users/me", params: update_params, headers: { "Cookie" => "jwt=#{@jwt_cookie}; refresh_token=#{@refresh_token_cookie}" }
+        post "/api/v1/auth/login", params: { email: user.email, password: user_password }
+        patch "/api/v1/users/me", params: update_params
       end
 
       it "updates the user details" do
@@ -70,7 +62,8 @@ RSpec.describe "Api::V1::UsersController", type: :request do
   describe "DELETE /api/v1/users/me" do
     context "when authenticated" do
       before do
-        delete "/api/v1/users/me", headers: { "Cookie" => "jwt=#{@jwt_cookie}; refresh_token=#{@refresh_token_cookie}" }
+        post "/api/v1/auth/login", params: { email: user.email, password: user_password }
+        delete "/api/v1/users/me"
       end
 
       it "deletes the user account" do

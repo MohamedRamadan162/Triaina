@@ -13,8 +13,7 @@ class Api::ApiController < ApplicationController
   def authenticate_request!
     jwt_token = cookies.signed[:jwt]
     refresh_token = cookies.signed[:refresh_token]
-
-    render_error("Unauthorized", :unauthorized) unless refresh_token
+    return render_error("Unauthorized", :unauthorized) unless refresh_token
 
     decoded_jwt = JsonWebToken.decode(jwt_token) if jwt_token
     return refresh_session(refresh_token) if decoded_jwt.nil?
@@ -23,14 +22,15 @@ class Api::ApiController < ApplicationController
       User.find_by!(id: decoded_jwt[:user_id])
     end
 
-    puts "Current user: #{@current_user}"
-    render_error("Unauthorized", :unauthorized) unless @current_user
+    return render_error("Unauthorized", :unauthorized) unless @current_user
   end
 
   # Refresh session
   def refresh_session(refresh_token)
+    return render_error("Unauthorized", :unauthorized) if refresh_token.nil?
+
     result = RefreshToken.refresh(refresh_token)
-    render_error("Unauthorized", :unauthorized) unless result
+    return render_error("Unauthorized", :unauthorized) unless result
 
     cookies.signed[:jwt] = {
       value: result[:new_jwt],

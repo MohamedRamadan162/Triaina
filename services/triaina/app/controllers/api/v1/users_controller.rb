@@ -5,7 +5,6 @@ class Api::V1::UsersController < Api::ApiController
   # Retrieves the current user
   # GET /me
   def me
-    puts "Current user: #{@current_user}"
     render_success({ user: serializer(@current_user) })
   end
 

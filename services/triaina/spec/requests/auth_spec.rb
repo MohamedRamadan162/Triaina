@@ -6,11 +6,11 @@ RSpec.describe Api::V1::AuthController, type: :controller do
   describe 'POST #signup' do
     let(:valid_params) do
       {
-        name: 'John Doe',
-        username: 'johndoe',
-        email: 'john@example.com',
-        password: 'GreatPassword@123',
-        password_confirmation: 'GreatPassword@123'
+        name: TestConstants::DEFAULT_NAME,
+        username: TestConstants::DEFAULT_USERNAME,
+        email: TestConstants::DEFAULT_EMAIL,
+        password: TestConstants::DEFAULT_PASSWORD,
+        password_confirmation: TestConstants::DEFAULT_PASSWORD
       }
     end
 
@@ -47,12 +47,11 @@ RSpec.describe Api::V1::AuthController, type: :controller do
   end
 
   describe 'POST #login' do
-    let(:user) { create(:user, email: 'john@example.com', username: "johndoe") }
-    let!(:user_security) { create(:user_security, user: user, password: 'Password@123', password_confirmation: 'Password@123') }
+    let(:user) { create(:user) }
 
     context 'with valid credentials' do
       it 'logs in the user and sets JWT cookies' do
-        post :login, params: { email: user.email, password: 'Password@123' }
+        post :login, params: { email: user.email, password: TestConstants::DEFAULT_PASSWORD }
 
         expect(response).to have_http_status(:success)
         json = JSON.parse(response.body)

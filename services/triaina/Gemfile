@@ -24,8 +24,8 @@ gem "aws-sdk-elasticache"
 gem "aws-sdk-kafka"
 gem "aws-sdk-rds"
 
-# Use Rack CORS for handling Cross-Origin Resource Sharing (CORS), making cross-origin Ajax possible
-# gem "rack-cors"
+# For the virgin windows users (Jinzou - Omar)
+# gem "tzinfo-data", platforms: %i[mingw mswin x64_mingw jruby]
 
 group :development, :test do
   gem "brakeman", require: false

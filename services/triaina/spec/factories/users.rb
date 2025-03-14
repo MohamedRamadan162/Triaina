@@ -5,6 +5,10 @@ FactoryBot.define do
     name { Faker::Name.name }
     email_verified { false } # Default to false unless specified
 
+    after(:create) do |user|
+      create(:user_security, user: user)
+    end
+
     trait :verified do
       email_verified { true }
     end
