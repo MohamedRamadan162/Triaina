@@ -23,6 +23,7 @@ gem "thruster", require: false
 gem "aws-sdk-elasticache"
 gem "aws-sdk-kafka"
 gem "aws-sdk-rds"
+gem "aws-sdk-s3"
 
 # For the virgin windows users (Jinzou - Omar)
 # gem "tzinfo-data", platforms: %i[mingw mswin x64_mingw jruby]

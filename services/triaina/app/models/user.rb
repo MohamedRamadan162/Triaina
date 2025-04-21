@@ -2,6 +2,7 @@ class User < ApplicationRecord
   include Constants
   include Verifiable
 
+  has_one_attached :avatar
   has_one :user_security, dependent: :destroy
   has_many :refresh_tokens, dependent: :destroy
 

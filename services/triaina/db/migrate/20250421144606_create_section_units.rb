@@ -3,7 +3,6 @@ class CreateSectionUnits < ActiveRecord::Migration[8.0]
     create_table :section_units, id: :uuid do |t|
       t.string :title, null: false
       t.string :description
-      t.string :content_type, null: false
       t.integer :order_index, null: false
       t.uuid :section_id, null: false
       t.timestamps

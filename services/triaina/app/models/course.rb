@@ -19,7 +19,7 @@ class Course < ApplicationRecord
       code = SecureRandom.alphanumeric(8).upcase
 
       # Ensure the generated code is unique
-      break code unless Team.exists?(join_code: code)
+      break code unless Course.exists?(join_code: code)
     end
   end
 end
