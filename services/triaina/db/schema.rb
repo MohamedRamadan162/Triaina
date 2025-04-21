@@ -10,9 +10,21 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_03_05_205453) do
+ActiveRecord::Schema[8.0].define(version: 2025_04_21_125838) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
+
+  create_table "courses", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.string "name", null: false
+    t.string "description"
+    t.string "join_code", limit: 10, null: false
+    t.uuid "created_by", null: false
+    t.datetime "start_date", precision: nil, null: false
+    t.datetime "end_date", precision: nil
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["join_code"], name: "index_courses_on_join_code", unique: true
+  end
 
   create_table "refresh_tokens", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.uuid "user_id", null: false
@@ -44,6 +56,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_03_05_205453) do
     t.index ["username"], name: "index_users_on_username", unique: true
   end
 
+  add_foreign_key "courses", "users", column: "created_by", on_delete: :cascade
   add_foreign_key "refresh_tokens", "refresh_tokens", column: "replaced_by", on_delete: :nullify
   add_foreign_key "refresh_tokens", "users", on_delete: :cascade
   add_foreign_key "user_securities", "users", on_delete: :cascade
