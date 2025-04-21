@@ -1,4 +1,5 @@
 class SectionUnit < ApplicationRecord
+  has_one_attached :content
   belongs_to :section, class_name: "CourseSection", foreign_key: "section_id"
 
   validates :title, presence: true

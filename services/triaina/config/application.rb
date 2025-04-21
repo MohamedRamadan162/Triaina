@@ -6,7 +6,7 @@ require "rails/all"
 # you've limited to :test, :development, or :production.
 Bundler.require(*Rails.groups)
 
-module UserService
+module TriainaBackend
   class Application < Rails::Application
     # Initialize configuration defaults for originally generated Rails version.
     config.load_defaults 8.0
@@ -31,6 +31,9 @@ module UserService
 
     # Configure Redis cache
     config.cache_store = :redis_cache_store, { url: ENV["REDIS_ENDPOINT"], namespace: "triaina_cache", expires_in: 1.day }
+
+    # Use S3
+    config.active_storage.service = :amazon
 
     # Use cookies
     config.middleware.use ActionDispatch::Cookies

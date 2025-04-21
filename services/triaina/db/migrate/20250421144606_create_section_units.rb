@@ -4,7 +4,6 @@ class CreateSectionUnits < ActiveRecord::Migration[8.0]
       t.string :title, null: false
       t.string :description
       t.integer :order_index, null: false
-      t.string :content_url, null: false
       t.uuid :section_id, null: false
       t.timestamps
     end
