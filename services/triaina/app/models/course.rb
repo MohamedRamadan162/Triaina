@@ -5,7 +5,6 @@ class Course < ApplicationRecord
   validates :name, presence: true
   validates :join_code, presence: true, uniqueness: true
 
-  # Implement the create_join_code method
   before_validation :create_join_code
 
   scope :filter_by_id, ->(id) { where(id: id) }
@@ -15,9 +14,10 @@ class Course < ApplicationRecord
   private
 
   def create_join_code
+    return if self.join_code.present?
+
     self.join_code = loop do
       code = SecureRandom.alphanumeric(8).upcase
-
       # Ensure the generated code is unique
       break code unless Course.exists?(join_code: code)
     end
