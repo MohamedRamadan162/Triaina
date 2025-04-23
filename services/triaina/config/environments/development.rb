@@ -75,4 +75,6 @@ Rails.application.configure do
   config.to_prepare do
     require Rails.root.join("spec/support/constants.rb")
   end
+
+  config.active_storage.service = :local
 end
