@@ -7,5 +7,8 @@ Rails.application.routes.draw do
   namespace(:api, path: api_path) do
     draw(:auth)
     draw(:user)
+    draw(:course)
+    draw(:course_section)
+    draw(:section_unit)
   end
 end

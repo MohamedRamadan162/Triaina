@@ -66,10 +66,11 @@ ActiveRecord::Schema[8.0].define(version: 2025_05_04_170320) do
   end
 
   create_table "permissions", force: :cascade do |t|
-    t.string "action"
-    t.string "subject"
+    t.string "action", null: false
+    t.string "subject", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.index ["action", "subject"], name: "index_permissions_on_action_and_subject", unique: true
   end
 
   create_table "refresh_tokens", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
@@ -91,10 +92,11 @@ ActiveRecord::Schema[8.0].define(version: 2025_05_04_170320) do
   end
 
   create_table "roles", force: :cascade do |t|
-    t.string "name"
+    t.string "name", null: false
     t.text "description"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.index ["name"], name: "index_roles_on_name", unique: true
   end
 
   create_table "section_units", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
