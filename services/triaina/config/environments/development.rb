@@ -76,5 +76,5 @@ Rails.application.configure do
     require Rails.root.join("spec/support/constants.rb")
   end
 
-  config.active_storage.service = :local
+  config.active_storage.service = :amazon
 end
