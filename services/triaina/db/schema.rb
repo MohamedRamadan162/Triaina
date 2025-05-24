@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_05_04_170320) do
+ActiveRecord::Schema[8.0].define(version: 2025_05_24_155053) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -65,12 +65,24 @@ ActiveRecord::Schema[8.0].define(version: 2025_05_04_170320) do
     t.index ["join_code"], name: "index_courses_on_join_code", unique: true
   end
 
-  create_table "permissions", force: :cascade do |t|
-    t.string "action", null: false
-    t.string "subject", null: false
+  create_table "enrollments", force: :cascade do |t|
+    t.uuid "user_id", null: false
+    t.uuid "course_id", null: false
+    t.bigint "role_id", null: false
+    t.integer "status", default: 0, null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["action", "subject"], name: "index_permissions_on_action_and_subject", unique: true
+    t.index ["course_id"], name: "index_enrollments_on_course_id"
+    t.index ["role_id"], name: "index_enrollments_on_role_id"
+    t.index ["user_id", "course_id"], name: "index_enrollments_on_user_id_and_course_id", unique: true
+    t.index ["user_id"], name: "index_enrollments_on_user_id"
+  end
+
+  create_table "permissions", force: :cascade do |t|
+    t.string "action"
+    t.string "subject"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
 
   create_table "refresh_tokens", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
@@ -85,18 +97,20 @@ ActiveRecord::Schema[8.0].define(version: 2025_05_04_170320) do
   end
 
   create_table "role_permissions", force: :cascade do |t|
-    t.string "roles"
-    t.string "permissions"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.bigint "role_id", null: false
+    t.bigint "permission_id", null: false
+    t.index ["permission_id", "role_id"], name: "index_role_permissions_on_permission_id_and_role_id", unique: true
+    t.index ["permission_id"], name: "index_role_permissions_on_permission_id"
+    t.index ["role_id"], name: "index_role_permissions_on_role_id"
   end
 
   create_table "roles", force: :cascade do |t|
-    t.string "name", null: false
+    t.string "name"
     t.text "description"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["name"], name: "index_roles_on_name", unique: true
   end
 
   create_table "section_units", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
@@ -131,8 +145,13 @@ ActiveRecord::Schema[8.0].define(version: 2025_05_04_170320) do
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
   add_foreign_key "courses", "users", column: "created_by", on_delete: :cascade
+  add_foreign_key "enrollments", "courses"
+  add_foreign_key "enrollments", "roles"
+  add_foreign_key "enrollments", "users"
   add_foreign_key "refresh_tokens", "refresh_tokens", column: "replaced_by", on_delete: :nullify
   add_foreign_key "refresh_tokens", "users", on_delete: :cascade
+  add_foreign_key "role_permissions", "permissions"
+  add_foreign_key "role_permissions", "roles"
   add_foreign_key "section_units", "course_sections", column: "section_id", on_delete: :cascade
   add_foreign_key "user_securities", "users", on_delete: :cascade
 end

@@ -5,6 +5,8 @@ class User < ApplicationRecord
   has_one_attached :avatar
   has_one :user_security, dependent: :destroy
   has_many :refresh_tokens, dependent: :destroy
+  has_many :enrollments, dependent: :destroy
+  has_many :courses, through: :enrollments
 
   ######################### Validations #########################
   validates :username, presence: true, uniqueness: { case_sensitive: false }, length: { minimum: 4 }
