@@ -14,8 +14,11 @@ class Api::V1::AuthController < Api::ApiController
   # Sign in
   # POST /login
   def login
-    user = User.find_by!(email: sign_in_params[:email])
+    user = User.find_by(email: sign_in_params[:email])
     # Check if the user exists
+    if user.nil?
+      return render_error("Invalid email or password", :unauthorized)
+    end
     user_security = UserSecurity.find(user[:id])
     if user_security&.authenticate(sign_in_params[:password])
       # Cache user

@@ -1,0 +1,142 @@
+---
+openapi: 3.0.1
+info:
+  title: Triaina API
+  version: v1
+components:
+  securitySchemes:
+    jwtCookie:
+      type: apiKey
+      in: cookie
+      name: jwt
+    refreshCookie:
+      type: apiKey
+      in: cookie
+      name: refresh_token
+paths:
+  "/api/v1/auth/signup":
+    post:
+      summary: User Signup
+      tags:
+      - Authentication
+      parameters: []
+      responses:
+        '201':
+          description: user created
+        '422':
+          description: validation failed
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  example: John Doe
+                username:
+                  type: string
+                  example: johndoe
+                  minLength: 4
+                email:
+                  type: string
+                  format: email
+                  example: johndoe@email.com
+                password:
+                  type: string
+                  example: SecurePass123!
+                password_confirmation:
+                  type: string
+                  example: SecurePass123!
+              required:
+              - name
+              - username
+              - email
+              - password
+              - password_confirmation
+  "/api/v1/auth/login":
+    post:
+      summary: User Login
+      tags:
+      - Authentication
+      parameters: []
+      responses:
+        '200':
+          description: user logged in
+        '401':
+          description: invalid credentials
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  example: johndoe@email.com
+                password:
+                  type: string
+                  example: SecurePass123!
+              required:
+              - email
+              - password
+  "/api/v1/users/me":
+    get:
+      summary: Fetch the current user
+      tags:
+      - Users
+      security:
+      - cookie_auth: []
+      responses:
+        '200':
+          description: user found
+        '401':
+          description: unauthorized
+    patch:
+      summary: Update the current user
+      tags:
+      - Users
+      security:
+      - cookie_auth: []
+      parameters: []
+      responses:
+        '200':
+          description: user updated
+        '401':
+          description: unauthorized
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  example: John Doe
+                email:
+                  type: string
+                  format: email
+                  example: johndoe@email.com
+                username:
+                  type: string
+                  minLength: 4
+                  example: johndoe
+              required: []
+    delete:
+      summary: Delete the current user
+      tags:
+      - Users
+      security:
+      - cookie_auth: []
+      responses:
+        '204':
+          description: user deleted
+        '401':
+          description: unauthorized
+servers:
+- url: http://localhost:3000
+  description: Local dev server (HTTP)
+- url: https://{defaultHost}
+  variables:
+    defaultHost:
+      default: triaina.com

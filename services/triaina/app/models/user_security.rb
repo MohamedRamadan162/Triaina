@@ -3,6 +3,7 @@ class UserSecurity < ApplicationRecord
 
   self.primary_key = :user_id
   belongs_to :user, foreign_key: :user_id
+  has_many :refresh_tokens, foreign_key: :user_id, dependent: :destroy
 
   has_secure_password
 

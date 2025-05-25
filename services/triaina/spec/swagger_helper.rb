@@ -21,13 +21,31 @@ RSpec.configure do |config|
         title: 'Triaina API',
         version: 'v1'
       },
+      components: {
+        securitySchemes: {
+        jwtCookie: {
+          type: :apiKey,
+          in: :cookie,
+          name: 'jwt'
+        },
+        refreshCookie: {
+          type: :apiKey,
+          in: :cookie,
+          name: 'refresh_token'
+        }
+      }
+      },
       paths: {},
       servers: [
+         {
+          url: 'http://localhost:3000',
+          description: 'Local dev server (HTTP)'
+        },
         {
           url: 'https://{defaultHost}',
           variables: {
             defaultHost: {
-              default: 'www.example.com'
+              default: 'triaina.com'
             }
           }
         }

@@ -76,7 +76,7 @@ RSpec.describe Api::V1::AuthController, type: :request do
       it 'returns an error for non-existent user' do
         post "#{TestConstants::DEFAULT_API_BASE_URL}/auth/login", params: { email: 'nonexistent@example.com', password: 'password123' }
 
-        expect(response).to have_http_status(:not_found)
+        expect(response).to have_http_status(:unauthorized)
       end
     end
   end
