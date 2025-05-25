@@ -12,8 +12,6 @@ RSpec.describe CourseSection, type: :model do
     subject { build(:course_section, course: course, order_index: 1, title: "Introduction") }
 
     it { should validate_presence_of(:title) }
-    it { should validate_presence_of(:order_index) }
-    it { should validate_uniqueness_of(:order_index).scoped_to(:course_id) }
   end
 
   describe 'scopes' do

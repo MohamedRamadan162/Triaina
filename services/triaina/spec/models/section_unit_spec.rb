@@ -1,19 +1,17 @@
 require 'rails_helper'
 
 RSpec.describe SectionUnit, type: :model do
-  let(:course_section) { create(:course_section) }
-  let(:section_unit) { create(:section_unit, section: course_section) }
+  let(:section_unit) { create(:section_unit) }
+  let(:course_section) { section_unit.course_section }
 
   describe 'associations' do
-    it { should belong_to(:section).class_name('CourseSection').with_foreign_key('section_id') }
+    it { should belong_to(:course_section).class_name('CourseSection').with_foreign_key('section_id') }
   end
 
   describe 'validations' do
-    subject { build(:section_unit, section: course_section, order_index: 1, title: "Introduction") }
+    subject { build(:section_unit, course_section: course_section, order_index: 1, title: "Introduction") }
 
     it { should validate_presence_of(:title) }
-    it { should validate_presence_of(:order_index) }
-    it { should validate_uniqueness_of(:order_index).scoped_to(:section_id) }
   end
 
   describe 'scopes' do

@@ -2,7 +2,8 @@ require 'rails_helper'
 
 RSpec.describe UserSecurity, type: :model do
   let(:user) { create(:user) }
-  let(:user_security) { build(:user_security, user: user, password: TestConstants::DEFAULT_PASSWORD) }
+  let(:user_security) { user.user_security }
+  let(:valid_password) { TestConstants::DEFAULT_USER[:password] }
   let(:invalid_user_security) { build(:user_security, user: user, password: "123") }
 
   describe "associations" do
@@ -13,7 +14,7 @@ RSpec.describe UserSecurity, type: :model do
     it { should validate_presence_of(:password) }
 
     it "validates password format using regex" do
-      expect(user_security.password).to match(Constants::PASSWORD_REGEX)
+      expect(valid_password).to match(Constants::PASSWORD_REGEX)
       expect(invalid_user_security.password).not_to match(Constants::PASSWORD_REGEX)
     end
   end

@@ -2,22 +2,22 @@
 
 require 'rails_helper'
 
-RSpec.describe Api::V1::AuthController, type: :controller do
-  describe 'POST #signup' do
+RSpec.describe Api::V1::AuthController, type: :request do
+  describe "POST #{TestConstants::DEFAULT_API_BASE_URL}/auth/signup" do
     let(:valid_params) do
       {
-        name: TestConstants::DEFAULT_NAME,
-        username: TestConstants::DEFAULT_USERNAME,
-        email: TestConstants::DEFAULT_EMAIL,
-        password: TestConstants::DEFAULT_PASSWORD,
-        password_confirmation: TestConstants::DEFAULT_PASSWORD
+        name: TestConstants::DEFAULT_USER[:name],
+        username: TestConstants::DEFAULT_USER[:username],
+        email: TestConstants::DEFAULT_USER[:email],
+        password: TestConstants::DEFAULT_USER[:password],
+        password_confirmation: TestConstants::DEFAULT_USER[:password]
       }
     end
 
     context 'with valid parameters' do
       it 'creates a new user and returns success response' do
         expect {
-          post :signup, params: valid_params
+          post "#{TestConstants::DEFAULT_API_BASE_URL}/auth/signup", params: valid_params
         }.to change(User, :count).by(1)
 
         expect(response).to have_http_status(:created)
@@ -30,7 +30,7 @@ RSpec.describe Api::V1::AuthController, type: :controller do
     context 'with invalid parameters' do
       it 'returns an error when passwords do not match' do
         invalid_params = valid_params.merge(password_confirmation: 'wrongpassword')
-        post :signup, params: invalid_params
+        post "#{TestConstants::DEFAULT_API_BASE_URL}/auth/signup", params: invalid_params
 
         expect(response).to have_http_status(:unprocessable_entity)
         json = JSON.parse(response.body)
@@ -39,31 +39,33 @@ RSpec.describe Api::V1::AuthController, type: :controller do
 
       it 'returns an error when email is missing' do
         invalid_params = valid_params.except(:email)
-        post :signup, params: invalid_params
+        post "#{TestConstants::DEFAULT_API_BASE_URL}/auth/signup", params: invalid_params
 
         expect(response).to have_http_status(:unprocessable_entity)
       end
     end
   end
 
-  describe 'POST #login' do
+  describe "POST #{TestConstants::DEFAULT_API_BASE_URL}/auth/login" do
     let(:user) { create(:user) }
 
     context 'with valid credentials' do
       it 'logs in the user and sets JWT cookies' do
-        post :login, params: { email: user.email, password: TestConstants::DEFAULT_PASSWORD }
+        post "#{TestConstants::DEFAULT_API_BASE_URL}/auth/login", params: { email: user.email, password: TestConstants::DEFAULT_USER[:password] }
 
         expect(response).to have_http_status(:success)
         json = JSON.parse(response.body)
         expect(json['message']).to eq('Sign in successful')
-        expect(cookies.signed[:jwt]).not_to be_nil
-        expect(cookies.signed[:refresh_token]).not_to be_nil
+        cookie_jar = build_cookie_jar(request, response.cookies.to_h)
+        expect(cookie_jar.signed[:jwt]).to be_present
+        expect(cookie_jar.signed[:refresh_token]).to be_present
+        expect(cookie_jar.signed[:jwt]).to eq(JsonWebToken.encode(user_id: user.id))
       end
     end
 
     context 'with invalid credentials' do
       it 'returns an error for incorrect password' do
-        post :login, params: { email: user.email, password: 'wrongpassword' }
+        post "#{TestConstants::DEFAULT_API_BASE_URL}/auth/login", params: { email: user.email, password: 'wrongpassword' }
 
         expect(response).to have_http_status(:unauthorized)
         json = JSON.parse(response.body)
@@ -72,7 +74,7 @@ RSpec.describe Api::V1::AuthController, type: :controller do
       end
 
       it 'returns an error for non-existent user' do
-        post :login, params: { email: 'nonexistent@example.com', password: 'password123' }
+        post "#{TestConstants::DEFAULT_API_BASE_URL}/auth/login", params: { email: 'nonexistent@example.com', password: 'password123' }
 
         expect(response).to have_http_status(:not_found)
       end

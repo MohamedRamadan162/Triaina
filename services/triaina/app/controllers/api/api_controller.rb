@@ -22,7 +22,7 @@ class Api::ApiController < ApplicationController
       User.find_by!(id: decoded_jwt[:user_id])
     end
 
-    return render_error("Unauthorized", :unauthorized) unless @current_user
+    render_error("Unauthorized", :unauthorized) unless @current_user
   end
 
   # Refresh session

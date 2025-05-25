@@ -116,4 +116,6 @@ RSpec.configure do |config|
   # config.filter_gems_from_backtrace("gem name")
   config.include Rails.application.routes.url_helpers
   Dir[Rails.root.join('spec/support/**/*.rb')].each { |f| require f }
+  config.include CookieHelper, type: :request # Include CookieHelper for request specs
+  config.include TestConstants
 end
