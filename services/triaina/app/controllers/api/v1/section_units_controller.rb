@@ -44,7 +44,7 @@ class Api::V1::SectionUnitsController < Api::ApiController
   end
 
   def update_unit_params
-    params.permit(:title, :description)
+    params.permit(:id, :title, :description)
   end
 
   def serializer_class

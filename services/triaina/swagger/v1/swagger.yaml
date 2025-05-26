@@ -80,6 +80,92 @@ paths:
               required:
               - email
               - password
+  "/api/v1/course_sections":
+    post:
+      summary: Create a new course section
+      tags:
+      - Course Sections
+      security:
+      - cookie_auth: []
+      parameters: []
+      responses:
+        '201':
+          description: section created
+        '401':
+          description: unauthorized
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                title:
+                  type: string
+                  example: New Section
+                description:
+                  type: string
+                  example: New section description
+                course_id:
+                  type: integer
+                  example: 1
+              required:
+              - title
+              - course_id
+  "/api/v1/course_sections/{id}":
+    parameters:
+    - name: id
+      in: path
+      description: Course Section ID
+      required: true
+      schema:
+        type: string
+    get:
+      summary: Get a specific course section
+      tags:
+      - Course Sections
+      security:
+      - cookie_auth: []
+      responses:
+        '200':
+          description: section found
+        '401':
+          description: unauthorized
+    put:
+      summary: Update a course section
+      tags:
+      - Course Sections
+      security:
+      - cookie_auth: []
+      parameters: []
+      responses:
+        '200':
+          description: section updated
+        '401':
+          description: unauthorized
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                title:
+                  type: string
+                  example: Updated Section Title
+                description:
+                  type: string
+                  example: Updated section description
+              required: []
+    delete:
+      summary: Delete a course section
+      tags:
+      - Course Sections
+      security:
+      - cookie_auth: []
+      responses:
+        '204':
+          description: section deleted
+        '401':
+          description: unauthorized
   "/api/v1/courses":
     get:
       summary: List all courses
@@ -189,6 +275,93 @@ paths:
       responses:
         '204':
           description: course deleted
+        '401':
+          description: unauthorized
+  "/api/v1/section_units":
+    post:
+      summary: Create a new section unit
+      tags:
+      - Section Units
+      security:
+      - cookie_auth: []
+      parameters: []
+      responses:
+        '201':
+          description: unit created
+        '401':
+          description: unauthorized
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                title:
+                  type: string
+                description:
+                  type: string
+                section_id:
+                  type: integer
+                content:
+                  type: file
+                  format: binary
+              required:
+              - title
+              - section_id
+              - content
+  "/api/v1/section_units/{id}":
+    parameters:
+    - name: id
+      in: path
+      description: Section Unit ID
+      required: true
+      schema:
+        type: string
+    get:
+      summary: Get a specific section unit
+      tags:
+      - Section Units
+      security:
+      - cookie_auth: []
+      responses:
+        '200':
+          description: unit found
+        '401':
+          description: unauthorized
+    put:
+      summary: Update a section unit
+      tags:
+      - Section Units
+      security:
+      - cookie_auth: []
+      parameters: []
+      responses:
+        '200':
+          description: unit updated
+        '401':
+          description: unauthorized
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                title:
+                  type: string
+                  example: Updated Unit Title
+                description:
+                  type: string
+                  example: Updated unit description
+              required: []
+    delete:
+      summary: Delete a section unit
+      tags:
+      - Section Units
+      security:
+      - cookie_auth: []
+      responses:
+        '204':
+          description: unit deleted
         '401':
           description: unauthorized
   "/api/v1/users/me":

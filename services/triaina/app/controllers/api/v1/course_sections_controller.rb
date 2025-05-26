@@ -43,7 +43,7 @@ class Api::V1::CourseSectionsController < Api::ApiController
   end
 
   def update_section_params
-    params.permit(:title, :description)
+    params.permit(:id, :title, :description)
   end
 
   def serializer_class
