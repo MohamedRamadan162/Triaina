@@ -294,21 +294,8 @@ paths:
         content:
           multipart/form-data:
             schema:
-              type: object
-              properties:
-                title:
-                  type: string
-                description:
-                  type: string
-                section_id:
-                  type: integer
-                content:
-                  type: file
-                  format: binary
-              required:
-              - title
-              - section_id
-              - content
+              type: string
+        required: true
   "/api/v1/section_units/{id}":
     parameters:
     - name: id

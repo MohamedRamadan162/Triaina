@@ -17,30 +17,30 @@ RSpec.describe 'Api::V1::SectionUnitsController', type: :request do
       produces 'application/json'
       security [ cookie_auth: [] ]
 
-        parameter name: :section_unit, in: :formData, type: :object, schema: {
-          type: :object,
-          properties: {
-            title: { type: :string },
-            description: { type: :string },
-            section_id: { type: :integer },
-            content: { type: :file, format: :binary }
-          },
-          required: [ 'title', 'section_id', 'content' ]
-        }
+      # For multipart/form-data, use formData parameters
+      parameter name: :title, in: :formData, type: :string, required: true
+      parameter name: :description, in: :formData, type: :string, required: false
+      parameter name: :section_id, in: :formData, type: :integer, required: true
+      parameter name: :content, in: :formData, type: :file, required: true
 
       response '201', 'unit created' do
-        let(:title) { 'New Unit' }
-        let(:description) { 'Unit description' }
-        let(:section_id) { section.id }
-        # For file upload in tests
-        let(:content) { Rack::Test::UploadedFile.new(Rails.root.join('spec', 'fixtures', 'files', 'test_pdf.pdf'), 'application/pdf') }
-
+        # Create the fixture file before tests run
         before do
           authorize_req
-          # Ensure the fixture file exists for the test
+
+          # Make sure the section exists and is valid
+          section # Force the section to be created
+
+          # Create test file
           FileUtils.mkdir_p(Rails.root.join('spec', 'fixtures', 'files'))
-          FileUtils.touch(Rails.root.join('spec', 'fixtures', 'files', 'sample.pdf'))
+          FileUtils.touch(Rails.root.join('spec', 'fixtures', 'files', 'test_pdf.pdf'))
         end
+
+        # Set let values for form parameters
+        let(:title) { 'Test Unit Title' }
+        let(:description) { 'Test Unit Description' }
+        let(:section_id) { section.id }
+        let(:content) { Rack::Test::UploadedFile.new(Rails.root.join('spec', 'fixtures', 'files', 'test_pdf.pdf'), 'application/pdf') }
 
         run_test! do
           expect(JSON.parse(response.body)['success']).to be true
@@ -48,16 +48,27 @@ RSpec.describe 'Api::V1::SectionUnitsController', type: :request do
       end
 
       response '401', 'unauthorized' do
-        let(:title) { 'Invalid Unit' }
-        let(:description) { 'No Auth' }
+        # For unauthorized test, we need to provide the parameters but don't need to authorize
+        let(:title) { 'Test Unit Title' }
+        let(:description) { 'Test Unit Description' }
         let(:section_id) { section.id }
-        let(:content) { Rack::Test::UploadedFile.new(Rails.root.join('spec', 'fixtures', 'files', 'sample.pdf'), 'application/pdf') }
+        let(:content) { Rack::Test::UploadedFile.new(Rails.root.join('spec', 'fixtures', 'files', 'test_pdf.pdf'), 'application/pdf') }
+
+        before do
+          # Make sure the section exists
+          section
+
+          # Create test file
+          FileUtils.mkdir_p(Rails.root.join('spec', 'fixtures', 'files'))
+          FileUtils.touch(Rails.root.join('spec', 'fixtures', 'files', 'test_pdf.pdf'))
+        end
 
         run_test!
       end
     end
   end
 
+  # Rest of the specification remains the same
   path '/api/v1/section_units/{id}' do
     parameter name: :id, in: :path, type: :string, description: 'Section Unit ID'
 
