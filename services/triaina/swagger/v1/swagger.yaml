@@ -80,6 +80,117 @@ paths:
               required:
               - email
               - password
+  "/api/v1/courses":
+    get:
+      summary: List all courses
+      tags:
+      - Courses
+      security:
+      - cookie_auth: []
+      responses:
+        '200':
+          description: courses found
+        '401':
+          description: unauthorized
+    post:
+      summary: Create a new course
+      tags:
+      - Courses
+      security:
+      - cookie_auth: []
+      parameters: []
+      responses:
+        '201':
+          description: course created
+        '401':
+          description: unauthorized
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  example: New Course
+                description:
+                  type: string
+                  example: New course description
+                start_date:
+                  type: string
+                  format: date_time
+                  example: '2025-05-04T00:00:00.000Z'
+                end_date:
+                  type: string
+                  format: date_time
+                  nullable: true
+              required:
+              - name
+              - description
+              - start_date
+  "/api/v1/courses/{id}":
+    parameters:
+    - name: id
+      in: path
+      description: Course ID
+      required: true
+      schema:
+        type: string
+    get:
+      summary: Get a specific course
+      tags:
+      - Courses
+      security:
+      - cookie_auth: []
+      responses:
+        '200':
+          description: course found
+        '401':
+          description: unauthorized
+    put:
+      summary: Update a course
+      tags:
+      - Courses
+      security:
+      - cookie_auth: []
+      parameters: []
+      responses:
+        '200':
+          description: course updated
+        '401':
+          description: unauthorized
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  example: Updated Course Name
+                description:
+                  type: string
+                  example: Updated course description
+                start_date:
+                  type: string
+                  format: date_time
+                  example: '2025-05-04T00:00:00.000Z'
+                end_date:
+                  type: string
+                  format: date_time
+                  nullable: true
+              required: []
+    delete:
+      summary: Delete a course
+      tags:
+      - Courses
+      security:
+      - cookie_auth: []
+      responses:
+        '204':
+          description: course deleted
+        '401':
+          description: unauthorized
   "/api/v1/users/me":
     get:
       summary: Fetch the current user
