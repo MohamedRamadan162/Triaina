@@ -3,7 +3,7 @@ class CourseSectionSerializer < ApplicationSerializer
 
   attribute :units do
     object.section_units.map do |unit|
-      UnitSerializer.render(unit)
+      SectionUnitSerializer.render(unit)
     end
   end
 end

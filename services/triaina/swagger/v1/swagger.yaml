@@ -428,9 +428,27 @@ paths:
         content:
           multipart/form-data:
             schema:
-              type: string
-        required: true
-        description: Title of the section unit
+              type: object
+              properties:
+                title:
+                  type: string
+                  example: Updated Unit Title
+                  description: Title of the section unit
+                description:
+                  type: string
+                  example: Updated unit description
+                  description: Description of the section unit
+                section_id:
+                  type: integer
+                  example: 123
+                  description: ID of the parent course section
+                content:
+                  type: string
+                  format: binary
+                  description: File content of the section unit
+              required:
+              - title
+              - content
   "/api/v1/courses/{course_id}/sections/{section_id}/units/{unit_id}":
     parameters:
     - name: unit_id
@@ -817,9 +835,6 @@ components:
           success:
             type: boolean
             example: true
-          message:
-            type: string
-            description: response message
           user:
             "$ref": "#/components/schemas/User"
       Login:
@@ -831,9 +846,6 @@ components:
           success:
             type: boolean
             example: true
-          message:
-            type: string
-            description: response message
           user:
             "$ref": "#/components/schemas/User"
     User:
@@ -846,9 +858,6 @@ components:
           success:
             type: boolean
             example: true
-          message:
-            type: string
-            description: response message
           users:
             type: array
             items:
@@ -862,9 +871,6 @@ components:
           success:
             type: boolean
             example: true
-          message:
-            type: string
-            description: response message
           user:
             "$ref": "#/components/schemas/User"
       Update:
@@ -876,9 +882,6 @@ components:
           success:
             type: boolean
             example: true
-          message:
-            type: string
-            description: response message
           user:
             "$ref": "#/components/schemas/User"
       Course:
@@ -891,9 +894,6 @@ components:
             success:
               type: boolean
               example: true
-            message:
-              type: string
-              description: response message
             courses:
               type: array
               items:
@@ -908,9 +908,6 @@ components:
           success:
             type: boolean
             example: true
-          message:
-            type: string
-            description: response message
           courses:
             type: array
             items:
@@ -924,9 +921,6 @@ components:
           success:
             type: boolean
             example: true
-          message:
-            type: string
-            description: response message
           course:
             "$ref": "#/components/schemas/Course"
       Create:
@@ -938,9 +932,6 @@ components:
           success:
             type: boolean
             example: true
-          message:
-            type: string
-            description: response message
           course:
             "$ref": "#/components/schemas/Course"
       Update:
@@ -952,9 +943,6 @@ components:
           success:
             type: boolean
             example: true
-          message:
-            type: string
-            description: response message
           course:
             "$ref": "#/components/schemas/Course"
       Section:
@@ -967,9 +955,6 @@ components:
             success:
               type: boolean
               example: true
-            message:
-              type: string
-              description: response message
             sections:
               type: array
               items:
@@ -983,9 +968,6 @@ components:
             success:
               type: boolean
               example: true
-            message:
-              type: string
-              description: response message
             section:
               "$ref": "#/components/schemas/Section"
         Create:
@@ -997,9 +979,6 @@ components:
             success:
               type: boolean
               example: true
-            message:
-              type: string
-              description: response message
             section:
               "$ref": "#/components/schemas/Section"
         Update:
@@ -1011,9 +990,6 @@ components:
             success:
               type: boolean
               example: true
-            message:
-              type: string
-              description: response message
             section:
               "$ref": "#/components/schemas/Section"
         Unit:
@@ -1026,9 +1002,6 @@ components:
               success:
                 type: boolean
                 example: true
-              message:
-                type: string
-                description: response message
               units:
                 type: array
                 items:
@@ -1042,9 +1015,6 @@ components:
               success:
                 type: boolean
                 example: true
-              message:
-                type: string
-                description: response message
               unit:
                 "$ref": "#/components/schemas/Unit"
           Create:
@@ -1056,9 +1026,6 @@ components:
               success:
                 type: boolean
                 example: true
-              message:
-                type: string
-                description: response message
               unit:
                 "$ref": "#/components/schemas/Unit"
           Update:
@@ -1070,9 +1037,6 @@ components:
               success:
                 type: boolean
                 example: true
-              message:
-                type: string
-                description: response message
               unit:
                 "$ref": "#/components/schemas/Unit"
     Error:

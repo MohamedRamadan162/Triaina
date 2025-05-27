@@ -54,8 +54,6 @@ RSpec.describe Api::V1::AuthController, type: :request do
         post "#{TestConstants::DEFAULT_API_BASE_URL}/auth/login", params: { email: user.email, password: TestConstants::DEFAULT_USER[:password] }
 
         expect(response).to have_http_status(:success)
-        json = JSON.parse(response.body)
-        expect(json['message']).to eq('Sign in successful')
         cookie_jar = build_cookie_jar(request, response.cookies.to_h)
         expect(cookie_jar.signed[:jwt]).to be_present
         expect(cookie_jar.signed[:refresh_token]).to be_present

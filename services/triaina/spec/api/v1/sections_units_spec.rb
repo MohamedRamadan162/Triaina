@@ -26,10 +26,16 @@ RSpec.describe 'Api::V1::SectionUnitsController', type: :request do
       produces 'application/json'
       security [ cookie_auth: [] ]
 
-      parameter name: :title, in: :formData, type: :string, required: true, description: 'Title of the section unit'
-      parameter name: :description, in: :formData, type: :string, required: false, description: 'Description of the section unit'
-      parameter name: :section_id, in: :formData, type: :integer, required: true, description: 'ID of the parent course section'
-      parameter name: :content, in: :formData, type: :file, required: true, description: 'File content of the section unit'
+    parameter name: :unit_params, in: :formData, schema: {
+      type: :object,
+      properties: {
+        title: { type: :string, example: "Updated Unit Title", description: "Title of the section unit" },
+        description: { type: :string, example: "Updated unit description", description: "Description of the section unit" },
+        section_id: { type: :integer, example: 123, description: "ID of the parent course section" },
+        content: { type: :string, format: :binary, description: "File content of the section unit" }
+      },
+      required: [ :title, :content ]
+  }
 
       response '201', 'unit created' do
         description 'Returns the created section unit'

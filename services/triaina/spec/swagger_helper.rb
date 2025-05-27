@@ -52,8 +52,7 @@ def response_model_schema_ref(ref, data_key, is_array: false, extra_data: nil, s
     type: 'object',
     required: %w[success data],
     properties: {
-      success: { type: :boolean, example: success },
-      message: { type: :string, description: 'response message' }
+      success: { type: :boolean, example: success }
     }
   }
   response[:properties].merge!(extra_data) if extra_data

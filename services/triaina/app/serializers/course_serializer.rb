@@ -3,7 +3,7 @@ class CourseSerializer < ApplicationSerializer
 
   attribute :sections do
     object.course_sections.map do |section|
-      SectionSerializer.render(section)
+      CourseSectionSerializer.render(section)
     end
   end
 end
