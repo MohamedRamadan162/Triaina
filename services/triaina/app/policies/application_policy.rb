@@ -36,6 +36,10 @@ class ApplicationPolicy
     false
   end
 
+  def policy_error_message
+    "You are not authorized to access this resource"
+  end
+
   class Scope
     def initialize(user, scope)
       @user = user
