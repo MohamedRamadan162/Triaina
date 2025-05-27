@@ -1,4 +1,18 @@
-class Api::V1::CourseSectionsController < Api::ApiController
+class Api::V1::Courses::CourseSectionsController < Api::ApiController
+  ###########################
+  # List all sections for a course
+  # GET /api/v1/courses/:course_id/sections
+  ############################
+  def index
+    course_id = params[:course_id]
+    sections = list(CourseSection.where(course_id: course_id))
+    render_success(sections: serializer(sections))
+  end
+
+  ###########################
+  # List a section by id
+  # GET /api/v1/courses/:course_id/sections/:id
+  ############################
   def show
     section_id = get_id_params[:id]
     section = Rails.cache.fetch("section_#{section_id}") do
@@ -7,6 +21,10 @@ class Api::V1::CourseSectionsController < Api::ApiController
     render_success(section: serializer(section))
   end
 
+  ###########################
+  # Create a new section
+  # POST /api/v1/courses/:course_id/sections
+  # ############################
   def create
     section = CourseSection.create!(create_section_params)
     Rails.cache.write("section_#{section.id}", section)
@@ -14,6 +32,10 @@ class Api::V1::CourseSectionsController < Api::ApiController
     render_success({ section: serializer(section) }, :created)
   end
 
+  ###########################
+  # Delete a section by id
+  # DELETE /api/v1/courses/:course_id/sections/:id
+  ###########################
   def destroy
     section_id = get_id_params[:id]
     section = Rails.cache.fetch("section_#{section_id}") do
@@ -25,6 +47,10 @@ class Api::V1::CourseSectionsController < Api::ApiController
     render_success({}, :no_content)
   end
 
+  ###########################
+  # Update a section by id
+  # PATCH /api/v1/courses/:course_id/sections/:id
+  # ############################
   def update
     section = Rails.cache.fetch("section_#{update_section_params[:id]}") do
       CourseSection.find(update_section_params[:id])
@@ -47,9 +73,5 @@ class Api::V1::CourseSectionsController < Api::ApiController
 
   def update_section_params
     params.permit(:id, :title, :description)
-  end
-
-  def serializer_class
-    "SectionSerializer".constantize
   end
 end

@@ -1,9 +1,17 @@
 class Api::V1::CoursesController < Api::ApiController
+  ###########################
+  # List all courses
+  # GET /api/v1/courses
+  ############################
   def index
     courses = list(Course)
     render_success(courses: serializer(courses))
   end
 
+  ###########################
+  # List a course by id
+  # GET /api/v1/courses/:id
+  # ############################
   def show
     params.permit(:id)
     course = Rails.cache.fetch("course_#{params[:id]}") do
@@ -12,6 +20,10 @@ class Api::V1::CoursesController < Api::ApiController
     render_success(course: serializer(course))
   end
 
+  ###########################
+  # Create a new course
+  # POST /api/v1/courses
+  ############################
   def create
     course = Course.create!(create_course_params.merge(created_by: @current_user.id))
     Rails.cache.write("course_#{course.id}", course)
@@ -19,6 +31,10 @@ class Api::V1::CoursesController < Api::ApiController
     render_success({ course: serializer(course) }, :created)
   end
 
+  ###########################
+  # Delete a course by id
+  # DELETE /api/v1/courses/:id
+  ###########################
   def destroy
     params.permit(:id)
     course = Rails.cache.fetch("course_#{params[:id]}") do
@@ -30,6 +46,10 @@ class Api::V1::CoursesController < Api::ApiController
     render_success({}, :no_content)
   end
 
+  ###########################
+  # Update a course by id
+  # PATCH /api/v1/courses/:id
+  # ############################
   def update
     params.permit(:id)
     course = Rails.cache.fetch("course_#{params[:id]}") do
@@ -49,9 +69,5 @@ class Api::V1::CoursesController < Api::ApiController
 
   def update_course_params
     params.permit(:name, :description, :start_date, :end_date)
-  end
-
-  def filtering_params
-    params.permit(:id, :name, :join_code, :created_by)
   end
 end

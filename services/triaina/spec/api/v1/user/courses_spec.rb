@@ -9,7 +9,7 @@ RSpec.describe 'api/v1/user/courses', type: :request do
       description 'List all courses for a user'
       produces 'application/json'
 
-      security [cookie_auth: []]
+      security [ cookie_auth: [] ]
       parameter name: :id, in: :path, type: :integer, required: true, description: 'User ID'
 
       response '200', 'List of courses' do

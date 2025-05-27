@@ -10,11 +10,20 @@ paths:
       tags:
       - Authentication
       parameters: []
+      description: User creation failed due to validation errors
       responses:
         '201':
           description: user created
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/x-responses/Auth/Signup"
         '422':
           description: validation failed
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/x-responses/Error/ValidationError"
       requestBody:
         content:
           application/json:
@@ -50,11 +59,20 @@ paths:
       tags:
       - Authentication
       parameters: []
+      description: User login failed due to invalid email or password
       responses:
         '200':
           description: user logged in
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/x-responses/Auth/Login"
         '401':
           description: invalid credentials
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/x-responses/Error/WrongCredentials"
       requestBody:
         content:
           application/json:
@@ -70,7 +88,34 @@ paths:
               required:
               - email
               - password
-  "/api/v1/course_sections":
+  "/api/v1/courses/{course_id}/sections":
+    parameters:
+    - name: course_id
+      in: path
+      description: Course ID
+      required: true
+      schema:
+        type: integer
+    get:
+      summary: List all course sections
+      tags:
+      - Course Sections
+      security:
+      - cookie_auth: []
+      description: Unauthorized access to sections
+      responses:
+        '200':
+          description: sections found
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/x-responses/Course/Section/List"
+        '401':
+          description: unauthorized
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/x-responses/Error/Unauthorized"
     post:
       summary: Create a new course section
       tags:
@@ -78,11 +123,20 @@ paths:
       security:
       - cookie_auth: []
       parameters: []
+      description: Unauthorized access to create section
       responses:
         '201':
           description: section created
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/x-responses/Course/Section/Create"
         '401':
           description: unauthorized
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/x-responses/Error/Unauthorized"
       requestBody:
         content:
           application/json:
@@ -95,31 +149,42 @@ paths:
                 description:
                   type: string
                   example: New section description
-                course_id:
-                  type: integer
-                  example: 1
               required:
               - title
-              - course_id
-  "/api/v1/course_sections/{id}":
+  "/api/v1/courses/{course_id}/sections/{section_id}":
     parameters:
-    - name: id
+    - name: course_id
+      in: path
+      description: Course ID
+      required: true
+      schema:
+        type: integer
+    - name: section_id
       in: path
       description: Course Section ID
       required: true
       schema:
-        type: string
+        type: integer
     get:
       summary: Get a specific course section
       tags:
       - Course Sections
       security:
       - cookie_auth: []
+      description: Unauthorized access to section
       responses:
         '200':
           description: section found
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/x-responses/Course/Section/Show"
         '401':
           description: unauthorized
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/x-responses/Error/Unauthorized"
     put:
       summary: Update a course section
       tags:
@@ -127,11 +192,20 @@ paths:
       security:
       - cookie_auth: []
       parameters: []
+      description: Unauthorized access to update section
       responses:
         '200':
           description: section updated
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/x-responses/Course/Section/Update"
         '401':
           description: unauthorized
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/x-responses/Error/Unauthorized"
       requestBody:
         content:
           application/json:
@@ -151,11 +225,16 @@ paths:
       - Course Sections
       security:
       - cookie_auth: []
+      description: Unauthorized access to delete section
       responses:
         '204':
           description: section deleted
         '401':
           description: unauthorized
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/x-responses/Error/Unauthorized"
   "/api/v1/courses":
     get:
       summary: List all courses
@@ -163,11 +242,20 @@ paths:
       - Courses
       security:
       - cookie_auth: []
+      description: Unauthorized access to courses
       responses:
         '200':
           description: courses found
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/x-responses/Course/List"
         '401':
           description: unauthorized
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/x-responses/Error/Unauthorized"
     post:
       summary: Create a new course
       tags:
@@ -175,11 +263,20 @@ paths:
       security:
       - cookie_auth: []
       parameters: []
+      description: Unauthorized access to courses
       responses:
         '201':
           description: course created
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/x-responses/Course/Create"
         '401':
           description: unauthorized
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/x-responses/Error/Unauthorized"
       requestBody:
         content:
           application/json:
@@ -202,7 +299,6 @@ paths:
                   nullable: true
               required:
               - name
-              - description
               - start_date
   "/api/v1/courses/{id}":
     parameters:
@@ -218,11 +314,20 @@ paths:
       - Courses
       security:
       - cookie_auth: []
+      description: Unauthorized access to courses
       responses:
         '200':
           description: course found
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/x-responses/Course/Show"
         '401':
           description: unauthorized
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/x-responses/Error/Unauthorized"
     put:
       summary: Update a course
       tags:
@@ -230,11 +335,20 @@ paths:
       security:
       - cookie_auth: []
       parameters: []
+      description: Unauthorized access to courses
       responses:
         '200':
           description: course updated
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/x-responses/Course/Update"
         '401':
           description: unauthorized
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/x-responses/Error/Unauthorized"
       requestBody:
         content:
           application/json:
@@ -262,12 +376,33 @@ paths:
       - Courses
       security:
       - cookie_auth: []
+      description: Unauthorized access to courses
       responses:
         '204':
           description: course deleted
         '401':
           description: unauthorized
-  "/api/v1/section_units":
+  "/api/v1/courses/{course_id}/sections/{section_id}/units":
+    get:
+      summary: List all section units for a course section
+      tags:
+      - Section Units
+      security:
+      - cookie_auth: []
+      description: Unauthorized access to list section units
+      responses:
+        '200':
+          description: list of section units
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/x-responses/Course/Section/Unit/List"
+        '401':
+          description: unauthorized
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/x-responses/Error/Unauthorized"
     post:
       summary: Create a new section unit
       tags:
@@ -275,20 +410,30 @@ paths:
       security:
       - cookie_auth: []
       parameters: []
+      description: Unauthorized access to create section unit
       responses:
         '201':
           description: unit created
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/x-responses/Course/Section/Unit/Create"
         '401':
           description: unauthorized
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/x-responses/Error/Unauthorized"
       requestBody:
         content:
           multipart/form-data:
             schema:
               type: string
         required: true
-  "/api/v1/section_units/{id}":
+        description: Title of the section unit
+  "/api/v1/courses/{course_id}/sections/{section_id}/units/{unit_id}":
     parameters:
-    - name: id
+    - name: unit_id
       in: path
       description: Section Unit ID
       required: true
@@ -300,11 +445,20 @@ paths:
       - Section Units
       security:
       - cookie_auth: []
+      description: Unauthorized access to section unit
       responses:
         '200':
           description: unit found
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/x-responses/Course/Section/Unit/Show"
         '401':
           description: unauthorized
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/x-responses/Error/Unauthorized"
     put:
       summary: Update a section unit
       tags:
@@ -312,11 +466,20 @@ paths:
       security:
       - cookie_auth: []
       parameters: []
+      description: Unauthorized access to update section unit
       responses:
         '200':
           description: unit updated
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/x-responses/Course/Section/Unit/Update"
         '401':
           description: unauthorized
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/x-responses/Error/Unauthorized"
       requestBody:
         content:
           application/json:
@@ -336,11 +499,16 @@ paths:
       - Section Units
       security:
       - cookie_auth: []
+      description: Unauthorized access to delete section unit
       responses:
         '204':
           description: unit deleted
         '401':
           description: unauthorized
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/x-responses/Error/Unauthorized"
   "/api/v1/users/{id}/courses":
     get:
       summary: List all courses for a user
@@ -398,11 +566,20 @@ paths:
       - Users
       security:
       - cookie_auth: []
+      description: Unauthorized access to courses
       responses:
         '200':
           description: user found
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/x-responses/User/Show"
         '401':
           description: unauthorized
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/x-responses/Error/Unauthorized"
     patch:
       summary: Update the current user
       tags:
@@ -410,11 +587,20 @@ paths:
       security:
       - cookie_auth: []
       parameters: []
+      description: Unauthorized access to courses
       responses:
         '200':
           description: user updated
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/x-responses/User/Update"
         '401':
           description: unauthorized
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/x-responses/Error/Unauthorized"
       requestBody:
         content:
           application/json:
@@ -439,6 +625,7 @@ paths:
       - Users
       security:
       - cookie_auth: []
+      description: Unauthorized access to courses
       responses:
         '204':
           description: user deleted
@@ -499,18 +686,9 @@ components:
         type: number
         example: 10
   schemas:
-    error:
-      type: object
-      required:
-      - success
-      - message
-      properties:
-        success:
-          type: boolean
-          description: response status failure
-        message:
-          type: string
-          description: validation error message
+    Error:
+      type: string
+      example: An error occurred
     Unit:
       type: object
       properties:
@@ -601,8 +779,108 @@ components:
       - start_date
       - end_date
       - sections
-  x-responses:
     User:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+        name:
+          type: string
+          example: John Doe
+        username:
+          type: string
+          example: johndoe
+        email:
+          type: string
+          format: email
+          example: johndoe@email.com
+        verified:
+          type: boolean
+          example: true
+        created_at:
+          type: string
+          format: date-time
+          example: '2025-01-01T00:00:00Z'
+        updated_at:
+          type: string
+          format: date-time
+          example: '2025-01-01T00:00:00Z'
+  x-responses:
+    Auth:
+      Signup:
+        type: object
+        required:
+        - success
+        - data
+        properties:
+          success:
+            type: boolean
+            example: true
+          message:
+            type: string
+            description: response message
+          user:
+            "$ref": "#/components/schemas/User"
+      Login:
+        type: object
+        required:
+        - success
+        - data
+        properties:
+          success:
+            type: boolean
+            example: true
+          message:
+            type: string
+            description: response message
+          user:
+            "$ref": "#/components/schemas/User"
+    User:
+      List:
+        type: object
+        required:
+        - success
+        - data
+        properties:
+          success:
+            type: boolean
+            example: true
+          message:
+            type: string
+            description: response message
+          users:
+            type: array
+            items:
+              "$ref": "#/components/schemas/User"
+      Show:
+        type: object
+        required:
+        - success
+        - data
+        properties:
+          success:
+            type: boolean
+            example: true
+          message:
+            type: string
+            description: response message
+          user:
+            "$ref": "#/components/schemas/User"
+      Update:
+        type: object
+        required:
+        - success
+        - data
+        properties:
+          success:
+            type: boolean
+            example: true
+          message:
+            type: string
+            description: response message
+          user:
+            "$ref": "#/components/schemas/User"
       Course:
         List:
           type: object
@@ -620,3 +898,214 @@ components:
               type: array
               items:
                 "$ref": "#/components/schemas/Course"
+    Course:
+      List:
+        type: object
+        required:
+        - success
+        - data
+        properties:
+          success:
+            type: boolean
+            example: true
+          message:
+            type: string
+            description: response message
+          courses:
+            type: array
+            items:
+              "$ref": "#/components/schemas/Course"
+      Show:
+        type: object
+        required:
+        - success
+        - data
+        properties:
+          success:
+            type: boolean
+            example: true
+          message:
+            type: string
+            description: response message
+          course:
+            "$ref": "#/components/schemas/Course"
+      Create:
+        type: object
+        required:
+        - success
+        - data
+        properties:
+          success:
+            type: boolean
+            example: true
+          message:
+            type: string
+            description: response message
+          course:
+            "$ref": "#/components/schemas/Course"
+      Update:
+        type: object
+        required:
+        - success
+        - data
+        properties:
+          success:
+            type: boolean
+            example: true
+          message:
+            type: string
+            description: response message
+          course:
+            "$ref": "#/components/schemas/Course"
+      Section:
+        List:
+          type: object
+          required:
+          - success
+          - data
+          properties:
+            success:
+              type: boolean
+              example: true
+            message:
+              type: string
+              description: response message
+            sections:
+              type: array
+              items:
+                "$ref": "#/components/schemas/Section"
+        Show:
+          type: object
+          required:
+          - success
+          - data
+          properties:
+            success:
+              type: boolean
+              example: true
+            message:
+              type: string
+              description: response message
+            section:
+              "$ref": "#/components/schemas/Section"
+        Create:
+          type: object
+          required:
+          - success
+          - data
+          properties:
+            success:
+              type: boolean
+              example: true
+            message:
+              type: string
+              description: response message
+            section:
+              "$ref": "#/components/schemas/Section"
+        Update:
+          type: object
+          required:
+          - success
+          - data
+          properties:
+            success:
+              type: boolean
+              example: true
+            message:
+              type: string
+              description: response message
+            section:
+              "$ref": "#/components/schemas/Section"
+        Unit:
+          List:
+            type: object
+            required:
+            - success
+            - data
+            properties:
+              success:
+                type: boolean
+                example: true
+              message:
+                type: string
+                description: response message
+              units:
+                type: array
+                items:
+                  "$ref": "#/components/schemas/Unit"
+          Show:
+            type: object
+            required:
+            - success
+            - data
+            properties:
+              success:
+                type: boolean
+                example: true
+              message:
+                type: string
+                description: response message
+              unit:
+                "$ref": "#/components/schemas/Unit"
+          Create:
+            type: object
+            required:
+            - success
+            - data
+            properties:
+              success:
+                type: boolean
+                example: true
+              message:
+                type: string
+                description: response message
+              unit:
+                "$ref": "#/components/schemas/Unit"
+          Update:
+            type: object
+            required:
+            - success
+            - data
+            properties:
+              success:
+                type: boolean
+                example: true
+              message:
+                type: string
+                description: response message
+              unit:
+                "$ref": "#/components/schemas/Unit"
+    Error:
+      Unauthorized:
+        type: object
+        required:
+        - success
+        - data
+        properties:
+          success:
+            type: boolean
+            example: false
+          message:
+            "$ref": "#/components/schemas/Error"
+      WrongCredentials:
+        type: object
+        required:
+        - success
+        - data
+        properties:
+          success:
+            type: boolean
+            example: false
+          message:
+            "$ref": "#/components/schemas/Error"
+      ValidationError:
+        type: object
+        required:
+        - success
+        - data
+        properties:
+          success:
+            type: boolean
+            example: false
+          message:
+            "$ref": "#/components/schemas/Error"

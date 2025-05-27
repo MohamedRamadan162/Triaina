@@ -2,12 +2,12 @@ class User < ApplicationRecord
   include Constants
   include Verifiable
 
-  has_one_attached :avatar
+  ######################### Associations #########################
   has_one :user_security, dependent: :destroy
   has_many :refresh_tokens, dependent: :destroy
   has_many :enrollments, dependent: :destroy
   has_many :courses, through: :enrollments
-  has_many :chat_messages, class_name: "ChatMessage", foreign_key: "user_id", dependent: :destroy
+  has_many :chat_messages, dependent: :destroy
 
   ######################### Validations #########################
   validates :username, presence: true, uniqueness: { case_sensitive: false }, length: { minimum: 4 }

@@ -1,4 +1,4 @@
-class SectionSerializer < ApplicationSerializer
+class CourseSectionSerializer < ApplicationSerializer
   attributes :id, :title, :description, :order_index, :course_id
 
   attribute :units do

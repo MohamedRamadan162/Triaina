@@ -40,19 +40,19 @@ def model_ref(ref, is_array: false, nullable: false)
   o = if is_array
         { type: :array,
           items: { '$ref' => "#/components/schemas/#{ref}" } }
-      else
+  else
         { '$ref' => "#/components/schemas/#{ref}" }
-      end
+  end
   o[:nullable] = true if nullable
   o
 end
 
-def response_model_schema_ref(ref, data_key, is_array: false, extra_data: nil)
+def response_model_schema_ref(ref, data_key, is_array: false, extra_data: nil, success: true)
   response = {
     type: 'object',
     required: %w[success data],
     properties: {
-      success: { type: :boolean, example: true },
+      success: { type: :boolean, example: success },
       message: { type: :string, description: 'response message' }
     }
   }
@@ -159,13 +159,9 @@ RSpec.configure do |config|
           }
         },
         schemas: {
-          error: {
-            type: :object,
-            required: %w[success message],
-            properties: {
-              success: { type: :boolean, description: 'response status failure' },
-              message: { type: :string, description: 'validation error message' }
-            }
+          Error: {
+            type: :string,
+            example: 'An error occurred'
           },
           Unit: model_schema(
             {
@@ -197,21 +193,62 @@ RSpec.configure do |config|
               join_code: { type: :string, example: '123456' },
               start_date: { type: :string, example: '2025-01-01' },
               end_date: { type: :string, example: '2025-01-01' },
-              sections: { type: :array, items: model_ref('Section') },
+              sections: { type: :array, items: model_ref('Section') }
             },
             %w[id name description join_code start_date end_date sections]
-          )
+          ),
+          User: model_schema(
+            {
+              id: { type: :integer, example: 1 },
+              name: { type: :string, example: 'John Doe' },
+              username: { type: :string, example: 'johndoe' },
+              email: { type: :string, format: 'email', example: 'johndoe@email.com' },
+              verified: { type: :boolean, example: true },
+              created_at: { type: :string, format: 'date-time', example: '2025-01-01T00:00:00Z' },
+              updated_at: { type: :string, format: 'date-time', example: '2025-01-01T00:00:00Z' }
+            })
         },
         'x-responses': {
+          Auth: {
+            Signup: response_model_schema_ref('User', 'user'),
+            Login: response_model_schema_ref('User', 'user')
+          },
           User: {
+            List: response_model_schema_ref('User', 'users', is_array: true),
+            Show: response_model_schema_ref('User', 'user'),
+            Update: response_model_schema_ref('User', 'user'),
             Course: {
               List: response_model_schema_ref('Course', 'courses', is_array: true)
             }
+          },
+          Course: {
+            List: response_model_schema_ref('Course', 'courses', is_array: true),
+            Show: response_model_schema_ref('Course', 'course'),
+            Create: response_model_schema_ref('Course', 'course'),
+            Update: response_model_schema_ref('Course', 'course'),
+            Section: {
+              List: response_model_schema_ref('Section', 'sections', is_array: true),
+              Show: response_model_schema_ref('Section', 'section'),
+              Create: response_model_schema_ref('Section', 'section'),
+              Update: response_model_schema_ref('Section', 'section'),
+              Unit: {
+                List: response_model_schema_ref('Unit', 'units', is_array: true),
+                Show: response_model_schema_ref('Unit', 'unit'),
+                Create: response_model_schema_ref('Unit', 'unit'),
+                Update: response_model_schema_ref('Unit', 'unit')
+              }
+            }
+          },
+          Error: {
+            Unauthorized: response_model_schema_ref('Error', 'message', success: false),
+            WrongCredentials: response_model_schema_ref('Error', 'message', success: false),
+            ValidationError: response_model_schema_ref('Error', 'message', success: false)
           }
         }
       }
     }
   }
+
 
   # Specify the format of the output Swagger file when running 'rswag:specs:swaggerize'.
   # The openapi_specs configuration option has the filename including format in

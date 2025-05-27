@@ -1,12 +1,18 @@
 class CourseSection < ApplicationRecord
+  ######################### Associations #########################
   belongs_to :course, class_name: "Course", foreign_key: "course_id"
+  has_many :users, through: :course_enrollments, source: :user
   has_many :section_units, dependent: :destroy, foreign_key: "section_id"
+  has_many :course_enrollments, through: :course, source: :enrollments
 
-  before_validation :create_order_index
-
+  ######################### Validations #########################
   validates :title, presence: true
   validates :order_index, presence: true, uniqueness: { scope: :course_id }
 
+  ############################ Hooks ############################
+  before_validation :create_order_index
+
+  ############################# Scopes ############################
   scope :filter_by_id, ->(id) { where(id: id) }
   scope :filter_by_course_id, ->(course_id) { where(course_id: course_id) }
   scope :filter_by_course_and_order, ->(course_id, order_index) {

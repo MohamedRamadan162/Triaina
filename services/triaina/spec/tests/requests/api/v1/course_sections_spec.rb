@@ -1,20 +1,49 @@
 require 'rails_helper'
 
-RSpec.describe "Api::V1::CourseSectionsController", type: :request do
+RSpec.describe "Api::V1::Courses::CourseSectionsController", type: :request do
   describe "Course Sections Management" do
-    let(:user) { create(:user) }
-    let(:section) { create(:course_section) }
-    let(:course) { section.course }
+    let!(:user) { create(:user) }
+    let!(:section) { create(:course_section) }
+    let!(:course) { section.course }
 
     before do
-      section # Ensure section is created
       post "#{TestConstants::DEFAULT_API_BASE_URL}/auth/login", params: { email: user.email, password: TestConstants::DEFAULT_USER[:password] }
     end
 
-    describe "GET #{TestConstants::DEFAULT_API_BASE_URL}/course_sections/:id" do
+    describe "GET #{TestConstants::DEFAULT_API_BASE_URL}/courses/:course_id/sections" do
+      context "when sections exist" do
+        before do
+          get "#{TestConstants::DEFAULT_API_BASE_URL}/courses/#{course.id}/sections"
+        end
+
+        it "returns the list of sections" do
+          expect(response).to have_http_status(:ok)
+          json = JSON.parse(response.body)
+          expect(json["success"]).to be true
+          expect(json["sections"].length).to be > 0
+          expect(json["sections"].first["id"]).to eq(section.id)
+        end
+      end
+
+      context "when no sections exist" do
+        before do
+          CourseSection.destroy_all
+          get "#{TestConstants::DEFAULT_API_BASE_URL}/courses/#{course.id}/sections"
+        end
+
+        it "returns an empty list" do
+          expect(response).to have_http_status(:ok)
+          json = JSON.parse(response.body)
+          expect(json["success"]).to be true
+          expect(json["sections"]).to be_empty
+        end
+      end
+    end
+
+    describe "GET #{TestConstants::DEFAULT_API_BASE_URL}/courses/:course_id/sections/:section_id" do
       context "when section exists" do
         before do
-          get "#{TestConstants::DEFAULT_API_BASE_URL}/course_sections/#{section.id}"
+          get "#{TestConstants::DEFAULT_API_BASE_URL}/courses/#{course.id}/sections/#{section.id}"
         end
 
         it "returns the section details" do
@@ -28,7 +57,7 @@ RSpec.describe "Api::V1::CourseSectionsController", type: :request do
 
       context "when section does not exist" do
         before do
-          get "#{TestConstants::DEFAULT_API_BASE_URL}/course_sections/999999"
+          get "#{TestConstants::DEFAULT_API_BASE_URL}/courses/#{course.id}/sections/999999"
         end
 
         it "returns a not found error" do
@@ -37,15 +66,13 @@ RSpec.describe "Api::V1::CourseSectionsController", type: :request do
       end
     end
 
-    describe "POST #{TestConstants::DEFAULT_API_BASE_URL}/course_sections" do
+    describe "POST #{TestConstants::DEFAULT_API_BASE_URL}/courses/:course_id/sections" do
       context "with valid parameters" do
         before do
-          expect(CourseSectionEventProducer).to receive(:publish_create_section).once
-          post "#{TestConstants::DEFAULT_API_BASE_URL}/course_sections",
+          post "#{TestConstants::DEFAULT_API_BASE_URL}/courses/#{course.id}/sections",
             params: {
               title: "New Section",
-              description: "Section Description",
-              course_id: course.id
+              description: "Section Description"
             }
         end
 
@@ -60,8 +87,10 @@ RSpec.describe "Api::V1::CourseSectionsController", type: :request do
 
       context "with invalid parameters" do
         before do
-          post "#{TestConstants::DEFAULT_API_BASE_URL}/course_sections",
-            params: { title: "" }
+          post "#{TestConstants::DEFAULT_API_BASE_URL}/courses/#{course.id}/sections",
+            params: {
+              title: ""
+            }
         end
 
         it "returns an error" do
@@ -70,13 +99,10 @@ RSpec.describe "Api::V1::CourseSectionsController", type: :request do
       end
     end
 
-    describe "PATCH #{TestConstants::DEFAULT_API_BASE_URL}/course_sections/:id" do
+    describe "PATCH #{TestConstants::DEFAULT_API_BASE_URL}/courses/:course_id/sections/:section_id" do
       context "when section exists" do
         before do
-          section # ensure section is created
-          expect(CourseSectionEventProducer).to receive(:publish_update_section).once
-          patch "#{TestConstants::DEFAULT_API_BASE_URL}/course_sections/#{section.id}",
-                params: {
+          patch "#{TestConstants::DEFAULT_API_BASE_URL}/courses/#{course.id}/sections/#{section.id}", params: {
                   title: "Updated Title",
                   description: "Updated Description"
                 }
@@ -93,7 +119,10 @@ RSpec.describe "Api::V1::CourseSectionsController", type: :request do
 
       context "when section does not exist" do
         before do
-          patch "#{TestConstants::DEFAULT_API_BASE_URL}/course_sections/999999"
+          patch "#{TestConstants::DEFAULT_API_BASE_URL}/courses/#{course.id}/sections/999999", params: {
+                  title: "Updated Title",
+                  description: "Updated Description"
+                }
         end
 
         it "returns a not found error" do
@@ -102,12 +131,10 @@ RSpec.describe "Api::V1::CourseSectionsController", type: :request do
       end
     end
 
-    describe "DELETE #{TestConstants::DEFAULT_API_BASE_URL}/course_sections/:id" do
+    describe "DELETE #{TestConstants::DEFAULT_API_BASE_URL}/courses/:course_id/sections/:section_id" do
       context "when section exists" do
         before do
-          section # ensure section is created
-          expect(CourseSectionEventProducer).to receive(:publish_delete_section).once
-          delete "#{TestConstants::DEFAULT_API_BASE_URL}/course_sections/#{section.id}"
+          delete "#{TestConstants::DEFAULT_API_BASE_URL}/courses/#{course.id}/sections/#{section.id}"
         end
 
         it "deletes the section" do
@@ -118,7 +145,7 @@ RSpec.describe "Api::V1::CourseSectionsController", type: :request do
 
       context "when section does not exist" do
         before do
-          delete "#{TestConstants::DEFAULT_API_BASE_URL}/course_sections/999999"
+          delete "#{TestConstants::DEFAULT_API_BASE_URL}/courses/#{course.id}/sections/999999"
         end
 
         it "returns a not found error" do

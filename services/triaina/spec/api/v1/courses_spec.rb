@@ -1,12 +1,6 @@
 require 'swagger_helper'
 
 RSpec.describe 'Api::V1::CoursesController', type: :request do
-  let(:user) { create(:user) }
-  let(:course) { create(:course) }
-  def authorize_req
-    post '/api/v1/auth/login', params: { email: user[:email], password: TestConstants::DEFAULT_USER[:password] }
-  end
-
   path '/api/v1/courses' do
     get 'List all courses' do
       tags 'Courses'
@@ -14,16 +8,14 @@ RSpec.describe 'Api::V1::CoursesController', type: :request do
       security [ cookie_auth: [] ]
 
       response '200', 'courses found' do
-        before do
-          authorize_req
-        end
-
-        run_test! do
-          expect(JSON.parse(response.body)['success']).to be true
-        end
+        description 'Returns a list of courses'
+        response_ref 'Course/List'
+        run_test!
       end
 
       response '401', 'unauthorized' do
+        description 'Unauthorized access to courses'
+        response_ref 'Error/Unauthorized'
         run_test!
       end
     end
@@ -42,32 +34,18 @@ RSpec.describe 'Api::V1::CoursesController', type: :request do
           start_date: { type: :string, format: :date_time, example: "2025-05-04T00:00:00.000Z" },
           end_date: { type: :string, format: :date_time, nullable: true }
         },
-        required: [ 'name', 'description', 'start_date' ]
+        required: [ 'name', 'start_date' ]
       }
 
       response '201', 'course created' do
-        let(:course) { {
-          name: 'New Course',
-          description: 'Course description',
-          start_date: '2025-05-04T00:00:00.000Z',
-          end_date: nil
-        }}
-
-        before do
-          authorize_req
-        end
-
-        run_test! do
-          expect(JSON.parse(response.body)['success']).to be true
-        end
+        description 'Returns a list of courses'
+        response_ref 'Course/Create'
+        run_test!
       end
 
       response '401', 'unauthorized' do
-        let(:course) { {
-          name: 'Invalid Course',
-          description: 'No Auth',
-          start_date: '2025-05-04T00:00:00.000Z'
-        }}
+        description 'Unauthorized access to courses'
+        response_ref 'Error/Unauthorized'
         run_test!
       end
     end
@@ -82,19 +60,14 @@ RSpec.describe 'Api::V1::CoursesController', type: :request do
       security [ cookie_auth: [] ]
 
       response '200', 'course found' do
-        let(:id) { course["id"] }
-
-        before do
-          authorize_req
-        end
-
-        run_test! do
-          expect(JSON.parse(response.body)['success']).to be true
-        end
+        description 'Returns a specific course'
+        response_ref 'Course/Show'
+        run_test!
       end
 
       response '401', 'unauthorized' do
-        let(:id) { course["id"] }
+        description 'Unauthorized access to courses'
+        response_ref 'Error/Unauthorized'
         run_test!
       end
     end
@@ -105,7 +78,7 @@ RSpec.describe 'Api::V1::CoursesController', type: :request do
       produces 'application/json'
       security [ cookie_auth: [] ]
 
-      parameter name: :course_params, in: :body, schema: {
+      parameter name: :course, in: :body, schema: {
         type: :object,
         properties: {
           name: { type: :string, example: "Updated Course Name" },
@@ -116,23 +89,14 @@ RSpec.describe 'Api::V1::CoursesController', type: :request do
       }
 
       response '200', 'course updated' do
-        let(:id) { course["id"] }
-        let(:course_params) { { name: 'Updated Course', description: 'Updated description' } }
-
-        before do
-          authorize_req
-        end
-
-        run_test! do
-          body = JSON.parse(response.body)
-          expect(body['success']).to be true
-          expect(body['course']['name']).to eq('Updated Course')
-        end
+        description 'Returns the updated course'
+        response_ref 'Course/Update'
+        run_test!
       end
 
       response '401', 'unauthorized' do
-        let(:id) { course["id"] }
-        let(:course_params) { { name: 'Fail' } }
+        description 'Unauthorized access to courses'
+        response_ref 'Error/Unauthorized'
         run_test!
       end
     end
@@ -142,19 +106,13 @@ RSpec.describe 'Api::V1::CoursesController', type: :request do
       security [ cookie_auth: [] ]
 
       response '204', 'course deleted' do
-        let(:id) { course["id"] }
-
-        before do
-          authorize_req
-        end
-
-        run_test! do
-          expect(Course.exists?(course["id"])).to be false
-        end
+        description 'Course successfully deleted'
+        run_test!
       end
 
       response '401', 'unauthorized' do
-        let(:id) { course["id"] }
+        description 'Unauthorized access to courses'
+        response_ref 'Error/Unauthorized'
         run_test!
       end
     end

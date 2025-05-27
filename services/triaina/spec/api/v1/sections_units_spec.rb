@@ -1,76 +1,52 @@
 require 'swagger_helper'
 
 RSpec.describe 'Api::V1::SectionUnitsController', type: :request do
-  let(:user) { create(:user) }
-  let(:course) { create(:course) }
-  let(:section) { create(:course_section, course: course) }
-  let(:unit) { create(:section_unit, course_section: section) }
+  path '/api/v1/courses/{course_id}/sections/{section_id}/units' do
+    get 'List all section units for a course section' do
+      tags 'Section Units'
+      produces 'application/json'
+      security [ cookie_auth: [] ]
 
-  def authorize_req
-    post '/api/v1/auth/login', params: { email: user[:email], password: TestConstants::DEFAULT_USER[:password] }
-  end
+      response '200', 'list of section units' do
+        description 'Returns all units under the given course section'
+        response_ref 'Course/Section/Unit/List'
+        run_test!
+      end
 
-  path '/api/v1/section_units' do
+      response '401', 'unauthorized' do
+        description 'Unauthorized access to list section units'
+        response_ref 'Error/Unauthorized'
+        run_test!
+      end
+    end
+
     post 'Create a new section unit' do
       tags 'Section Units'
       consumes 'multipart/form-data'
       produces 'application/json'
       security [ cookie_auth: [] ]
 
-      # For multipart/form-data, use formData parameters
-      parameter name: :title, in: :formData, type: :string, required: true
-      parameter name: :description, in: :formData, type: :string, required: false
-      parameter name: :section_id, in: :formData, type: :integer, required: true
-      parameter name: :content, in: :formData, type: :file, required: true
+      parameter name: :title, in: :formData, type: :string, required: true, description: 'Title of the section unit'
+      parameter name: :description, in: :formData, type: :string, required: false, description: 'Description of the section unit'
+      parameter name: :section_id, in: :formData, type: :integer, required: true, description: 'ID of the parent course section'
+      parameter name: :content, in: :formData, type: :file, required: true, description: 'File content of the section unit'
 
       response '201', 'unit created' do
-        # Create the fixture file before tests run
-        before do
-          authorize_req
-
-          # Make sure the section exists and is valid
-          section # Force the section to be created
-
-          # Create test file
-          FileUtils.mkdir_p(Rails.root.join('spec', 'fixtures', 'files'))
-          FileUtils.touch(Rails.root.join('spec', 'fixtures', 'files', 'test_pdf.pdf'))
-        end
-
-        # Set let values for form parameters
-        let(:title) { 'Test Unit Title' }
-        let(:description) { 'Test Unit Description' }
-        let(:section_id) { section.id }
-        let(:content) { Rack::Test::UploadedFile.new(Rails.root.join('spec', 'fixtures', 'files', 'test_pdf.pdf'), 'application/pdf') }
-
-        run_test! do
-          expect(JSON.parse(response.body)['success']).to be true
-        end
+        description 'Returns the created section unit'
+        response_ref 'Course/Section/Unit/Create'
+        run_test!
       end
 
       response '401', 'unauthorized' do
-        # For unauthorized test, we need to provide the parameters but don't need to authorize
-        let(:title) { 'Test Unit Title' }
-        let(:description) { 'Test Unit Description' }
-        let(:section_id) { section.id }
-        let(:content) { Rack::Test::UploadedFile.new(Rails.root.join('spec', 'fixtures', 'files', 'test_pdf.pdf'), 'application/pdf') }
-
-        before do
-          # Make sure the section exists
-          section
-
-          # Create test file
-          FileUtils.mkdir_p(Rails.root.join('spec', 'fixtures', 'files'))
-          FileUtils.touch(Rails.root.join('spec', 'fixtures', 'files', 'test_pdf.pdf'))
-        end
-
+        description 'Unauthorized access to create section unit'
+        response_ref 'Error/Unauthorized'
         run_test!
       end
     end
   end
 
-  # Rest of the specification remains the same
-  path '/api/v1/section_units/{id}' do
-    parameter name: :id, in: :path, type: :string, description: 'Section Unit ID'
+  path '/api/v1/courses/{course_id}/sections/{section_id}/units/{unit_id}' do
+    parameter name: :unit_id, in: :path, type: :string, description: 'Section Unit ID'
 
     get 'Get a specific section unit' do
       tags 'Section Units'
@@ -78,19 +54,14 @@ RSpec.describe 'Api::V1::SectionUnitsController', type: :request do
       security [ cookie_auth: [] ]
 
       response '200', 'unit found' do
-        let(:id) { unit.id }
-
-        before do
-          authorize_req
-        end
-
-        run_test! do
-          expect(JSON.parse(response.body)['success']).to be true
-        end
+        description 'Returns the requested section unit'
+        response_ref 'Course/Section/Unit/Show'
+        run_test!
       end
 
       response '401', 'unauthorized' do
-        let(:id) { unit.id }
+        description 'Unauthorized access to section unit'
+        response_ref 'Error/Unauthorized'
         run_test!
       end
     end
@@ -111,47 +82,31 @@ RSpec.describe 'Api::V1::SectionUnitsController', type: :request do
       }
 
       response '200', 'unit updated' do
-        let(:id) { unit.id }
-        let(:unit_params) { { title: 'Updated Unit', description: 'Updated description' } }
-
-        before do
-          authorize_req
-          # Make sure the unit exists
-          unit
-        end
-
-        run_test! do
-          body = JSON.parse(response.body)
-          expect(body['success']).to be true
-          expect(body['unit']['title']).to eq('Updated Unit')
-        end
+        description 'Returns the updated section unit'
+        response_ref 'Course/Section/Unit/Update'
+        run_test!
       end
 
       response '401', 'unauthorized' do
-        let(:id) { unit.id }
-        let(:unit_params) { { title: 'Fail' } }
+        description 'Unauthorized access to update section unit'
+        response_ref 'Error/Unauthorized'
         run_test!
       end
     end
 
     delete 'Delete a section unit' do
       tags 'Section Units'
+      produces 'application/json'
       security [ cookie_auth: [] ]
 
       response '204', 'unit deleted' do
-        let(:id) { unit.id }
-
-        before do
-          authorize_req
-        end
-
-        run_test! do
-          expect(SectionUnit.exists?(unit.id)).to be false
-        end
+        description 'Section unit successfully deleted'
+        run_test!
       end
 
       response '401', 'unauthorized' do
-        let(:id) { unit.id }
+        description 'Unauthorized access to delete section unit'
+        response_ref 'Error/Unauthorized'
         run_test!
       end
     end

@@ -40,7 +40,7 @@ class Api::V1::AuthController < Api::ApiController
         same_site: :strict
       }
 
-      render_success({ message: "Sign in successful" })
+      render_success(user: serializer(user))
     else
       render_error("Invalid email or password", :unauthorized)
     end

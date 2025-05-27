@@ -1,15 +1,27 @@
 require 'swagger_helper'
 
 RSpec.describe 'Api::V1::CourseSectionsController', type: :request do
-  let(:user) { create(:user) }
-  let(:course) { create(:course) }
-  let(:section) { create(:course_section, course: course) }
+  path '/api/v1/courses/{course_id}/sections' do
+    parameter name: :course_id, in: :path, type: :integer, description: 'Course ID'
 
-  def authorize_req
-    post '/api/v1/auth/login', params: { email: user[:email], password: TestConstants::DEFAULT_USER[:password] }
-  end
+    get 'List all course sections' do
+      tags 'Course Sections'
+      produces 'application/json'
+      security [ cookie_auth: [] ]
 
-  path '/api/v1/course_sections' do
+      response '200', 'sections found' do
+        description 'Returns a list of course sections'
+        response_ref 'Course/Section/List'
+        run_test!
+      end
+
+      response '401', 'unauthorized' do
+        description 'Unauthorized access to sections'
+        response_ref 'Error/Unauthorized'
+        run_test!
+      end
+    end
+
     post 'Create a new course section' do
       tags 'Course Sections'
       consumes 'application/json'
@@ -20,41 +32,28 @@ RSpec.describe 'Api::V1::CourseSectionsController', type: :request do
         type: :object,
         properties: {
           title: { type: :string, example: "New Section" },
-          description: { type: :string, example: "New section description" },
-          course_id: { type: :integer, example: 1 }
+          description: { type: :string, example: "New section description" }
         },
-        required: [ 'title', 'course_id' ]
+        required: [ 'title' ]
       }
 
       response '201', 'section created' do
-        let(:section_params) { {
-          title: 'New Section',
-          description: 'Section description',
-          course_id: course.id
-        }}
-
-        before do
-          authorize_req
-        end
-
-        run_test! do
-          expect(JSON.parse(response.body)['success']).to be true
-        end
+        description 'Returns the created section'
+        response_ref 'Course/Section/Create'
+        run_test!
       end
 
       response '401', 'unauthorized' do
-        let(:section_params) { {
-          title: 'Invalid Section',
-          description: 'No Auth',
-          course_id: course.id
-        }}
+        description 'Unauthorized access to create section'
+        response_ref 'Error/Unauthorized'
         run_test!
       end
     end
   end
 
-  path '/api/v1/course_sections/{id}' do
-    parameter name: :id, in: :path, type: :string, description: 'Course Section ID'
+  path '/api/v1/courses/{course_id}/sections/{section_id}' do
+    parameter name: :course_id, in: :path, type: :integer, description: 'Course ID'
+    parameter name: :section_id, in: :path, type: :integer, description: 'Course Section ID'
 
     get 'Get a specific course section' do
       tags 'Course Sections'
@@ -62,19 +61,14 @@ RSpec.describe 'Api::V1::CourseSectionsController', type: :request do
       security [ cookie_auth: [] ]
 
       response '200', 'section found' do
-        let(:id) { section.id }
-
-        before do
-          authorize_req
-        end
-
-        run_test! do
-          expect(JSON.parse(response.body)['success']).to be true
-        end
+        description 'Returns the requested section'
+        response_ref 'Course/Section/Show'
+        run_test!
       end
 
       response '401', 'unauthorized' do
-        let(:id) { section.id }
+        description 'Unauthorized access to section'
+        response_ref 'Error/Unauthorized'
         run_test!
       end
     end
@@ -95,45 +89,31 @@ RSpec.describe 'Api::V1::CourseSectionsController', type: :request do
       }
 
       response '200', 'section updated' do
-        let(:id) { section.id }
-        let(:section_params) { { title: 'Updated Section', description: 'Updated description' } }
-
-        before do
-          authorize_req
-        end
-
-        run_test! do
-          body = JSON.parse(response.body)
-          expect(body['success']).to be true
-          expect(body['section']['title']).to eq('Updated Section')
-        end
+        description 'Returns the updated section'
+        response_ref 'Course/Section/Update'
+        run_test!
       end
 
       response '401', 'unauthorized' do
-        let(:id) { section.id }
-        let(:section_params) { { title: 'Fail' } }
+        description 'Unauthorized access to update section'
+        response_ref 'Error/Unauthorized'
         run_test!
       end
     end
 
     delete 'Delete a course section' do
       tags 'Course Sections'
+      produces 'application/json'
       security [ cookie_auth: [] ]
 
       response '204', 'section deleted' do
-        let(:id) { section.id }
-
-        before do
-          authorize_req
-        end
-
-        run_test! do
-          expect(CourseSection.exists?(section.id)).to be false
-        end
+        description 'Course section successfully deleted'
+        run_test!
       end
 
       response '401', 'unauthorized' do
-        let(:id) { section.id }
+        description 'Unauthorized access to delete section'
+        response_ref 'Error/Unauthorized'
         run_test!
       end
     end

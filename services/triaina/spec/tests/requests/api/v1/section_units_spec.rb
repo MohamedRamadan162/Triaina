@@ -2,25 +2,26 @@ require 'rails_helper'
 
 RSpec.describe "Api::V1::SectionUnitsController", type: :request do
   describe "Section Units Management" do
-    let(:user) { create(:user) }
-    let(:unit) { create(:section_unit) }
-    let(:section) { unit.course_section }
-    let(:blob) do
+    let!(:user) { create(:user) }
+    let!(:unit) { create(:section_unit) }
+    let!(:section) { unit.course_section }
+    let!(:course) { section.course }
+    let!(:blob) do
       ActiveStorage::Blob.create_and_upload!(
         io: File.open(Rails.root.join("spec/fixtures/files/test_pdf.pdf"), "rb"),
         filename: "test_pdf.pdf",
         content_type: "application/pdf"
       )
     end
+
     before do
-      unit # Ensure unit is created
       post "#{TestConstants::DEFAULT_API_BASE_URL}/auth/login", params: { email: user.email, password: TestConstants::DEFAULT_USER[:password] }
     end
 
-    describe "GET #{TestConstants::DEFAULT_API_BASE_URL}/section_units/:id" do
+    describe "GET #{TestConstants::DEFAULT_API_BASE_URL}/courses/:course_id/sections/:section_id/units/:unit_id" do
       context "when unit exists" do
         before do
-          get "#{TestConstants::DEFAULT_API_BASE_URL}/section_units/#{unit.id}"
+          get "#{TestConstants::DEFAULT_API_BASE_URL}/courses/#{course.id}/sections/#{section.id}/units/#{unit.id}"
         end
 
         it "returns the unit details" do
@@ -34,7 +35,7 @@ RSpec.describe "Api::V1::SectionUnitsController", type: :request do
 
       context "when unit does not exist" do
         before do
-          get "#{TestConstants::DEFAULT_API_BASE_URL}/section_units/999999"
+          get "#{TestConstants::DEFAULT_API_BASE_URL}/courses/#{course.id}/sections/#{section.id}/units/999999"
         end
 
         it "returns a not found error" do
@@ -43,11 +44,11 @@ RSpec.describe "Api::V1::SectionUnitsController", type: :request do
       end
     end
 
-    describe "POST #{TestConstants::DEFAULT_API_BASE_URL}/section_units" do
+    describe "POST #{TestConstants::DEFAULT_API_BASE_URL}/courses/:course_id/sections/:section_id/units" do
       context "with valid parameters" do
         before do
           expect(SectionUnitEventProducer).to receive(:publish_create_unit).once
-          post "#{TestConstants::DEFAULT_API_BASE_URL}/section_units",
+          post "#{TestConstants::DEFAULT_API_BASE_URL}/courses/#{course.id}/sections/#{section.id}/units",
             params: {
               title: "New Unit",
               description: "Unit Description",
@@ -68,7 +69,7 @@ RSpec.describe "Api::V1::SectionUnitsController", type: :request do
 
       context "with invalid parameters" do
         before do
-          post "#{TestConstants::DEFAULT_API_BASE_URL}/section_units",
+          post "#{TestConstants::DEFAULT_API_BASE_URL}/courses/#{course.id}/sections/#{section.id}/units",
             params: { title: "" }
         end
 
@@ -78,12 +79,12 @@ RSpec.describe "Api::V1::SectionUnitsController", type: :request do
       end
     end
 
-    describe "PATCH #{TestConstants::DEFAULT_API_BASE_URL}/section_units/:id" do
+    describe "PATCH #{TestConstants::DEFAULT_API_BASE_URL}/courses/:course_id/sections/:section_id/units/:unit_id" do
       context "when unit exists" do
         before do
           unit # ensure unit is created
           expect(SectionUnitEventProducer).to receive(:publish_update_unit).once
-          patch "#{TestConstants::DEFAULT_API_BASE_URL}/section_units/#{unit.id}",
+          patch "#{TestConstants::DEFAULT_API_BASE_URL}/courses/#{course.id}/sections/#{section.id}/units/#{unit.id}",
                 params: {
                   title: "Updated Title",
                   description: "Updated Description"
@@ -101,7 +102,7 @@ RSpec.describe "Api::V1::SectionUnitsController", type: :request do
 
       context "when unit does not exist" do
         before do
-          patch "#{TestConstants::DEFAULT_API_BASE_URL}/section_units/999999"
+          patch "#{TestConstants::DEFAULT_API_BASE_URL}/courses/#{course.id}/sections/#{section.id}/units/999999"
         end
 
         it "returns a not found error" do
@@ -110,12 +111,12 @@ RSpec.describe "Api::V1::SectionUnitsController", type: :request do
       end
     end
 
-    describe "DELETE #{TestConstants::DEFAULT_API_BASE_URL}/section_units/:id" do
+    describe "DELETE #{TestConstants::DEFAULT_API_BASE_URL}/courses/:course_id/sections/:section_id/units/:unit_id" do
       context "when unit exists" do
         before do
           unit # ensure unit is created
           expect(SectionUnitEventProducer).to receive(:publish_delete_unit).once
-          delete "#{TestConstants::DEFAULT_API_BASE_URL}/section_units/#{unit.id}"
+          delete "#{TestConstants::DEFAULT_API_BASE_URL}/courses/#{course.id}/sections/#{section.id}/units/#{unit.id}"
         end
 
         it "deletes the unit" do
@@ -126,7 +127,7 @@ RSpec.describe "Api::V1::SectionUnitsController", type: :request do
 
       context "when unit does not exist" do
         before do
-          delete "#{TestConstants::DEFAULT_API_BASE_URL}/section_units/999999"
+          delete "#{TestConstants::DEFAULT_API_BASE_URL}/courses/#{course.id}/sections/#{section.id}/units/999999"
         end
 
         it "returns a not found error" do

@@ -1,4 +1,4 @@
-class UnitSerializer < ApplicationSerializer
+class SectionUnitSerializer < ApplicationSerializer
   include Rails.application.routes.url_helpers
 
   attributes :id, :title, :description, :order_index, :section_id

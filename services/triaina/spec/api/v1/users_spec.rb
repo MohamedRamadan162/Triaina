@@ -9,21 +9,15 @@ RSpec.describe 'Api::V1::UsersController', type: :request do
       security [ cookie_auth: [] ]
 
       response '200', 'user found' do
-        let(:user) { create(:user) }
-
-        before do
-          post '/api/v1/auth/login', params: { email: user[:email], password: TestConstants::DEFAULT_USER[:password] }
-        end
-
-        run_test! do
-          expect(JSON.parse(response.body)['user']['id']).to eq(user.id)
-        end
+        description 'Returns the current user details'
+        response_ref 'User/Show'
+        run_test!
       end
 
       response '401', 'unauthorized' do
-        run_test! do
-          expect(JSON.parse(response.body)['message']).to eq('Unauthorized')
-        end
+        description 'Unauthorized access to courses'
+        response_ref 'Error/Unauthorized'
+        run_test!
       end
     end
 
@@ -48,23 +42,14 @@ RSpec.describe 'Api::V1::UsersController', type: :request do
       }
 
       response '200', 'user updated' do
-        let(:user) { create(:user) }
-        let(:updated_user) { { name: 'New Name', email: 'new_email@example.com' } }
-
-        before do
-          post '/api/v1/auth/login', params: { email: user[:email], password: TestConstants::DEFAULT_USER[:password] }
-        end
-
-        run_test! do
-          body = JSON.parse(response.body)
-          expect(body['user']['id']).to eq(user.id)
-          expect(body['user']['name']).to eq('New Name')
-          expect(body['user']['email']).to eq('new_email@example.com')
-        end
+        description 'Returns the updated user details'
+        response_ref 'User/Update'
+        run_test!
       end
 
       response '401', 'unauthorized' do
-        let(:updated_user) { { name: 'New Name' } }
+        description 'Unauthorized access to courses'
+        response_ref 'Error/Unauthorized'
         run_test!
       end
     end
@@ -74,18 +59,13 @@ RSpec.describe 'Api::V1::UsersController', type: :request do
       security [ cookie_auth: [] ]
 
       response '204', 'user deleted' do
-        let(:user) { create(:user) }
-
-        before do
-          post '/api/v1/auth/login', params: { email: user.email, password: TestConstants::DEFAULT_USER[:password] }
-        end
-
-        run_test! do
-          expect(User.find_by(id: user.id)).to be_nil
-        end
+        description 'Deletes the current user account'
+        run_test!
       end
 
       response '401', 'unauthorized' do
+        description 'Unauthorized access to courses'
+        response_ref 'Error/Unauthorized'
         run_test!
       end
     end

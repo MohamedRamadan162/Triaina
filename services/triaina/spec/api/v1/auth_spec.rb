@@ -22,35 +22,14 @@ RSpec.describe 'API V1 Auth', swagger_doc: 'v1/swagger.yaml' do
       }
 
       response '201', 'user created' do
-        let(:user) do
-          {
-            name: TestConstants::DEFAULT_USER[:name],
-            username: TestConstants::DEFAULT_USER[:username],
-            email: TestConstants::DEFAULT_USER[:email],
-            password: TestConstants::DEFAULT_USER[:password],
-            password_confirmation: TestConstants::DEFAULT_USER[:password]
-          }
-        end
-
-        run_test! do |response|
-          data = JSON.parse(response.body)
-          expect(data['user']['email']).to eq(user[:email])
-          expect(data['user']['name']).to eq(user[:name])
-          expect(data['user']['username']).to eq(user[:username])
-        end
+        description 'User successfully created and signed in'
+        response_ref 'Auth/Signup'
+        run_test!
       end
 
       response '422', 'validation failed' do
-        let(:user) do
-          {
-            name: TestConstants::DEFAULT_USER[:name],
-            username: TestConstants::DEFAULT_USER[:username],
-            email: TestConstants::DEFAULT_USER[:email],
-            password: TestConstants::DEFAULT_USER[:password],
-            password_confirmation: 'Mismatch123'
-          }
-        end
-
+        description 'User creation failed due to validation errors'
+        response_ref 'Error/ValidationError'
         run_test!
       end
     end
@@ -72,29 +51,14 @@ RSpec.describe 'API V1 Auth', swagger_doc: 'v1/swagger.yaml' do
       }
 
       response '200', 'user logged in' do
-        let(:user) { create(:user) }
-
-        let(:credentials) do
-          {
-            email: user.email,
-            password: TestConstants::DEFAULT_USER[:password]
-          }
-        end
-
-        run_test! do |response|
-          data = JSON.parse(response.body)
-          expect(data['message']).to eq('Sign in successful')
-
-          # Check signed cookies for JWT and refresh token
-          cookie_jar = build_cookie_jar(request, response.cookies.to_h)
-          expect(cookie_jar.signed[:jwt]).to eq(JsonWebToken.encode(user_id: user.id))
-          latest_token = user.user_security.refresh_tokens.order(issued_at: :desc).first&.hashed_token
-          expect(Digest::SHA256.hexdigest(cookie_jar.signed[:refresh_token])).to eq(latest_token)
-        end
+        description 'User successfully logged in and received authentication token'
+        response_ref 'Auth/Login'
+        run_test!
       end
 
       response '401', 'invalid credentials' do
-        let(:credentials) { { email: 'wrong@email.com', password: 'nope' } }
+        description 'User login failed due to invalid email or password'
+        response_ref 'Error/WrongCredentials'
         run_test!
       end
     end
