@@ -1,0 +1,18 @@
+[
+  {
+    "success": "false",
+    "message": "Unauthorized Action!"
+  },
+  {
+    "success": "false",
+    "message": "Missing token in the sent header!"
+  },
+  {
+    "success": "false",
+    "message": "Invalid token, Authorization failed!"
+  },
+  {
+    "success": "false",
+    "message": "Token expired, Authorization failed!"
+  }
+]

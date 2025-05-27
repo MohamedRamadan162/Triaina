@@ -2,6 +2,71 @@
 
 require 'rails_helper'
 
+shared_examples 'pagination_headers' do
+  header 'Current-Page', schema: { type: :integer }, description: 'The current page that has been returned.'
+  header 'Total-Pages', schema: { type: :integer }, description: 'Total number of pages.'
+  header 'Total-Count', schema: { type: :integer }, description: 'The total count of the collection.'
+  header 'Page-Items', schema: { type: :integer }, description: 'How many items per page.'
+end
+
+def example_file(path)
+  path = "#{path}.json" unless path.ends_with? '.json'
+  full_path = "doc/responses/#{path}"
+  examples 'application/json' => JSON.parse(File.read(full_path)) if File.exist? full_path
+end
+
+def global_concepts_ref(reference)
+  parameter '$ref' => "#/components/parameters/#{reference}"
+end
+
+def schema_ref(reference)
+  schema '$ref' => "#/components/schemas/#{reference}"
+end
+
+def response_ref(reference)
+  schema '$ref' => "#/components/x-responses/#{reference}"
+end
+
+def model_schema(properties = {}, required = [])
+  model_schema = {
+    type: 'object',
+    properties: properties
+  }
+  model_schema[:required] = required if required.present?
+  model_schema
+end
+
+def model_ref(ref, is_array: false, nullable: false)
+  o = if is_array
+        { type: :array,
+          items: { '$ref' => "#/components/schemas/#{ref}" } }
+      else
+        { '$ref' => "#/components/schemas/#{ref}" }
+      end
+  o[:nullable] = true if nullable
+  o
+end
+
+def response_model_schema_ref(ref, data_key, is_array: false, extra_data: nil)
+  response = {
+    type: 'object',
+    required: %w[success data],
+    properties: {
+      success: { type: :boolean, example: true },
+      message: { type: :string, description: 'response message' }
+    }
+  }
+  response[:properties].merge!(extra_data) if extra_data
+  response[:properties][data_key.to_s] =
+    if is_array
+      { type: :array,
+        items: { '$ref' => "#/components/schemas/#{ref}" } }
+    else
+      { '$ref' => "#/components/schemas/#{ref}" }
+    end
+  response
+end
+
 RSpec.configure do |config|
   # Specify a root folder where Swagger JSON files are generated
   # NOTE: If you're using the rswag-api to serve API descriptions, you'll need
@@ -21,20 +86,6 @@ RSpec.configure do |config|
         title: 'Triaina API',
         version: 'v1'
       },
-      components: {
-        securitySchemes: {
-        jwtCookie: {
-          type: :apiKey,
-          in: :cookie,
-          name: 'jwt'
-        },
-        refreshCookie: {
-          type: :apiKey,
-          in: :cookie,
-          name: 'refresh_token'
-        }
-      }
-      },
       paths: {},
       servers: [
          {
@@ -49,7 +100,116 @@ RSpec.configure do |config|
             }
           }
         }
-      ]
+      ],
+      components: {
+        securitySchemes: {
+        jwtCookie: {
+          type: :apiKey,
+          in: :cookie,
+          name: 'jwt'
+        },
+        refreshCookie: {
+          type: :apiKey,
+          in: :cookie,
+          name: 'refresh_token'
+          }
+        },
+        parameters: {
+          id_param: {
+            name: 'id',
+            in: :path,
+            description: 'The id to fetch with',
+            required: true,
+            schema: {
+              type: :number,
+              example: 1
+            }
+          },
+          locale_param: {
+            name: 'Accept-Language',
+            in: 'header',
+            type: 'string',
+            description: "A localiztion param and it only accepts **ar** or **en**. \n
+             > Please note: in case of passing this param in any protected endpoint
+             it automatically overrides the locale of the current user",
+            required: false,
+            schema: {
+              type: 'string',
+              example: 'ar',
+              default: 'en'
+            }
+          },
+          page_param: {
+            name: 'page',
+            in: :query,
+            description: 'The current page for paginated items, send it with value = -1 if no pagination needed',
+            schema: {
+              type: :number,
+              example: 3
+            }
+          },
+          items_param: {
+            name: 'items',
+            in: :query,
+            description: 'The number of items per page',
+            schema: {
+              type: :number,
+              example: 10
+            }
+          }
+        },
+        schemas: {
+          error: {
+            type: :object,
+            required: %w[success message],
+            properties: {
+              success: { type: :boolean, description: 'response status failure' },
+              message: { type: :string, description: 'validation error message' }
+            }
+          },
+          Unit: model_schema(
+            {
+              id: { type: :integer, example: 1 },
+              title: { type: :string, example: 'Unit 1' },
+              description: { type: :string, example: 'Unit 1 description' },
+              order_index: { type: :integer, example: 1 },
+              section_id: { type: :integer, example: 1 },
+              content_url: { type: :string, example: 'https://example.com/unit1.mp4' }
+            },
+            %w[id title description order_index section_id content_url]
+          ),
+          Section: model_schema(
+            {
+              id: { type: :integer, example: 1 },
+              title: { type: :string, example: 'Section 1' },
+              description: { type: :string, example: 'Section 1 description' },
+              order_index: { type: :integer, example: 1 },
+              course_id: { type: :integer, example: 1 },
+              units: { type: :array, items: model_ref('Unit') }
+            },
+            %w[id title description order_index course_id units]
+          ),
+          Course: model_schema(
+            {
+              id: { type: :integer, example: 1 },
+              name: { type: :string, example: 'Course 1' },
+              description: { type: :string, example: 'Course 1 description' },
+              join_code: { type: :string, example: '123456' },
+              start_date: { type: :string, example: '2025-01-01' },
+              end_date: { type: :string, example: '2025-01-01' },
+              sections: { type: :array, items: model_ref('Section') },
+            },
+            %w[id name description join_code start_date end_date sections]
+          )
+        },
+        'x-responses': {
+          User: {
+            Course: {
+              List: response_model_schema_ref('Course', 'courses', is_array: true)
+            }
+          }
+        }
+      }
     }
   }
 

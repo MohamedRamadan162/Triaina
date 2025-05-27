@@ -3,16 +3,6 @@ openapi: 3.0.1
 info:
   title: Triaina API
   version: v1
-components:
-  securitySchemes:
-    jwtCookie:
-      type: apiKey
-      in: cookie
-      name: jwt
-    refreshCookie:
-      type: apiKey
-      in: cookie
-      name: refresh_token
 paths:
   "/api/v1/auth/signup":
     post:
@@ -351,6 +341,56 @@ paths:
           description: unit deleted
         '401':
           description: unauthorized
+  "/api/v1/users/{id}/courses":
+    get:
+      summary: List all courses for a user
+      tags:
+      - User Courses
+      description: List of courses for a user
+      security:
+      - cookie_auth: []
+      parameters:
+      - name: id
+        in: path
+        required: true
+        description: User ID
+        schema:
+          type: integer
+      responses:
+        '200':
+          description: List of courses
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/x-responses/User/Course/List"
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              examples:
+                example_0:
+                  value:
+                  - success: 'false'
+                    message: Unauthorized Action!
+                  - success: 'false'
+                    message: Missing token in the sent header!
+                  - success: 'false'
+                    message: Invalid token, Authorization failed!
+                  - success: 'false'
+                    message: Token expired, Authorization failed!
+              schema:
+                "$ref": "#/components/schemas/error"
+        '404':
+          description: User not found
+          content:
+            application/json:
+              examples:
+                example_0:
+                  value:
+                    success: 'false'
+                    message: Can not find record with id 1
+              schema:
+                "$ref": "#/components/schemas/error"
   "/api/v1/users/me":
     get:
       summary: Fetch the current user
@@ -411,3 +451,172 @@ servers:
   variables:
     defaultHost:
       default: triaina.com
+components:
+  securitySchemes:
+    jwtCookie:
+      type: apiKey
+      in: cookie
+      name: jwt
+    refreshCookie:
+      type: apiKey
+      in: cookie
+      name: refresh_token
+  parameters:
+    id_param:
+      name: id
+      in: path
+      description: The id to fetch with
+      required: true
+      schema:
+        type: number
+        example: 1
+    locale_param:
+      name: Accept-Language
+      in: header
+      type: string
+      description: "A localiztion param and it only accepts **ar** or **en**. \n\n
+        \            > Please note: in case of passing this param in any protected
+        endpoint\n             it automatically overrides the locale of the current
+        user"
+      required: false
+      schema:
+        type: string
+        example: ar
+        default: en
+    page_param:
+      name: page
+      in: query
+      description: The current page for paginated items, send it with value = -1 if
+        no pagination needed
+      schema:
+        type: number
+        example: 3
+    items_param:
+      name: items
+      in: query
+      description: The number of items per page
+      schema:
+        type: number
+        example: 10
+  schemas:
+    error:
+      type: object
+      required:
+      - success
+      - message
+      properties:
+        success:
+          type: boolean
+          description: response status failure
+        message:
+          type: string
+          description: validation error message
+    Unit:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+        title:
+          type: string
+          example: Unit 1
+        description:
+          type: string
+          example: Unit 1 description
+        order_index:
+          type: integer
+          example: 1
+        section_id:
+          type: integer
+          example: 1
+        content_url:
+          type: string
+          example: https://example.com/unit1.mp4
+      required:
+      - id
+      - title
+      - description
+      - order_index
+      - section_id
+      - content_url
+    Section:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+        title:
+          type: string
+          example: Section 1
+        description:
+          type: string
+          example: Section 1 description
+        order_index:
+          type: integer
+          example: 1
+        course_id:
+          type: integer
+          example: 1
+        units:
+          type: array
+          items:
+            "$ref": "#/components/schemas/Unit"
+      required:
+      - id
+      - title
+      - description
+      - order_index
+      - course_id
+      - units
+    Course:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+        name:
+          type: string
+          example: Course 1
+        description:
+          type: string
+          example: Course 1 description
+        join_code:
+          type: string
+          example: '123456'
+        start_date:
+          type: string
+          example: '2025-01-01'
+        end_date:
+          type: string
+          example: '2025-01-01'
+        sections:
+          type: array
+          items:
+            "$ref": "#/components/schemas/Section"
+      required:
+      - id
+      - name
+      - description
+      - join_code
+      - start_date
+      - end_date
+      - sections
+  x-responses:
+    User:
+      Course:
+        List:
+          type: object
+          required:
+          - success
+          - data
+          properties:
+            success:
+              type: boolean
+              example: true
+            message:
+              type: string
+              description: response message
+            courses:
+              type: array
+              items:
+                "$ref": "#/components/schemas/Course"

@@ -1,0 +1,6 @@
+[
+  {
+    "success": "false",
+    "message": "Cannot delete record because of dependent model"
+  }
+]

@@ -68,12 +68,24 @@ class Api::ApiController < ApplicationController
     { order_by_created_at: :desc }
   end
 
+  def authorize_request
+    authorize([controller_namespace.underscore.to_sym, controller_model])
+  end
+
+  def scope
+    policy_scope([controller_namespace.underscore.to_sym, controller_model])
+  end
+
   def serializer(objects, params: {}, serializer_class: serializer_class())
     serializer_class.render(objects, params)
   end
 
   def controller_model
     controller_name.classify.constantize
+  end
+
+  def controller_namespace
+    self.class.name.split('::')[0]
   end
 
   def serializer_class

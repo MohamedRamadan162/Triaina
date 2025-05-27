@@ -1,6 +1,7 @@
 #################### Users ####################
 namespace :v1 do
   resources :users, controller: "users" do
+    resources :courses, controller: "users/courses", only: [ :index ]
     collection do
       get :me
       patch :me, to: "users#update_me"
