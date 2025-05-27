@@ -3,6 +3,7 @@ require 'rails_helper'
 RSpec.describe ChatChannel, type: :model do
   describe "associations" do
     it { should belong_to(:course) }
+    it { should have_many(:chat_messages).dependent(:destroy) }
   end
 
   describe "validations" do
