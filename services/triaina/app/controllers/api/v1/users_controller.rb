@@ -5,12 +5,14 @@ class Api::V1::UsersController < Api::ApiController
   # Retrieves the current user
   # GET /me
   def me
+    authorize @current_user, :me?
     render_success({ user: serializer(@current_user) })
   end
 
   # Update current user
   # PATCH /me
   def update_me
+      authorize @current_user, :update_me?
     @current_user.update!(update_user_params)
     Rails.cache.write("user_#{@current_user_id}", @current_user)
     UserEventProducer.publish_update_user(@current_user)
@@ -20,6 +22,7 @@ class Api::V1::UsersController < Api::ApiController
   # Deletes the current user
   # DELETE /me
   def delete_me
+    authorize @current_user, :delete_me?
     @current_user.destroy!
     Rails.cache.delete("user_#{@current_user_id}")
     UserEventProducer.publish_delete_user(@current_user)
@@ -29,6 +32,7 @@ class Api::V1::UsersController < Api::ApiController
   # List all users and render them as JSON.
   # GET /
   def index
+    authorize User, :index?
     # List all users
     users = list(User)
     render_success(users: serializer(users))
@@ -37,12 +41,14 @@ class Api::V1::UsersController < Api::ApiController
   # Retrieves a user by id
   # Get /:id
   def show
+    authorize User, :show?
     render_success(user: serializer(@current_user))
   end
 
   # Deletes a user by id
   # DELETE /:id
   def delete
+    authorize User, :destroy?
     @current_user.destroy!
     Rails.cache.delete("user_#{@current_user.id}")
     UserEventProducer.publish_delete_user(@current_user)
@@ -52,12 +58,12 @@ class Api::V1::UsersController < Api::ApiController
   # Update a user by id
   # PATCH /:id
   def update
+    authorize User, :update?
     @current_user.update!(update_user_params)
     Rails.cache.write("user_#{@current_user.id}", @current_user)
     UserEventProducer.publish_update_user(@current_user)
     render_success({ user: serializer(@current_user) })
   end
-
 
   private
 

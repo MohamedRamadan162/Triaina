@@ -1,24 +1,36 @@
 # frozen_string_literal: true
 
 class UserPolicy < ApplicationPolicy
+  def me?
+    @user.present? && @user.id == record.id
+  end
+
+  def update_me?
+    @user.present? && @user.id == record.id
+  end
+
+  def delete_me?
+    @user.present? && @user.id == record.id
+  end
+
   def index?
-    true
+    @user.admin?
   end
 
   def show?
-    true
+    @user.admin?
   end
 
   def create?
-    true
+    @user.admin?
   end
 
   def update?
-    true
+    @user.admin?
   end
 
   def destroy?
-    true
+    @user.admin?
   end
 
   def enrolled?
