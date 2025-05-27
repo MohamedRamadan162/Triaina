@@ -10,6 +10,7 @@ class Api::V1::SectionUnitsController < Api::ApiController
   def create
     unit = SectionUnit.create!(create_unit_params)
     Rails.cache.write("unit_#{unit.id}", unit)
+    SectionUnitEventProducer.publish_create_unit(unit)
     render_success({ unit: serializer(unit) }, :created)
   end
 
@@ -20,6 +21,7 @@ class Api::V1::SectionUnitsController < Api::ApiController
     end
     unit.destroy!
     Rails.cache.delete("unit_#{unit_id}")
+    SectionUnitEventProducer.publish_delete_unit(unit)
     render_success({}, :no_content)
   end
 
@@ -30,6 +32,7 @@ class Api::V1::SectionUnitsController < Api::ApiController
     end
     unit.update!(update_unit_params)
     Rails.cache.write("unit_#{unit.id}", unit)
+    SectionUnitEventProducer.publish_update_unit(unit)
     render_success(unit: serializer(unit))
   end
 

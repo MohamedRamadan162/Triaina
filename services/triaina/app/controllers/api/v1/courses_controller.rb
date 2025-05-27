@@ -15,6 +15,7 @@ class Api::V1::CoursesController < Api::ApiController
   def create
     course = Course.create!(create_course_params.merge(created_by: @current_user.id))
     Rails.cache.write("course_#{course.id}", course)
+    CourseEventProducer.publish_create_course(course)
     render_success({ course: serializer(course) }, :created)
   end
 
@@ -25,6 +26,7 @@ class Api::V1::CoursesController < Api::ApiController
     end
     course.destroy!
     Rails.cache.delete("course_#{params[:id]}")
+    CourseEventProducer.publish_delete_course(course)
     render_success({}, :no_content)
   end
 
@@ -35,6 +37,7 @@ class Api::V1::CoursesController < Api::ApiController
     end
     course.update!(create_course_params)
     Rails.cache.write("course_#{params[:id]}", course)
+    CourseEventProducer.publish_delete_course(course)
     render_success({ course: serializer(course) })
   end
 

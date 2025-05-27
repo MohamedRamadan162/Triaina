@@ -10,6 +10,7 @@ class Api::V1::CourseSectionsController < Api::ApiController
   def create
     section = CourseSection.create!(create_section_params)
     Rails.cache.write("section_#{section.id}", section)
+    CourseSectionEventProducer.publish_create_section(section)
     render_success({ section: serializer(section) }, :created)
   end
 
@@ -20,6 +21,7 @@ class Api::V1::CourseSectionsController < Api::ApiController
     end
     section.destroy!
     Rails.cache.delete("section_#{section_id}")
+    CourseSectionEventProducer.publish_delete_section(section)
     render_success({}, :no_content)
   end
 
@@ -29,6 +31,7 @@ class Api::V1::CourseSectionsController < Api::ApiController
     end
     section.update!(update_section_params)
     Rails.cache.write("section_#{section.id}", section)
+    CourseSectionEventProducer.publish_update_section(section)
     render_success({ section: serializer(section) })
   end
 

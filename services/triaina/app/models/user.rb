@@ -7,6 +7,7 @@ class User < ApplicationRecord
   has_many :refresh_tokens, dependent: :destroy
   has_many :enrollments, dependent: :destroy
   has_many :courses, through: :enrollments
+  has_many :chat_messages, class_name: "ChatMessage", foreign_key: "user_id", dependent: :destroy
 
   ######################### Validations #########################
   validates :username, presence: true, uniqueness: { case_sensitive: false }, length: { minimum: 4 }

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_05_24_155053) do
+ActiveRecord::Schema[8.0].define(version: 2025_05_27_021109) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -40,6 +40,25 @@ ActiveRecord::Schema[8.0].define(version: 2025_05_24_155053) do
     t.bigint "blob_id", null: false
     t.string "variation_digest", null: false
     t.index ["blob_id", "variation_digest"], name: "index_active_storage_variant_records_uniqueness", unique: true
+  end
+
+  create_table "chat_channels", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.string "name", null: false
+    t.string "description"
+    t.uuid "course_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["course_id"], name: "index_chat_channels_on_course_id"
+  end
+
+  create_table "chat_messages", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.text "content", null: false
+    t.uuid "chat_channel_id", null: false
+    t.uuid "user_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["chat_channel_id"], name: "index_chat_messages_on_chat_channel_id"
+    t.index ["user_id"], name: "index_chat_messages_on_user_id"
   end
 
   create_table "course_sections", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
@@ -146,6 +165,9 @@ ActiveRecord::Schema[8.0].define(version: 2025_05_24_155053) do
 
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
+  add_foreign_key "chat_channels", "courses", on_delete: :cascade
+  add_foreign_key "chat_messages", "chat_channels", on_delete: :cascade
+  add_foreign_key "chat_messages", "users", on_delete: :cascade
   add_foreign_key "courses", "users", column: "created_by", on_delete: :cascade
   add_foreign_key "enrollments", "courses"
   add_foreign_key "enrollments", "roles"

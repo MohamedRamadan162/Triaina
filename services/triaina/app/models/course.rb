@@ -1,6 +1,8 @@
 class Course < ApplicationRecord
   belongs_to :user, class_name: "User", foreign_key: "created_by"
   has_many :course_sections, dependent: :destroy
+  has_many :chat_channels, dependent: :destroy
+  has_many :section_units, through: :course_sections
 
   validates :name, presence: true
   validates :join_code, presence: true, uniqueness: true
