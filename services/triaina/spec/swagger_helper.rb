@@ -205,6 +205,23 @@ RSpec.configure do |config|
               verified: { type: :boolean, example: true },
               created_at: { type: :string, format: 'date-time', example: '2025-01-01T00:00:00Z' },
               updated_at: { type: :string, format: 'date-time', example: '2025-01-01T00:00:00Z' }
+            }),
+          ChatChannel: model_schema(
+            {
+              id: { type: :uuid, example: "f47ac10b-58cc-4372-a567-0e02b2c3d479" },
+              name: { type: :string, example: 'General' },
+              messages: { type: :array, items: model_ref('ChatMessage') },
+              course_id: { type: :uuid, example: "f47ac10b-58cc-4372-a567-0e02b2c3d479" },
+              created_at: { type: :string, format: 'date-time', example: '2025-01-01T00:00:00Z' },
+              updated_at: { type: :string, format: 'date-time', example: '2025-01-01T00:00:00Z' }
+            }),
+          ChatMessage: model_schema(
+            {
+              id: { type: :uuid, example: "f47ac10b-58cc-4372-a567-0e02b2c3d479" },
+              content: { type: :string, example: 'Hello, world!' },
+              created_at: { type: :string, format: 'date-time', example: '2025-01-01T00:00:00Z' },
+              updated_at: { type: :string, format: 'date-time', example: '2025-01-01T00:00:00Z' },
+              user_id: { type: :uuid, example: "f47ac10b-58cc-4372-a567-0e02b2c3d479" }
             })
         },
         'x-responses': {
@@ -236,12 +253,26 @@ RSpec.configure do |config|
                 Create: response_model_schema_ref('Unit', 'unit'),
                 Update: response_model_schema_ref('Unit', 'unit')
               }
+            },
+            ChatChannel: {
+              List: response_model_schema_ref('ChatChannel', 'chat_channels', is_array: true),
+              Show: response_model_schema_ref('ChatChannel', 'chat_channel'),
+              Create: response_model_schema_ref('ChatChannel', 'chat_channel'),
+              Update: response_model_schema_ref('ChatChannel', 'chat_channel'),
+              ChatMessage: {
+                List: response_model_schema_ref('ChatMessage', 'chat_messages', is_array: true),
+                Show: response_model_schema_ref('ChatMessage', 'chat_message'),
+                Create: response_model_schema_ref('ChatMessage', 'chat_message'),
+                Update: response_model_schema_ref('ChatMessage', 'chat_message')
+              }
             }
           },
           Error: {
             Unauthorized: response_model_schema_ref('Error', 'message', success: false),
             WrongCredentials: response_model_schema_ref('Error', 'message', success: false),
-            ValidationError: response_model_schema_ref('Error', 'message', success: false)
+            ValidationError: response_model_schema_ref('Error', 'message', success: false),
+            UnprocessableEntity: response_model_schema_ref('Error', 'message', success: false),
+            NotFound: response_model_schema_ref('Error', 'message', success: false)
           }
         }
       }

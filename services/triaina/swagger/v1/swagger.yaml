@@ -88,6 +88,360 @@ paths:
               required:
               - email
               - password
+  "/api/v1/courses/{course_id}/chat_channels/{chat_channel_id}/chat_messages":
+    parameters:
+    - name: course_id
+      in: path
+      description: Course ID
+      required: true
+      schema:
+        type: string
+    - name: chat_channel_id
+      in: path
+      description: Chat Channel ID
+      required: true
+      schema:
+        type: string
+    get:
+      summary: List all messages in a chat channel
+      tags:
+      - Chat Messages
+      security:
+      - cookie_auth: []
+      description: Course or chat channel not found
+      responses:
+        '200':
+          description: list of chat messages
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/x-responses/Course/ChatChannel/ChatMessage/List"
+        '401':
+          description: unauthorized
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/x-responses/Error/Unauthorized"
+        '404':
+          description: not found
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/x-responses/Error/NotFound"
+    post:
+      summary: Create a new message in a chat channel
+      tags:
+      - Chat Messages
+      security:
+      - cookie_auth: []
+      parameters: []
+      description: Invalid parameters provided
+      responses:
+        '201':
+          description: message created
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/x-responses/Course/ChatChannel/ChatMessage/Create"
+        '401':
+          description: unauthorized
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/x-responses/Error/Unauthorized"
+        '404':
+          description: not found
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/x-responses/Error/NotFound"
+        '422':
+          description: unprocessable entity
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/x-responses/Error/UnprocessableEntity"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                content:
+                  type: string
+                  example: Hello, this is a test message
+                  description: Content of the chat message
+                attachment_url:
+                  type: string
+                  example: https://example.com/file.pdf
+                  description: URL of an attached file (optional)
+              required:
+              - content
+  "/api/v1/courses/{course_id}/chat_channels/{chat_channel_id}/chat_messages/{id}":
+    parameters:
+    - name: course_id
+      in: path
+      description: Course ID
+      required: true
+      schema:
+        type: string
+    - name: chat_channel_id
+      in: path
+      description: Chat Channel ID
+      required: true
+      schema:
+        type: string
+    - name: id
+      in: path
+      description: Chat Message ID
+      required: true
+      schema:
+        type: string
+    get:
+      summary: Retrieves a chat message by id
+      tags:
+      - Chat Messages
+      security:
+      - cookie_auth: []
+      description: Course, chat channel, or message not found
+      responses:
+        '200':
+          description: message found
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/x-responses/Course/ChatChannel/ChatMessage/Show"
+        '401':
+          description: unauthorized
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/x-responses/Error/Unauthorized"
+        '404':
+          description: not found
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/x-responses/Error/NotFound"
+    patch:
+      summary: Update a chat message by id
+      tags:
+      - Chat Messages
+      security:
+      - cookie_auth: []
+      parameters: []
+      description: Invalid parameters provided
+      responses:
+        '200':
+          description: message updated
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/x-responses/Course/ChatChannel/ChatMessage/Update"
+        '401':
+          description: unauthorized
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/x-responses/Error/Unauthorized"
+        '404':
+          description: not found
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/x-responses/Error/NotFound"
+        '422':
+          description: unprocessable entity
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/x-responses/Error/UnprocessableEntity"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                content:
+                  type: string
+                  example: Updated message content
+                  description: Updated content of the chat message
+                edited:
+                  type: boolean
+                  example: true
+                  description: Mark message as edited
+              required: []
+    delete:
+      summary: Deletes a chat message by id
+      tags:
+      - Chat Messages
+      security:
+      - cookie_auth: []
+      description: Course, chat channel, or message not found
+      responses:
+        '204':
+          description: message deleted
+        '401':
+          description: unauthorized
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/x-responses/Error/Unauthorized"
+        '404':
+          description: not found
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/x-responses/Error/NotFound"
+  "/api/v1/courses/{course_id}/chat_channels":
+    parameters:
+    - name: course_id
+      in: path
+      description: Course ID
+      required: true
+      schema:
+        type: string
+    get:
+      summary: List all chat channels in a course
+      tags:
+      - Chat Channels
+      security:
+      - cookie_auth: []
+      description: Unauthorized access to list chat channels
+      responses:
+        '200':
+          description: list of chat channels
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/x-responses/Course/ChatChannel/List"
+        '401':
+          description: unauthorized
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/x-responses/Error/Unauthorized"
+    post:
+      summary: Create a new chat channel
+      tags:
+      - Chat Channels
+      security:
+      - cookie_auth: []
+      parameters: []
+      description: Unauthorized access to create chat channel
+      responses:
+        '201':
+          description: channel created
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/x-responses/Course/ChatChannel/Create"
+        '401':
+          description: unauthorized
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/x-responses/Error/Unauthorized"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  example: General Discussion
+                  description: Name of the chat channel
+                description:
+                  type: string
+                  example: A channel for general course discussions
+                  description: Description of the chat channel
+              required:
+              - name
+  "/api/v1/courses/{course_id}/chat_channels/{id}":
+    parameters:
+    - name: course_id
+      in: path
+      description: Course ID
+      required: true
+      schema:
+        type: string
+    - name: id
+      in: path
+      description: Chat Channel ID
+      required: true
+      schema:
+        type: string
+    get:
+      summary: Get a specific chat channel
+      tags:
+      - Chat Channels
+      security:
+      - cookie_auth: []
+      description: Unauthorized access to chat channel
+      responses:
+        '200':
+          description: channel found
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/x-responses/Course/ChatChannel/Show"
+        '401':
+          description: unauthorized
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/x-responses/Error/Unauthorized"
+    patch:
+      summary: Update a chat channel
+      tags:
+      - Chat Channels
+      security:
+      - cookie_auth: []
+      parameters: []
+      description: Unauthorized access to update chat channel
+      responses:
+        '200':
+          description: channel updated
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/x-responses/Course/ChatChannel/Update"
+        '401':
+          description: unauthorized
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/x-responses/Error/Unauthorized"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  example: Updated Channel Name
+                description:
+                  type: string
+                  example: Updated channel description
+              required: []
+    delete:
+      summary: Delete a chat channel
+      tags:
+      - Chat Channels
+      security:
+      - cookie_auth: []
+      description: Unauthorized access to delete chat channel
+      responses:
+        '204':
+          description: channel deleted
+        '401':
+          description: unauthorized
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/x-responses/Error/Unauthorized"
   "/api/v1/courses/{course_id}/sections":
     parameters:
     - name: course_id
@@ -824,6 +1178,50 @@ components:
           type: string
           format: date-time
           example: '2025-01-01T00:00:00Z'
+    ChatChannel:
+      type: object
+      properties:
+        id:
+          type: uuid
+          example: f47ac10b-58cc-4372-a567-0e02b2c3d479
+        name:
+          type: string
+          example: General
+        messages:
+          type: array
+          items:
+            "$ref": "#/components/schemas/ChatMessage"
+        course_id:
+          type: uuid
+          example: f47ac10b-58cc-4372-a567-0e02b2c3d479
+        created_at:
+          type: string
+          format: date-time
+          example: '2025-01-01T00:00:00Z'
+        updated_at:
+          type: string
+          format: date-time
+          example: '2025-01-01T00:00:00Z'
+    ChatMessage:
+      type: object
+      properties:
+        id:
+          type: uuid
+          example: f47ac10b-58cc-4372-a567-0e02b2c3d479
+        content:
+          type: string
+          example: Hello, world!
+        created_at:
+          type: string
+          format: date-time
+          example: '2025-01-01T00:00:00Z'
+        updated_at:
+          type: string
+          format: date-time
+          example: '2025-01-01T00:00:00Z'
+        user_id:
+          type: uuid
+          example: f47ac10b-58cc-4372-a567-0e02b2c3d479
   x-responses:
     Auth:
       Signup:
@@ -1039,6 +1437,100 @@ components:
                 example: true
               unit:
                 "$ref": "#/components/schemas/Unit"
+      ChatChannel:
+        List:
+          type: object
+          required:
+          - success
+          - data
+          properties:
+            success:
+              type: boolean
+              example: true
+            chat_channels:
+              type: array
+              items:
+                "$ref": "#/components/schemas/ChatChannel"
+        Show:
+          type: object
+          required:
+          - success
+          - data
+          properties:
+            success:
+              type: boolean
+              example: true
+            chat_channel:
+              "$ref": "#/components/schemas/ChatChannel"
+        Create:
+          type: object
+          required:
+          - success
+          - data
+          properties:
+            success:
+              type: boolean
+              example: true
+            chat_channel:
+              "$ref": "#/components/schemas/ChatChannel"
+        Update:
+          type: object
+          required:
+          - success
+          - data
+          properties:
+            success:
+              type: boolean
+              example: true
+            chat_channel:
+              "$ref": "#/components/schemas/ChatChannel"
+        ChatMessage:
+          List:
+            type: object
+            required:
+            - success
+            - data
+            properties:
+              success:
+                type: boolean
+                example: true
+              chat_messages:
+                type: array
+                items:
+                  "$ref": "#/components/schemas/ChatMessage"
+          Show:
+            type: object
+            required:
+            - success
+            - data
+            properties:
+              success:
+                type: boolean
+                example: true
+              chat_message:
+                "$ref": "#/components/schemas/ChatMessage"
+          Create:
+            type: object
+            required:
+            - success
+            - data
+            properties:
+              success:
+                type: boolean
+                example: true
+              chat_message:
+                "$ref": "#/components/schemas/ChatMessage"
+          Update:
+            type: object
+            required:
+            - success
+            - data
+            properties:
+              success:
+                type: boolean
+                example: true
+              chat_message:
+                "$ref": "#/components/schemas/ChatMessage"
     Error:
       Unauthorized:
         type: object
@@ -1063,6 +1555,28 @@ components:
           message:
             "$ref": "#/components/schemas/Error"
       ValidationError:
+        type: object
+        required:
+        - success
+        - data
+        properties:
+          success:
+            type: boolean
+            example: false
+          message:
+            "$ref": "#/components/schemas/Error"
+      UnprocessableEntity:
+        type: object
+        required:
+        - success
+        - data
+        properties:
+          success:
+            type: boolean
+            example: false
+          message:
+            "$ref": "#/components/schemas/Error"
+      NotFound:
         type: object
         required:
         - success
