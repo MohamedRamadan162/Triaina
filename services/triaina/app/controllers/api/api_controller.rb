@@ -69,11 +69,11 @@ class Api::ApiController < ApplicationController
   end
 
   def authorize_request
-    authorize([controller_namespace.underscore.to_sym, controller_model])
+    authorize([ controller_namespace.underscore.to_sym, controller_model ])
   end
 
   def scope
-    policy_scope([controller_namespace.underscore.to_sym, controller_model])
+    policy_scope([ controller_namespace.underscore.to_sym, controller_model ])
   end
 
   def serializer(objects, params: {}, serializer_class: serializer_class())
@@ -85,7 +85,7 @@ class Api::ApiController < ApplicationController
   end
 
   def controller_namespace
-    self.class.name.split('::')[0]
+    self.class.name.split("::")[0]
   end
 
   def serializer_class

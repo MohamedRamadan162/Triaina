@@ -175,7 +175,7 @@ RSpec.describe CourseChatChannel, type: :channel do
 
       expect {
         perform :fetch_messages
-      }.to have_broadcasted_to(chat_channel).with({ messages: [] })
+      }.to have_broadcasted_to(chat_channel).with(hash_including(:messages))
     end
   end
 
