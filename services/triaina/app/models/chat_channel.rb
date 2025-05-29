@@ -5,4 +5,9 @@ class ChatChannel < ApplicationRecord
   ############################################# ASSOCIATIONS #############################################
   belongs_to :course, class_name: "Course", foreign_key: "course_id"
   has_many :chat_messages, class_name: "ChatMessage", foreign_key: "chat_channel_id", dependent: :destroy
+
+  ############################################## METHODS #############################################
+  def send_message(user, content)
+    chat_messages.create!(user: user, content: content)
+  end
 end
