@@ -1,0 +1,245 @@
+openapi: 3.0.0
+info:
+  title: Course Chat Channel WebSocket API
+  version: 1.0.0
+  description: WebSocket API for real-time chat functionality in courses using ActionCable
+
+servers:
+  - url: ws://localhost:3000/cable
+    description: WebSocket connection endpoint
+    protocol: ws
+  - url: wss://api.example.com/cable
+    description: Secure WebSocket connection endpoint (production)
+    protocol: wss
+
+paths:
+  /cable:
+    get:
+      summary: WebSocket Connection Endpoint
+      description: |
+        Establishes a WebSocket connection for ActionCable.
+        After connection, subscribe to the CourseChatChannel with a specific channel_id.
+      tags:
+        - WebSocket
+      responses:
+        "101":
+          description: Switching Protocols - WebSocket connection established
+        "401":
+          description: Unauthorized - Authentication required
+
+components:
+  schemas:
+    # Subscription Message
+    SubscriptionMessage:
+      type: object
+      required:
+        - command
+        - identifier
+      properties:
+        command:
+          type: string
+          enum: [subscribe]
+          example: subscribe
+        identifier:
+          type: string
+          description: JSON string containing channel and parameters
+          example: '{"channel":"CourseChatChannel","channel_id":"123"}'
+
+    # Action Message Base
+    ActionMessage:
+      type: object
+      required:
+        - command
+        - identifier
+        - data
+      properties:
+        command:
+          type: string
+          enum: [message]
+          example: message
+        identifier:
+          type: string
+          description: JSON string containing channel and parameters
+          example: '{"channel":"CourseChatChannel","channel_id":"123"}'
+        data:
+          type: string
+          description: JSON string containing action and parameters
+
+    # Client -> Server Messages
+    SendMessageAction:
+      type: object
+      properties:
+        action:
+          type: string
+          enum: [send_message]
+          example: send_message
+        message:
+          type: string
+          description: Content of the message to send
+          example: "Hello, this is a test message"
+
+    UpdateMessageAction:
+      type: object
+      properties:
+        action:
+          type: string
+          enum: [update_message]
+          example: update_message
+        message_id:
+          type: string
+          description: ID of the message to update
+          example: "123e4567-e89b-12d3-a456-426614174000"
+        content:
+          type: string
+          description: New content for the message
+          example: "Updated message content"
+
+    DeleteMessageAction:
+      type: object
+      properties:
+        action:
+          type: string
+          enum: [delete_message]
+          example: delete_message
+        message_id:
+          type: string
+          description: ID of the message to delete
+          example: "123e4567-e89b-12d3-a456-426614174000"
+
+    FetchMessagesAction:
+      type: object
+      properties:
+        action:
+          type: string
+          enum: [fetch_messages]
+          example: fetch_messages
+
+    # Server -> Client Messages
+    ConfirmationMessage:
+      type: object
+      properties:
+        identifier:
+          type: string
+        message:
+          type: object
+          properties:
+            channel_id:
+              type: integer
+            type:
+              type: string
+              enum: [confirm_subscription, reject_subscription]
+
+    BroadcastMessage:
+      type: object
+      properties:
+        identifier:
+          type: string
+          example: '{"channel":"CourseChatChannel","channel_id":"123"}'
+        message:
+          oneOf:
+            - $ref: "#/components/schemas/MessageBroadcast"
+            - $ref: "#/components/schemas/MessagesBroadcast"
+            - $ref: "#/components/schemas/DeleteBroadcast"
+
+    MessageBroadcast:
+      type: object
+      properties:
+        message:
+          $ref: "#/components/schemas/ChatMessage"
+
+    MessagesBroadcast:
+      type: object
+      properties:
+        messages:
+          type: array
+          items:
+            $ref: "#/components/schemas/ChatMessage"
+
+    DeleteBroadcast:
+      type: object
+      properties:
+        message_id:
+          type: string
+          description: ID of the deleted message
+
+    ChatMessage:
+      type: object
+      properties:
+        id:
+          type: string
+          example: "123e4567-e89b-12d3-a456-426614174000"
+        content:
+          type: string
+          example: "Hello, this is a chat message"
+        user_id:
+          type: string
+          example: "456e7890-e89b-12d3-a456-426614174000"
+        chat_channel_id:
+          type: string
+          example: "789e0123-e89b-12d3-a456-426614174000"
+        created_at:
+          type: string
+          format: date-time
+          example: "2023-11-29T10:30:00.000Z"
+        updated_at:
+          type: string
+          format: date-time
+          example: "2023-11-29T10:30:00.000Z"
+
+x-websocket-operations:
+  subscribe:
+    description: Subscribe to a chat channel
+    message:
+      example:
+        command: subscribe
+        identifier: '{"channel":"CourseChatChannel","channel_id":"123"}'
+
+  send_message:
+    description: Send a new message to the chat channel
+    message:
+      example:
+        command: message
+        identifier: '{"channel":"CourseChatChannel","channel_id":"123"}'
+        data: '{"action":"send_message","message":"Hello, world!"}'
+
+  update_message:
+    description: Update an existing message (only by message owner)
+    message:
+      example:
+        command: message
+        identifier: '{"channel":"CourseChatChannel","channel_id":"123"}'
+        data: '{"action":"update_message","message_id":"msg-123","content":"Updated content"}'
+
+  delete_message:
+    description: Delete a message (only by message owner)
+    message:
+      example:
+        command: message
+        identifier: '{"channel":"CourseChatChannel","channel_id":"123"}'
+        data: '{"action":"delete_message","message_id":"msg-123"}'
+
+  fetch_messages:
+    description: Fetch all messages in the chat channel
+    message:
+      example:
+        command: message
+        identifier: '{"channel":"CourseChatChannel","channel_id":"123"}'
+        data: '{"action":"fetch_messages"}'
+
+x-authentication:
+  description: |
+    Authentication is handled through cookies set during the HTTP login process.
+    The WebSocket connection will use these cookies for authentication.
+  type: cookie
+  name: _session_id
+
+x-error-handling:
+  rejected:
+    description: |
+      When an action is rejected (e.g., trying to update/delete another user's message),
+      the connection will receive a rejection message and the action will not be performed.
+
+  record_not_found:
+    description: |
+      When a record is not found (e.g., invalid channel_id or message_id),
+      an error will be raised and the connection may be terminated.
