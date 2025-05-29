@@ -1,0 +1,69 @@
+openapi: 3.0.3
+info:
+  title: Course Chat WebSocket API
+  version: 1.0.0
+  description: |
+    This WebSocket API allows clients to connect to the CourseChatChannel
+    for sending and receiving chat messages in real-time.
+
+servers:
+  - url: ws://localhost:3000/cable
+    description: Local development WebSocket server
+
+paths:
+  /cable:
+    description: WebSocket endpoint for ActionCable
+    summary: WebSocket connection endpoint
+    x-websocket: true
+    x-description: |
+      Clients open a WebSocket connection here and send JSON commands
+      to subscribe, unsubscribe, and send messages.
+
+websocket:
+  protocols:
+    - actioncable
+
+  messages:
+    - name: subscribe
+      description: Subscribe to a channel.
+      example:
+        command: subscribe
+        identifier: '{"channel":"CourseChatChannel","channel_id":"<UUID>"}'
+
+    - name: unsubscribe
+      description: Unsubscribe from a channel.
+      example:
+        command: unsubscribe
+        identifier: '{"channel":"CourseChatChannel","channel_id":"<UUID>"}'
+
+    - name: send_message
+      description: Send a chat message to the subscribed channel.
+      example:
+        command: message
+        identifier: '{"channel":"CourseChatChannel","channel_id":"<UUID>"}'
+        data: '{"action":"send_message","message":"Hello everyone!"}'
+
+    - name: receive_message
+      description: Server sends a message broadcasted to the channel.
+      example:
+        message:
+          message:
+            user: "user@example.com"
+            content: "Hello everyone!"
+            timestamp: "2025-05-29T05:00:00Z"
+
+components:
+  schemas:
+    ChatMessage:
+      type: object
+      properties:
+        user:
+          type: string
+          description: User identifier or email
+        content:
+          type: string
+          description: Message content
+        timestamp:
+          type: string
+          format: date-time
+          description: Message timestamp
