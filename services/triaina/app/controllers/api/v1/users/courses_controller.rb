@@ -15,10 +15,10 @@ class Api::V1::Users::CoursesController < Api::ApiController
   private
 
   def scope
-    policy_scope(Course, policy_scope_class: UserPolicy::Scope)
+    policy_scope(Course, policy_scope_class: User::CoursePolicy::Scope)
   end
 
   def authorize_request
-    authorize(User, policy_class: UserPolicy)
+    authorize(User, policy_class: User::CoursePolicy)
   end
 end

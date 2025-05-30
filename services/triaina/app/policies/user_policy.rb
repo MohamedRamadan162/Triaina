@@ -32,19 +32,4 @@ class UserPolicy < ApplicationPolicy
   def destroy?
     @user.admin?
   end
-
-  def enrolled?
-    true
-  end
-
-  class Scope < Scope
-    def initialize(user, scope)
-      super
-      @courses = user.courses
-    end
-
-    def resolve
-      @courses
-    end
-  end
 end
