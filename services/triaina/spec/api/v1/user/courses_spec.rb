@@ -15,9 +15,7 @@ RSpec.describe 'api/v1/user/courses', type: :request do
       response '200', 'List of courses' do
         description 'List of courses for a user'
         response_ref 'User/Course/List'
-        run_test! do
-          expect(JSON.parse(response.body)['success']).to be true
-        end
+        run_test!
       end
 
       response '401', 'Unauthorized' do

@@ -8,6 +8,7 @@ class Role < ApplicationRecord
   has_many :users
   has_many :RolePermissions, dependent: :destroy
   has_many :permissions, through: :RolePermissions
+  has_many :abilities, through: :permissions
 end
 
 # == Schema Information
