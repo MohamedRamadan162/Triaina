@@ -1,11 +1,7 @@
 class ChatMessageSerializer < ApplicationSerializer
-  attributes :id, :content, :created_at, :updated_at, :user_id, :chat_channel_id
+  attributes :id, :content, :created_at, :updated_at
 
-  def user_id
-    object.user.id
-  end
-
-  def chat_id
-    object.chat_channel.id
+  attribute :user do
+    UserSerializer.render(object.user)
   end
 end

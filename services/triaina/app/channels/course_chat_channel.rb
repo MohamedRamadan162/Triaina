@@ -1,4 +1,6 @@
 class CourseChatChannel < ApplicationCable::Channel
+  include Pagy::Backend  # ✅ Add this line
+
   def subscribed
     chat_channel = ChatChannel.find(params[:channel_id])
     stream_for chat_channel
@@ -45,11 +47,25 @@ class CourseChatChannel < ApplicationCable::Channel
     end
   end
 
-  def fetch_messages
+  def fetch_messages(data)
     chat_channel = ChatChannel.find(params[:channel_id])
-    messages = chat_channel.chat_messages.order(created_at: :asc)
+    pagy, messages = pagy(chat_channel.chat_messages.order(created_at: :asc), items: 100, page: data["page"] || 1)
+
     CourseChatChannel.broadcast_to(chat_channel, {
-      messages: messages.map { |msg| render_message(msg) }
+      messages: messages.map { |msg| render_message(msg) },
+      pagy: {
+        page: pagy.page,
+        pages: pagy.pages,
+        count: pagy.count,
+        prev: pagy.prev,
+        next: pagy.next
+      }
+    })
+
+  rescue Pagy::OverflowError
+    CourseChatChannel.broadcast_to(chat_channel, {
+      type: "error",
+      message: "Page not found"
     })
   end
 
