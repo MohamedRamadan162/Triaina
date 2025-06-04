@@ -5,3 +5,7 @@ metadata:
   namespace: triaina
 data:
   RAILS_ENV: development
+  POSTGRES_HOST: host.docker.internal
+  POSTGRES_PORT: "5432"
+  REDIS_ENDPOINT: redis://host.docker.internal:6379
+  KAFKA_BROKERS: host.docker.internal:9092

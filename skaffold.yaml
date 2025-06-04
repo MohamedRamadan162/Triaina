@@ -1,70 +1,53 @@
-apiVersion: skaffold/v4beta11
+apiVersion: skaffold/v4beta13
 kind: Config
 metadata:
   name: triaina-backend
 build:
   artifacts:
-    - image: 000000000000.dkr.ecr.us-west-1.localhost.localstack.cloud:4566/triaina-auth-module
-      context: ./services/auth-service
-      docker:
-        dockerfile: Dockerfile.dev
-    - image: 000000000000.dkr.ecr.us-west-1.localhost.localstack.cloud:4566/triaina-user-module
-      context: ./services/user-service
-      docker:
-        dockerfile: Dockerfile.dev
-    - image: 000000000000.dkr.ecr.us-west-1.localhost.localstack.cloud:4566/triaina-course-module
-      context: ./services/course-service
-      docker:
-        dockerfile: Dockerfile.dev
-    - image: 000000000000.dkr.ecr.us-west-1.localhost.localstack.cloud:4566/triaina-static-content-module
-      context: ./services/static-content-service
+    - image: localhost:5001/triaina-backend # skaffold lives on the machine
+      context: ./services/triaina
       docker:
         dockerfile: Dockerfile.dev
   tagPolicy:
-    gitCommit: {}
+    customTemplate:
+      template: "latest"
   local:
     push: true
-    concurrency: 0
-    useDockerCLI: true
 
 manifests:
   rawYaml:
-    # - https://github.com/kubernetes-sigs/metrics-server/releases/latest/download/components.yaml
     - k8s/*.yaml
     - k8s/configmaps/*.yaml
     - k8s/secrets/*.yaml
     - k8s/api-gateway/*.yaml
-    - k8s/auth-service/*.yaml
-    - k8s/user-service/*.yaml
-    - k8s/course-service/*.yaml
-    - k8s/static-content-service/*.yaml
+    - k8s/triaina/*.yaml
 
-deploy:
-  # helm:
-  #   releases:
-  #     - name: kong
-  #       # chartPath: ./k8s/.charts/ingress
-  #       remoteChart: ingress
-  #       repo: https://charts.konghq.com
-  #       namespace: kong
-  #       createNamespace: true
-  #       valuesFiles:
-  #         ## Config for the gateway
-  #         - k8s/api-gateway/config/kong-values.yaml
-  #       wait: true
-  #   hooks:
-  #     before:
-  #       - host:
-  #           command:
-  #             [
-  #               "kubectl",
-  #               "apply",
-  #               "-f",
-  #               "https://github.com/kubernetes-sigs/gateway-api/releases/download/v1.2.0/standard-install.yaml",
-  #             ]
-  kubectl: {}
-  logs:
-    prefix: auto
+# deploy:
+#   # helm:
+#   #   releases:
+#   #     - name: kong
+#   #       # chartPath: ./k8s/.charts/ingress
+#   #       remoteChart: ingress
+#   #       repo: https://charts.konghq.com
+#   #       namespace: kong
+#   #       createNamespace: true
+#   #       valuesFiles:
+#   #         ## Config for the gateway
+#   #         - k8s/api-gateway/config/kong-values.yaml
+#   #       wait: true
+#   #   hooks:
+#   #     before:
+#   #       - host:
+#   #           command:
+#   #             [
+#   #               "kubectl",
+#   #               "apply",
+#   #               "-f",
+#   #               "https://github.com/kubernetes-sigs/gateway-api/releases/download/v1.2.0/standard-install.yaml",
+#   #             ]
+#   kubectl: {}
+#   logs:
+#     prefix: auto
 portForward:
   - resourceType: Service
     resourceName: kong-gateway-proxy

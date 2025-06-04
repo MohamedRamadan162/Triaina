@@ -1,11 +1,10 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: user-module
+  name: triaina-backend
   namespace: triaina
   labels:
-    app: user-module
-    component: user-content
+    app: triaina-backend
 spec:
   strategy:
     type: RollingUpdate
@@ -14,18 +13,17 @@ spec:
       maxUnavailable: 0 # No down pods
   selector:
     matchLabels:
-      app: user-module
+      app: triaina-backend
   template:
     metadata:
       labels:
-        app: user-module
-        component: serve-static-content
+        app: triaina-backend
     spec:
       # imagePullSecrets:
       #   - name: ghcr-secret
       containers:
-        - name: user-module
-          image: 000000000000.dkr.ecr.us-west-1.localhost.localstack.cloud:4566/triaina-user-module
+        - name: triaina-backend
+          image: localhost:5001/triaina-backend:latest
           envFrom:
             - configMapRef:
                 name: aws-configmap
@@ -40,7 +38,7 @@ spec:
               memory: "64Mi"
               cpu: "250m"
             limits:
-              memory: "128Mi"
+              memory: "1Gi"
               cpu: "500m"
           ports:
             - containerPort: 3000
@@ -71,26 +69,26 @@ spec:
               podAffinityTerm:
                 labelSelector:
                   matchLabels:
-                    app: user-module
+                    app: triaina-backend
                 topologyKey: kubernetes.io/zone
             ## Different nodes for fault tolerance and parallelism on the machine
             - weight: 70
               podAffinityTerm:
                 labelSelector:
                   matchLabels:
-                    app: user-module
+                    app: triaina-backend
                 topologyKey: kubernetes.io/hostname
 ---
 apiVersion: autoscaling/v2
 kind: HorizontalPodAutoscaler
 metadata:
-  name: user-module-hpa
+  name: triaina-backend-hpa
   namespace: triaina
 spec:
   scaleTargetRef:
     apiVersion: apps/v1
     kind: Deployment
-    name: user-module
+    name: triaina-backend
   minReplicas: 1
   maxReplicas: 10
   metrics:
@@ -127,27 +125,26 @@ spec:
 apiVersion: policy/v1
 kind: PodDisruptionBudget
 metadata:
-  name: user-module-pdb
+  name: triaina-backend-pdb
   namespace: triaina
 spec:
   ## 100% of pods must be up at all times (auth service is critical for the app)
   minAvailable: "100%"
   selector:
     matchLabels:
-      app: user-module
+      app: triaina-backend
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: user-service
+  name: triaina-backend-service
   namespace: triaina
   labels:
-    app: user-module
-    component: serve-static-content
+    app: triaina-backend
 spec:
   type: ClusterIP
   selector:
-    app: user-module
+    app: triaina-backend
   ports:
     - name: http
       port: 80 # Port exposed by the service
