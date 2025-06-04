@@ -6,7 +6,12 @@ class Api::ApiController < ApplicationController
 
   # Policies
   def pundit_user
-    @current_user
+    {
+      user: Current.user,
+      controller: controller_path.sub(/^api\/v1\//, ''),
+      action: action_name,
+      param_id: params[:id]
+    }
   end
 
   # Authenticate user

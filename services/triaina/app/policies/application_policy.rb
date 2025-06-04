@@ -1,11 +1,24 @@
 # frozen_string_literal: true
 
 class ApplicationPolicy
-  attr_reader :user, :record
+  attr_reader :user, :record, :controller, :action, :param_id
 
-  def initialize(user, record)
-    @user = user
+  def initialize(context, record)
+    @user = context[:user]
+    @controller = context[:controller]
+    @action = context[:action]
+    @param_id = context[:param_id]
     @record = record
+  end
+
+  def allowed?
+    return true if @user.admin?
+    user_has_required_ability?
+  end
+
+  def user_has_required_ability?
+    required_ability = "#{@controller}##{@action}"
+    Enrollment.where(user: @user, course: Course.find_by(id: @param_id)).role.abilities.where(name: required_ability).exists?
   end
 
   def index?

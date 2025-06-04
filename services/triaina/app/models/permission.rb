@@ -8,6 +8,7 @@ class Permission < ApplicationRecord
   ######################### Associations #########################
   has_many :role_permissions, dependent: :destroy
   has_many :roles, through: :role_permissions
+  has_many :abilities, dependent: :destroy
 end
 
 # == Schema Information

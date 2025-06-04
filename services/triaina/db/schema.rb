@@ -10,9 +10,17 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_05_27_161644) do
+ActiveRecord::Schema[8.0].define(version: 2025_05_29_152227) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
+
+  create_table "abilities", force: :cascade do |t|
+    t.string "name"
+    t.bigint "permission_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["permission_id"], name: "index_abilities_on_permission_id"
+  end
 
   create_table "active_storage_attachments", force: :cascade do |t|
     t.string "name", null: false
@@ -98,11 +106,10 @@ ActiveRecord::Schema[8.0].define(version: 2025_05_27_161644) do
   end
 
   create_table "permissions", force: :cascade do |t|
-    t.string "action", null: false
-    t.string "subject", null: false
+    t.string "action"
+    t.string "subject"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["action", "subject"], name: "index_permissions_on_action_and_subject", unique: true
   end
 
   create_table "refresh_tokens", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
@@ -127,11 +134,10 @@ ActiveRecord::Schema[8.0].define(version: 2025_05_27_161644) do
   end
 
   create_table "roles", force: :cascade do |t|
-    t.string "name", null: false
+    t.string "name"
     t.text "description"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["name"], name: "index_roles_on_name", unique: true
   end
 
   create_table "section_units", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
@@ -164,6 +170,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_05_27_161644) do
     t.index ["username"], name: "index_users_on_username", unique: true
   end
 
+  add_foreign_key "abilities", "permissions"
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
   add_foreign_key "chat_channels", "courses", on_delete: :cascade
