@@ -13,7 +13,7 @@ jobs:
         ports:
           - "5432:5432"
         env:
-          POSTGRES_DB: rails_test
+          POSTGRES_DB: triaina_test
           POSTGRES_USER: rails
           POSTGRES_PASSWORD: password
     env:
@@ -21,7 +21,7 @@ jobs:
       POSTGRES_HOST: localhost
       POSTGRES_PORT: 5432
       POSTGRES_USERNAME: rails
-      POSTGRES_PASSWORD: dpassword
+      POSTGRES_PASSWORD: password
       JWT_SECRET: secret
     steps:
       - name: Checkout code
