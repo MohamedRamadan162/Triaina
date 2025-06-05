@@ -44,7 +44,7 @@ jobs:
 
         
       - name: Run tests
-        run: rspec spec/tests
+        run: bin/rspec spec/tests
         working-directory: services/triaina
 
 
