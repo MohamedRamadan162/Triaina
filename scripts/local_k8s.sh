@@ -54,16 +54,16 @@ data:
     help: "https://kind.sigs.k8s.io/docs/user/local-registry/"
 EOF
 
-# Install the CRD
+# # Install the CRD
 kubectl apply -f https://github.com/kubernetes-sigs/metrics-server/releases/latest/download/components.yaml
 kubectl apply -f https://github.com/kubernetes-sigs/gateway-api/releases/download/v1.2.0/standard-install.yaml
-helm repo add kong https://charts.konghq.com
-helm repo update
-helm install kong kong/kong --namespace kong --create-namespace
-if helm ls --namespace kong | grep -q 'kong'; then
-  echo "Kong is already installed. Upgrading the installation..."
-  helm upgrade kong kong/ingress -f "${ROOT_DIR}/k8s/api-gateway/config/kong-values.yaml" --namespace kong --wait
-else
-  echo "Kong is not installed. Installing..."
-  helm install kong kong/ingress -f "${ROOT_DIR}/k8s/api-gateway/config/kong-values.yaml" --namespace kong --create-namespace --wait
-fi
+# helm repo add kong https://charts.konghq.com
+# helm repo update
+# helm install kong kong/kong --namespace kong --create-namespace
+# if helm ls --namespace kong | grep -q 'kong'; then
+#   echo "Kong is already installed. Upgrading the installation..."
+#   helm upgrade kong kong/ingress -f "${ROOT_DIR}/k8s/api-gateway/config/kong-values.yaml" --namespace kong --wait
+# else
+#   echo "Kong is not installed. Installing..."
+#   helm install kong kong/ingress -f "${ROOT_DIR}/k8s/api-gateway/config/kong-values.yaml" --namespace kong --create-namespace --wait
+# fi

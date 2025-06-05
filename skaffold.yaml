@@ -13,7 +13,6 @@ build:
       template: "latest"
   local:
     push: true
-
 manifests:
   rawYaml:
     - k8s/*.yaml
@@ -21,33 +20,17 @@ manifests:
     - k8s/secrets/*.yaml
     - k8s/api-gateway/*.yaml
     - k8s/triaina/*.yaml
-
-# deploy:
-#   # helm:
-#   #   releases:
-#   #     - name: kong
-#   #       # chartPath: ./k8s/.charts/ingress
-#   #       remoteChart: ingress
-#   #       repo: https://charts.konghq.com
-#   #       namespace: kong
-#   #       createNamespace: true
-#   #       valuesFiles:
-#   #         ## Config for the gateway
-#   #         - k8s/api-gateway/config/kong-values.yaml
-#   #       wait: true
-#   #   hooks:
-#   #     before:
-#   #       - host:
-#   #           command:
-#   #             [
-#   #               "kubectl",
-#   #               "apply",
-#   #               "-f",
-#   #               "https://github.com/kubernetes-sigs/gateway-api/releases/download/v1.2.0/standard-install.yaml",
-#   #             ]
-#   kubectl: {}
-#   logs:
-#     prefix: auto
+deploy:
+  helm:
+    releases:
+      - name: kong
+        namespace: kong
+        createNamespace: true
+        repo: https://charts.konghq.com
+        remoteChart: ingress
+        valuesFiles:
+          - ./k8s/api-gateway/config/kong-values.yaml
+        wait: true
 portForward:
   - resourceType: Service
     resourceName: kong-gateway-proxy
