@@ -26,26 +26,22 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
-
-      - name: Delete lockfile
-        run: rm -f services/triaina/Gemfile.lock
-
-      - name: Install Ruby and gems
-        uses: ruby/setup-ruby@v1
-
-        with:
-          bundler-cache: true
-          ruby-version: "3.3.6"
-          working-directory: services/triaina
-
-      - name: Set up database schema
-        run: bin/rails db:prepare
+      - name: Build docker image
+        run: docker build -t triaina-backend -f Dockerfile.dev .
         working-directory: services/triaina
-
-        
       - name: Run tests
-        run: bundle exec rspec spec/tests
+        run: |
+          docker run --rm \
+            --network host \
+            -e RAILS_ENV=test \
+            -e POSTGRES_HOST=localhost \
+            -e POSTGRES_PORT=5432 \
+            -e POSTGRES_USERNAME=rails \
+            -e POSTGRES_PASSWORD=password \
+            triaina-backend \
+            bundle exec rspec
         working-directory: services/triaina
+
 
 
   # lint:
