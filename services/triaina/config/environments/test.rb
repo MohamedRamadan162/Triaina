@@ -52,5 +52,5 @@ Rails.application.configure do
   config.action_controller.raise_on_missing_callback_actions = true
 
   config.active_storage.service = :local
-  config.cache_store = :local_cache_store, { size: 64.megabytes }
+  config.cache_store = :memory_store, { size: 64.megabytes }
 end
