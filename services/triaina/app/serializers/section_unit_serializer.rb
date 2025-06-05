@@ -4,7 +4,7 @@ class SectionUnitSerializer < ApplicationSerializer
   attributes :id, :title, :description, :order_index, :section_id
 
   attribute :content_url do
-    if object.content.attached?
+    if object.content.attached? && config.active_storage.service == :amazon
       blob = object.content.blob
 
       # Direct AWS S3 presigned URL generation
