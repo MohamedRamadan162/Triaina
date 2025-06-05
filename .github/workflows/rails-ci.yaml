@@ -18,7 +18,11 @@ jobs:
           POSTGRES_PASSWORD: password
     env:
       RAILS_ENV: test
-      DATABASE_URL: "postgres://rails:password@localhost:5432/rails_test"
+      POSTGRES_HOST: localhost
+      POSTGRES_PORT: 5432
+      POSTGRES_USERNAME: rails
+      POSTGRES_PASSWORD: dpassword
+      JWT_SECRET: secret
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
