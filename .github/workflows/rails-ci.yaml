@@ -27,14 +27,17 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
-      - name: Build Docker image
-        run: |
-          docker build \
-            -f Dockerfile.dev \
-            --network=host \
-            --build-arg RAILS_ENV=test \
-            -t triaina-backend:latest \
-            ./services/triaina
+      - name: Build Docker image with cache
+        uses: docker/build-push-action@v6
+        with:
+          context: ./services/triaina
+          file: Dockerfile.dev
+          tags: triaina-backend:latest
+          load: true
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+          build-args: |
+            RAILS_ENV=test
 
       - name: Run tests
         run: |
