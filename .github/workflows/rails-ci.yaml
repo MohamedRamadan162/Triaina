@@ -10,7 +10,7 @@ jobs:
     runs-on: ubuntu-latest
     env:
       RAILS_ENV: test
-      POSTGRES_HOST: postgres
+      POSTGRES_HOST: localhost
       POSTGRES_PORT: 5432
       POSTGRES_USERNAME: rails
       POSTGRES_PASSWORD: password
@@ -32,6 +32,9 @@ jobs:
         uses: docker/setup-qemu-action@v3
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
+        with:
+          driver-opts: network=host
+
       - name: Build Docker image with cache
         uses: docker/build-push-action@v6
         with:
