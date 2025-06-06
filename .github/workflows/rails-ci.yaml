@@ -34,8 +34,8 @@ jobs:
           file: Dockerfile.dev
           tags: triaina-backend:latest
           load: true
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
+          # cache-from: type=gha
+          # cache-to: type=gha,mode=max
           build-args: |
             RAILS_ENV=test
 
