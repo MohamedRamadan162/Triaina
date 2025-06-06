@@ -2,9 +2,7 @@ class CourseChatChannel < ApplicationCable::Channel
   include Pagy::Backend
 
   def subscribed
-    self.current_user = connection.current_user
-    self.channel_id = params[:channel_id]
-    @chat_channel = ChatChannel.find(channel_id)
+    @chat_channel = ChatChannel.find(params[:channel_id])
     stream_for @chat_channel
   end
 
