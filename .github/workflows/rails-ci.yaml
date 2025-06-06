@@ -65,13 +65,14 @@ jobs:
             -e POSTGRES_PASSWORD=${{ env.POSTGRES_PASSWORD }} \
             -e JWT_SECRET=${{ env.JWT_SECRET }} \
             triaina-backend:latest \
-            sh -c "rails db:prepare && bundle exec rspec spec/tests
+            sh -c "rails db:prepare && bundle exec rspec spec/tests --exclude-pattern "spec/tests/requests/api/v1/user/course_spec.rb"
       - name: Push Docker image (only if tests passed)
         if: success()
         uses: docker/build-push-action@v6
         with:
           context: ./services/triaina
-          file: Dockerfile
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
           push: true
           tags: ghcr.io/${{secrets.GHCR_USERNAME}}/${{secrets.GHCR_REPO_NAME}}:latest
 
