@@ -30,8 +30,8 @@ jobs:
       - name: Build Docker image with cache
         uses: docker/build-push-action@v6
         with:
-          context: services/triaina
-          file: Dockerfile.dev
+          context: ./services/triaina
+          file: ./services/triaina/Dockerfile.dev
           tags: triaina-backend:latest
           load: true
           # cache-from: type=gha
