@@ -1,0 +1,9 @@
+_format_version: "3.0"
+
+services:
+  - name: triaina
+    url: http://triaina-backend:3000
+    routes:
+      - name: users-route
+        paths:
+          - /
