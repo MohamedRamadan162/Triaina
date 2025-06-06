@@ -65,7 +65,7 @@ jobs:
             -e POSTGRES_PASSWORD=${{ env.POSTGRES_PASSWORD }} \
             -e JWT_SECRET=${{ env.JWT_SECRET }} \
             triaina-backend:latest \
-            rails db:prepare && bundle exec rspec spec/tests --exclude-pattern "spec/tests/requests/api/v1/user/course_spec.rb"
+            sh -c "rails db:prepare && bundle exec rspec spec/tests --exclude-pattern 'spec/tests/requests/api/v1/user/course_spec.rb'"
       - name: Push Docker image (only if tests passed)
         if: success()
         uses: docker/build-push-action@v6
