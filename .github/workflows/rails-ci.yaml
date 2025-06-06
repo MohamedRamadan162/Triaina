@@ -50,6 +50,7 @@ jobs:
       - name: Run tests
         run: |
           docker run --rm \
+            --network host \
             -e RAILS_ENV=${{ env.RAILS_ENV }} \
             -e POSTGRES_HOST=${{ env.POSTGRES_HOST }} \
             -e POSTGRES_PORT=${{ env.POSTGRES_PORT }} \
