@@ -1,6 +1,5 @@
 class CourseChatChannel < ApplicationCable::Channel
   include Pagy::Backend
-  identified_by :current_user, :channel_id
 
   def subscribed
     self.current_user = connection.current_user
