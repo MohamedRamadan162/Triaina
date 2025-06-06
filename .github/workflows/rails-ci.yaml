@@ -34,11 +34,13 @@ jobs:
       - name: Build and push
         uses: docker/build-push-action@v6
         with:
+          file: Dockerfile.dev
           context: ./services/triaina
-          file: ./services/triaina/Dockerfile.dev
           push: false
           load: true
           tags: triaina-backend:latest
+          cache-from: type=gha  # use GitHub Actions cache as a source
+          cache-to: type=gha,mode=max  # save cache in GitHub Actions cache for future runs
       - name: Run tests
         run: |
           docker run --rm \
@@ -50,7 +52,12 @@ jobs:
             -e JWT_SECRET=secret \
             triaina-backend:latest \
             bundle exec rspec spec/tests --exclude-pattern "spec/tests/models/section_unit_spec.rb"
-        working-directory: services/triaina
+      # - name: Login to GitHub Container Registry
+      #   uses: docker/login-action@v2
+      #   with:
+      #     registry: ghcr.io
+      #     token: # Use PAT (Personal Access Token) from GitHub Secrets
+          # This token should have write access to the GitHub Container Registry
       # - name: Push Docker image (only if tests passed)
       #   if: success()
       #   uses: docker/build-push-action@v6
