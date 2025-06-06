@@ -9,7 +9,6 @@ resource "aws_vpc" "triaina_vpc" {
   }
 }
 
-# Public Subnets
 resource "aws_subnet" "public_subnets" {
   vpc_id                  = aws_vpc.triaina_vpc.id
   count                   = length(var.public_subnet_cidrs)
@@ -22,7 +21,6 @@ resource "aws_subnet" "public_subnets" {
   }
 }
 
-# Public Subnets
 resource "aws_subnet" "private_subnets" {
   vpc_id                  = aws_vpc.triaina_vpc.id
   count                   = length(var.private_subnet_cidrs)
