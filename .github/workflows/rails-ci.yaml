@@ -35,7 +35,7 @@ jobs:
         uses: docker/build-push-action@v6
         with:
           context: ./services/triaina
-          file: ./Dockerfile.dev
+          file: ./services/triaina/Dockerfile.dev
           push: false
           tags: triaina-backend:latest
       - name: Run tests

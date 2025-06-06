@@ -1,5 +1,5 @@
 class CourseChatChannel < ApplicationCable::Channel
-  include Pagy::Backend  # ✅ Add this line
+  include Pagy::Backend
 
   def subscribed
     chat_channel = ChatChannel.find(params[:channel_id])
