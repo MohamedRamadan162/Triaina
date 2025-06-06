@@ -37,6 +37,7 @@ jobs:
           context: ./services/triaina
           file: ./services/triaina/Dockerfile.dev
           push: false
+          load: true
           tags: triaina-backend:latest
       - name: Run tests
         run: |

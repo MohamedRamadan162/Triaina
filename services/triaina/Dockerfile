@@ -64,6 +64,7 @@ USER 1000:1000
 # Entrypoint prepares the database.
 ENTRYPOINT ["/rails/bin/docker-entrypoint"]
 
-# Start server via Thruster by default, this can be overwritten at runtime
-EXPOSE 80
-CMD ["./bin/thrust", "./bin/rails", "server"]
+# Expose port for Rails
+EXPOSE 3000
+# Start supervisord to run both Rails and Karafka servers
+CMD ["supervisord", "-c", "/etc/supervisor/conf.d/supervisord.conf"]
