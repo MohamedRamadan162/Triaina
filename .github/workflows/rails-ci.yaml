@@ -30,6 +30,7 @@ jobs:
       - name: Build Docker image
         run: |
           docker build \
+            -f Dockerfile.dev \
             --network=host \
             --build-arg RAILS_ENV=test \
             -t triaina-backend:latest \
