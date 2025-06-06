@@ -36,13 +36,14 @@ jobs:
       - name: Build and push
         uses: docker/build-push-action@v6
         with:
+          context: ./services/triaina
           file: Dockerfile.dev
-          context: services/triaina/
           push: false
           load: true
           tags: triaina-backend:latest
           cache-from: type=gha  # use GitHub Actions cache as a source
           cache-to: type=gha,mode=max  # save cache in GitHub Actions cache for future runs
+
       - name: Run tests
         run: |
           docker run --rm \
