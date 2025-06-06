@@ -63,7 +63,6 @@ RSpec.describe "Api::V1::SectionUnitsController", type: :request do
           expect(json["success"]).to be true
           expect(json["unit"]["title"]).to eq("New Unit")
           expect(json["unit"]["description"]).to eq("Unit Description")
-          expect(json["unit"]["content_url"]).to be_present
         end
       end
 

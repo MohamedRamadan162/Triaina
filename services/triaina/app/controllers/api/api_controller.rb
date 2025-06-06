@@ -7,7 +7,7 @@ class Api::ApiController < ApplicationController
   # Policies
   def pundit_user
     {
-      user: Current.user,
+      user: @current_user,
       controller: controller_path.sub(/^api\/v1\//, ''),
       action: action_name,
       param_id: params[:id]

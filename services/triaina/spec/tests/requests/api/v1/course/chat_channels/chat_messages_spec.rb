@@ -94,7 +94,7 @@ RSpec.describe "Api::V1::Courses::ChatChannels::ChatMessagesController", type: :
           json = JSON.parse(response.body)
           expect(json["success"]).to be true
           expect(json["message"]["content"]).to eq("Hello, this is a test message")
-          expect(json["message"]["user_id"]).to eq(user.id)
+          expect(json["message"]["user"]["id"]).to eq(user.id)
         end
       end
 
