@@ -3,10 +3,8 @@ kind: Config
 metadata:
   name: triaina-backend
 build:
-  insecureRegistries:
-    - localhost:5000
   artifacts:
-    - image: localhost:5000/triaina-backend # skaffold lives on the machine
+    - image: ghcr.io/ossamatammam/triaina-backend
       context: ./services/triaina
       docker:
         dockerfile: Dockerfile.dev
@@ -15,7 +13,6 @@ build:
       template: "latest"
   local:
     push: false
-
 manifests:
   rawYaml:
     - k8s/*.yaml
@@ -34,9 +31,3 @@ deploy:
         valuesFiles:
           - ./k8s/api-gateway/config/kong-values.yaml
         wait: true
-portForward:
-  - resourceType: Service
-    resourceName: kong-gateway-proxy
-    namespace: kong
-    port: 80
-    localPort: 32069

@@ -19,11 +19,11 @@ spec:
       labels:
         app: triaina-backend
     spec:
-      # imagePullSecrets:
-      #   - name: ghcr-secret
+      imagePullSecrets:
+        - name: ghcr-secret
       containers:
         - name: triaina-backend
-          image: localhost:5000/triaina-backend:latest
+          image: ghcr.io/ossamatammam/triaina-backend:latest
           envFrom:
             - configMapRef:
                 name: aws-configmap
@@ -128,8 +128,7 @@ metadata:
   name: triaina-backend-pdb
   namespace: triaina
 spec:
-  ## 100% of pods must be up at all times (auth service is critical for the app)
-  minAvailable: "100%"
+  minAvailable: "0%"
   selector:
     matchLabels:
       app: triaina-backend
