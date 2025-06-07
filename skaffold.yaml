@@ -3,8 +3,10 @@ kind: Config
 metadata:
   name: triaina-backend
 build:
+  insecureRegistries:
+    - localhost:5000
   artifacts:
-    - image: localhost:5001/triaina-backend # skaffold lives on the machine
+    - image: localhost:5000/triaina-backend # skaffold lives on the machine
       context: ./services/triaina
       docker:
         dockerfile: Dockerfile.dev
@@ -12,7 +14,8 @@ build:
     customTemplate:
       template: "latest"
   local:
-    push: true
+    push: false
+
 manifests:
   rawYaml:
     - k8s/*.yaml

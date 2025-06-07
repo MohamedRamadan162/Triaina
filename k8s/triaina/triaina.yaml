@@ -23,7 +23,7 @@ spec:
       #   - name: ghcr-secret
       containers:
         - name: triaina-backend
-          image: localhost:5001/triaina-backend:latest
+          image: localhost:5000/triaina-backend:latest
           envFrom:
             - configMapRef:
                 name: aws-configmap
