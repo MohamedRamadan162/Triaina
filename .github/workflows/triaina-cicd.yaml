@@ -1,4 +1,4 @@
-name: "Ruby on Rails CI/CD"
+name: "Triaina CI/CD"
 permissions:
   contents: read           
   packages: write
@@ -63,7 +63,7 @@ jobs:
             triaina-backend:latest \
             sh -c "rails db:prepare && bundle exec rspec spec/tests --exclude-pattern 'spec/tests/requests/api/v1/user/course_spec.rb'"
   
-  push:
+  build:
     runs-on: ubuntu-latest
     needs: test
     if: success()
