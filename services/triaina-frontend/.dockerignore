@@ -1,0 +1,13 @@
+node_modules
+.next
+dist
+.vscode
+.env
+.git
+.gitignore
+Dockerfile
+Dockerfile.dev
+docker-compose.yml
+npm-debug.log
+yarn-error.log
+*.log

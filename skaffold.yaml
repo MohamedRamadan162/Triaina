@@ -5,7 +5,11 @@ metadata:
 build:
   artifacts:
     - image: ghcr.io/ossamatammam/triaina-backend
-      context: ./services/triaina
+      context: ./services/triaina-backend
+      docker:
+        dockerfile: Dockerfile.dev
+    - image: ghcr.io/ossamatammam/triaina-frontend
+      context: ./services/triaina-frontend
       docker:
         dockerfile: Dockerfile.dev
   tagPolicy:
