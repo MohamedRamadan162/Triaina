@@ -119,6 +119,6 @@ spec:
     app: triaina-frontend
   ports:
     - name: http
-      port: 3000 # Port exposed by the service
+      port: 80 # Port exposed by the service
       targetPort: 3000 # Port exposed by the pod to the service (Rails Port)
   sessionAffinity: None # We may use this if we want sticky sessions (if state arises)

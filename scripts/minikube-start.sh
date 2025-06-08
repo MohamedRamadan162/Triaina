@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Start minikube with Docker driver and enable registry addon
-minikube start --driver=docker
+minikube start --driver=docker --addons=metrics-server
 echo "Minikube started"
 
 # # Set up registry proxy
