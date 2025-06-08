@@ -4,8 +4,10 @@ class Api::V1::AuthController < Api::ApiController
   # Sign up
   # POST /signup
   def signup
-    user = User.create!(sign_up_profile_params)
-    UserSecurity.create!(sign_up_security_params.merge(user_id: user.id))
+    ActiveRecord::Base.transaction do
+      user = User.create!(sign_up_profile_params)
+      UserSecurity.create!(sign_up_security_params.merge(user_id: user.id))
+    end
     Rails.cache.write("user_#{user.id}", user)
     UserEventProducer.publish_sign_up(user)
     render_success({ user: serializer(user) }, :created)
