@@ -23,7 +23,7 @@ class CourseChatChannel < ApplicationCable::Channel
   def update_message(data)
     message = @chat_channel.chat_messages.find(data["message_id"])
     if message.user == current_user
-      message.update!(content: data["content"])
+      message.update!(content: data["message"])
       CourseChatChannel.broadcast_to(@chat_channel, {
         message: render_message(message)
       })
@@ -45,7 +45,7 @@ class CourseChatChannel < ApplicationCable::Channel
   end
 
   def fetch_messages(data)
-    pagy, messages = pagy(@chat_channel.chat_messages.order(created_at: :asc), items: 100, page: data["page"] || 1)
+    pagy, messages = pagy(@chat_channel.chat_messages.order(created_at: :desc), items: 100, page: data["page"] || 1)
 
     CourseChatChannel.broadcast_to(@chat_channel, {
       messages: messages.map { |msg| render_message(msg) },
