@@ -66,7 +66,7 @@ RSpec.describe CourseChatChannel, type: :channel do
     context 'when user owns the message' do
       it 'updates the message and broadcasts' do
         expect {
-          perform :update_message, { "message_id" => existing_message.id, "content" => "Updated content" }
+          perform :update_message, { "message_id" => existing_message.id, "message" => "Updated content" }
         }.to have_broadcasted_to(chat_channel).with(hash_including(:message))
 
         existing_message.reload
@@ -80,7 +80,7 @@ RSpec.describe CourseChatChannel, type: :channel do
       it 'rejects the update' do
         expect(subscription).to receive(:reject)
 
-        perform :update_message, { "message_id" => other_user_message.id, "content" => "Hacked content" }
+        perform :update_message, { "message_id" => other_user_message.id, "message" => "Hacked content" }
 
         other_user_message.reload
         expect(other_user_message.content).not_to eq("Hacked content")
@@ -90,7 +90,7 @@ RSpec.describe CourseChatChannel, type: :channel do
     context 'when message does not exist' do
       it 'raises an error' do
         expect {
-          perform :update_message, { "message_id" => 999999, "content" => "Updated content" }
+          perform :update_message, { "message_id" => 999999, "message" => "Updated content" }
         }.to raise_error(ActiveRecord::RecordNotFound)
       end
     end
@@ -149,7 +149,7 @@ RSpec.describe CourseChatChannel, type: :channel do
       subscribe(channel_id: chat_channel.id)
     end
 
-    it 'broadcasts all messages ordered by created_at' do
+    it 'broadcasts all messages in descending ordered by created_at' do
       expect {
         perform :fetch_messages
       }.to have_broadcasted_to(chat_channel).with { |data|
@@ -161,7 +161,7 @@ RSpec.describe CourseChatChannel, type: :channel do
 
         # Verify messages are in ascending order by created_at
         created_times = messages.map { |m| Time.parse(m["created_at"]) }
-        expect(created_times).to eq(created_times.sort)
+        expect(created_times).to eq(created_times.sort.reverse)
 
         # Verify all messages are included
         message_ids = messages.map { |m| m["id"] }
