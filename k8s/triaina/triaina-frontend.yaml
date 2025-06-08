@@ -1,10 +1,10 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: triaina-backend
+  name: triaina-frontend
   namespace: triaina
   labels:
-    app: triaina-backend
+    app: triaina-frontend
 spec:
   strategy:
     type: RollingUpdate
@@ -13,26 +13,17 @@ spec:
       maxUnavailable: 0 # No down pods
   selector:
     matchLabels:
-      app: triaina-backend
+      app: triaina-frontend
   template:
     metadata:
       labels:
-        app: triaina-backend
+        app: triaina-frontend
     spec:
       imagePullSecrets:
         - name: ghcr-secret
       containers:
-        - name: triaina-backend
-          image: ghcr.io/ossamatammam/triaina-backend:latest
-          envFrom:
-            - configMapRef:
-                name: aws-configmap
-            - secretRef:
-                name: aws-credentials
-            - configMapRef:
-                name: rails-configmap
-            - secretRef:
-                name: triaina-db-credentials
+        - name: triaina-frontend
+          image: ghcr.io/ossamatammam/triaina-frontend:latest
           resources:
             requests:
               memory: "64Mi"
@@ -42,24 +33,6 @@ spec:
               cpu: "500m"
           ports:
             - containerPort: 3000
-          # Determine if this container is alive and healthy
-          livenessProbe:
-            httpGet:
-              path: /health
-              port: 3000
-            initialDelaySeconds: 30
-            periodSeconds: 10
-            timeoutSeconds: 5
-            failureThreshold: 3
-          ## Determine if this container is ready to receive traffic (for starting up the container)
-          readinessProbe:
-            httpGet:
-              path: /health
-              port: 3000
-            initialDelaySeconds: 5
-            periodSeconds: 5
-            timeoutSeconds: 3
-            failureThreshold: 3
       ## Spread out our pods across different zones
       affinity:
         podAntiAffinity:
@@ -69,26 +42,26 @@ spec:
               podAffinityTerm:
                 labelSelector:
                   matchLabels:
-                    app: triaina-backend
+                    app: triaina-frontend
                 topologyKey: kubernetes.io/zone
             ## Different nodes for fault tolerance and parallelism on the machine
             - weight: 70
               podAffinityTerm:
                 labelSelector:
                   matchLabels:
-                    app: triaina-backend
+                    app: triaina-frontend
                 topologyKey: kubernetes.io/hostname
 ---
 apiVersion: autoscaling/v2
 kind: HorizontalPodAutoscaler
 metadata:
-  name: triaina-backend-hpa
+  name: triaina-frontend-hpa
   namespace: triaina
 spec:
   scaleTargetRef:
     apiVersion: apps/v1
     kind: Deployment
-    name: triaina-backend
+    name: triaina-frontend
   minReplicas: 1
   maxReplicas: 10
   metrics:
@@ -125,27 +98,27 @@ spec:
 apiVersion: policy/v1
 kind: PodDisruptionBudget
 metadata:
-  name: triaina-backend-pdb
+  name: triaina-frontend-pdb
   namespace: triaina
 spec:
   minAvailable: "0%"
   selector:
     matchLabels:
-      app: triaina-backend
+      app: triaina-frontend
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: triaina-backend-service
+  name: triaina-frontend-service
   namespace: triaina
   labels:
-    app: triaina-backend
+    app: triaina-frontend
 spec:
   type: ClusterIP
   selector:
-    app: triaina-backend
+    app: triaina-frontend
   ports:
     - name: http
-      port: 80 # Port exposed by the service
+      port: 3000 # Port exposed by the service
       targetPort: 3000 # Port exposed by the pod to the service (Rails Port)
   sessionAffinity: None # We may use this if we want sticky sessions (if state arises)
