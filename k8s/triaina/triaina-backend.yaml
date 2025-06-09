@@ -33,6 +33,8 @@ spec:
                 name: rails-configmap
             - secretRef:
                 name: triaina-db-credentials
+            - secretRef:
+                name: triaina-smtp-credentials
           resources:
             requests:
               memory: "64Mi"
