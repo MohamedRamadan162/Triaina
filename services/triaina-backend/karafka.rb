@@ -2,8 +2,12 @@
 
 class KarafkaApp < Karafka::App
   setup do |config|
-    config.kafka = { 'bootstrap.servers': ENV.fetch('KAFKA_BROKERS', nil) }
+    config.kafka = {
+      'bootstrap.servers': ENV.fetch('KAFKA_BROKERS', nil),
+      "group.id": 'triaina-processing-group'
+    }
     config.client_id = 'triaina_backend'
+
     # Recreate consumers with each batch. This will allow Rails code reload to work in the
     # development mode. Otherwise Karafka process would not be aware of code changes
     config.consumer_persistence = !Rails.env.development?
@@ -59,9 +63,9 @@ class KarafkaApp < Karafka::App
     # Uncomment this if you use Karafka with ActiveJob
     # You need to define the topic per each queue name you use
     # active_job_topic :default
-    # topic :user_sign_up do
-    #   consumer UserSignUpConsumer
-    # end
+    topic "user_signed_up" do
+      consumer UserSignupConsumer
+    end
   end
 end
 

@@ -7,7 +7,7 @@ services:
     ports:
       - 3000:3000
     env_file:
-      - ./env/aws.env
+      - ./env/triaina.env
     volumes:
       - ./services/triaina-backend:/rails
     networks:
