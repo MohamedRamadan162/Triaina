@@ -442,6 +442,136 @@ paths:
             application/json:
               schema:
                 "$ref": "#/components/x-responses/Error/Unauthorized"
+  "/api/v1/courses/{course_id}/enrollments":
+    parameters:
+    - name: course_id
+      in: path
+      description: Course ID
+      required: true
+      schema:
+        type: string
+    get:
+      summary: List all enrollments in a course
+      tags:
+      - Enrollments
+      security:
+      - cookie_auth: []
+      description: Unauthorized access to list enrollments
+      responses:
+        '200':
+          description: list of enrollments
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/x-responses/Course/Enrollment/List"
+        '401':
+          description: unauthorized
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/x-responses/Error/Unauthorized"
+  "/api/v1/courses/{course_id}/enrollments/{enrollment_id}":
+    parameters:
+    - name: course_id
+      in: path
+      description: Course ID
+      required: true
+      schema:
+        type: string
+    - name: enrollment_id
+      in: path
+      description: Enrollment ID
+      required: true
+      schema:
+        type: string
+    get:
+      summary: Get a specific enrollment
+      tags:
+      - Enrollments
+      security:
+      - cookie_auth: []
+      description: Unauthorized access to enrollment
+      responses:
+        '200':
+          description: enrollment found
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/x-responses/Course/Enrollment/Show"
+        '404':
+          description: enrollment not found
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/x-responses/Error/NotFound"
+        '401':
+          description: unauthorized
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/x-responses/Error/Unauthorized"
+    delete:
+      summary: Delete an enrollment
+      tags:
+      - Enrollments
+      security:
+      - cookie_auth: []
+      description: Unauthorized access to delete enrollment
+      responses:
+        '204':
+          description: enrollment deleted
+        '404':
+          description: enrollment not found
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/x-responses/Error/NotFound"
+        '401':
+          description: unauthorized
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/x-responses/Error/Unauthorized"
+  "/api/v1/courses/enrollments":
+    post:
+      summary: Create a new enrollment using course join code
+      tags:
+      - Enrollments
+      security:
+      - cookie_auth: []
+      parameters: []
+      description: Unauthorized access to create enrollment
+      responses:
+        '201':
+          description: enrollment created
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/x-responses/Course/Enrollment/Create"
+        '404':
+          description: course not found
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/x-responses/Error/NotFound"
+        '401':
+          description: unauthorized
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/x-responses/Error/Unauthorized"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                course_join_code:
+                  type: string
+                  example: JOIN123
+                  description: Unique join code for the course
+              required:
+              - course_join_code
   "/api/v1/courses/{course_id}/sections":
     parameters:
     - name: course_id
