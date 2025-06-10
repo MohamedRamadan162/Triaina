@@ -6,9 +6,9 @@ import { useParams } from "next/navigation"
 
 interface ChapterPartsProps {
   chapter: {
-    id: number
+    id: number | string
     title: string
-    parts: Array<{ id: number; title: string }>
+    parts: Array<{ id: string | number; title: string }>
   }
 }
 

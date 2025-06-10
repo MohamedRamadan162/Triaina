@@ -4,28 +4,30 @@ import Sidebar from "@/components/sidebar"
 import CourseChannels from "@/components/course-channels"
 import ChatMessage from "@/components/chat-message"
 import { courseService } from "@/lib/networkService"
-import { useEffect, useState } from "react"
+import { useEffect } from "react"
+import { useCourse } from "@/context/CourseContext"
 
 export default function CourseDetailPage({ params }: { params: { id: string } }) {
-  const [course, setCourse] = useState<any>(null)
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState<string | null>(null)
+  const { course, setCourse, loading, setLoading, error, setError } = useCourse()
 
   useEffect(() => {
-    // For now, use the provided id
-    const courseId = 'b3a78d2a-0c6d-4f3b-b95c-23e19bd3f9b7'
-    setLoading(true)
-    courseService.getCourse(courseId)
-      .then((res: any) => {
-        if (res.data && res.data.success) {
-          setCourse(res.data.course)
-        } else {
-          setError('Failed to fetch course')
-        }
-      })
-      .catch(() => setError('Failed to fetch course'))
-      .finally(() => setLoading(false))
-  }, [])
+    // Only fetch if we don't already have the course or it's a different course
+    if (!course || course.id !== params.id) {
+      // For now, use the provided id - later you can use params.id
+      const courseId = 'b3a78d2a-0c6d-4f3b-b95c-23e19bd3f9b7'
+      setLoading(true)
+      courseService.getCourse(courseId)
+        .then((res: any) => {
+          if (res.data && res.data.success) {
+            setCourse(res.data.course)
+          } else {
+            setError('Failed to fetch course')
+          }
+        })
+        .catch(() => setError('Failed to fetch course'))
+        .finally(() => setLoading(false))
+    }
+  }, [params.id]) // Only depend on params.id
 
   if (loading) return <div className="flex h-screen items-center justify-center">Loading...</div>
   if (error) return <div className="flex h-screen items-center justify-center text-red-500">{error}</div>
@@ -35,8 +37,8 @@ export default function CourseDetailPage({ params }: { params: { id: string } })
   const mappedCourse = {
     title: course.name,
     chapters: (course.sections || []).map((section: any, idx: number) => ({
-      id: section.id || idx,
-      title: section.name || `Section ${idx + 1}`,
+      id: section.id, // Always use the actual section ID
+      title: section.title || `Section ${section.order_index || idx + 1}`,
     })),
     channels: [
       { id: 1, name: "general-chat" },

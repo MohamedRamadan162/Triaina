@@ -7,8 +7,8 @@ import { useParams } from "next/navigation"
 interface CourseChannelsProps {
   course: {
     title: string
-    chapters: Array<{ id: number; title: string }>
-    channels: Array<{ id: number; name: string }>
+    chapters: Array<{ id: string | number; title: string }>
+    channels: Array<{ id: number | string; name: string }>
   }
 }
 

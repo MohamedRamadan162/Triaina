@@ -1,24 +1,43 @@
+"use client"
 import { Hash, Volume2, RotateCcw, Play, Maximize } from "lucide-react"
 import Sidebar from "@/components/sidebar"
 import CourseChannels from "@/components/course-channels"
 import ChapterParts from "@/components/chapter-parts"
+import { useCourse } from "@/context/CourseContext"
+import { useRouter } from "next/navigation"
+import { useEffect } from "react"
 
 export default function PartDetailPage({
   params,
 }: {
   params: { id: string; chapterId: string; partId: string }
 }) {
-  // Sample course data
-  const course = {
-    title: "Computer Network Security",
-    chapters: [
-      { id: 1, title: "Chapter 1" },
-      { id: 2, title: "Chapter 2" },
-      { id: 3, title: "Chapter 3" },
-      { id: 4, title: "Chapter 4" },
-      { id: 5, title: "Chapter 5" },
-      { id: 6, title: "Chapter 6" },
-    ],
+  const { course, loading, error } = useCourse()
+  const router = useRouter()
+  // Redirect back to course page if we don't have course data
+  useEffect(() => {
+    if (!loading && (!course || error)) {
+      router.push(`/course/${params.id}`)
+    }
+  }, [params.id])
+
+  if (loading) return <div className="flex h-screen items-center justify-center">Loading...</div>
+  if (!course) return null
+
+  // Find the current section (chapter) based on ID
+  const currentSection = course.sections.find(section => section.id === params.chapterId)
+  if (!currentSection) return <div className="flex h-screen items-center justify-center">Chapter not found</div>
+  
+  // Find the current unit (part) based on ID
+  const currentUnit = currentSection.units.find(unit => unit.id === params.partId)
+  if (!currentUnit) return <div className="flex h-screen items-center justify-center">Part not found</div>
+  // Map API data to UI structure
+  const mappedCourse = {
+    title: course.name,
+    chapters: course.sections.map(section => ({
+      id: section.id, // Always use the actual section ID
+      title: section.title || `Section ${section.order_index}`,
+    })),
     channels: [
       { id: 1, name: "general-chat" },
       { id: 2, name: "general-chat" },
@@ -27,47 +46,36 @@ export default function PartDetailPage({
       { id: 5, name: "general-chat" },
     ],
   }
-
   // Current chapter data
   const currentChapter = {
-    id: Number.parseInt(params.chapterId),
-    title: `Chapter ${params.chapterId}`,
-    parts: [
-      { id: 1, title: "Part 1" },
-      { id: 2, title: "Part 2" },
-      { id: 3, title: "Part 3" },
-      { id: 4, title: "Part 4" },
-      { id: 5, title: "Part 5" },
-      { id: 6, title: "Part 6" },
-    ],
+    id: currentSection.id, // Use the actual section ID for navigation
+    title: currentSection.title || `Chapter ${params.chapterId}`,
+    parts: currentSection.units.map(unit => ({
+      id: unit.id,
+      title: unit.title || `Part ${unit.order_index}`,
+    })),
   }
 
   // Current part data
   const currentPart = {
-    id: Number.parseInt(params.partId),
-    title: `Part ${params.partId}`,
-    duration: "3:24",
-    content: [
-      "Understanding the fundamentals of network security",
-      "Implementing basic security protocols",
-      "Identifying common vulnerabilities",
-    ],
+    id: currentUnit.order_index || params.partId,
+    title: currentUnit.title || `Part ${params.partId}`,
+    content: currentUnit.content_url ? currentUnit.content_url : "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4"
+
   }
 
   return (
     <div className="flex h-screen bg-white text-black">
       {/* Main sidebar */}
-      <Sidebar />
-
-      {/* Course sidebar */}
-      <CourseChannels course={course} />
+      <Sidebar />      {/* Course sidebar */}
+      <CourseChannels course={mappedCourse} />
 
       {/* Main content */}
       <div className="flex flex-1 flex-col">
         {/* Header */}
         <div className="flex items-center justify-between border-b border-gray-200 px-4 py-2">
           <div className="flex items-center">
-            <h1 className="mr-2 font-medium">{course.title}</h1>
+            <h1 className="mr-2 font-medium">{mappedCourse.title}</h1>
             <span className="flex items-center text-gray-500">
               <Hash className="mr-1 h-4 w-4" />
               {currentChapter.title} - {currentPart.title}
@@ -80,52 +88,11 @@ export default function PartDetailPage({
           <div className="flex-1 p-4">
             <div className="overflow-hidden rounded-md bg-gray-100">
               {/* Video container */}
-              <div className="relative aspect-video bg-gray-900">
-                {/* Video thumbnail/placeholder */}
-                <div className="absolute inset-0 flex items-center justify-center">
-                  <div className="flex h-16 w-16 items-center justify-center rounded-full bg-gray-800/50 text-white">
-                    <Play className="h-8 w-8" />
-                  </div>
-                </div>
-
-                {/* Video content list */}
-                <div className="absolute inset-0 flex items-center justify-center">
-                  <div className="w-3/4 space-y-6 text-white">
-                    <h2 className="text-xl font-semibold mb-4">{currentPart.title}</h2>
-                    {currentPart.content.map((item, index) => (
-                      <div key={index} className="flex items-start">
-                        <div className="mr-2 flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-full border border-white/30">
-                          {index + 1}
-                        </div>
-                        <p>{item}</p>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-
-                {/* Video controls */}
-                <div className="absolute bottom-0 left-0 right-0 flex items-center justify-between bg-gray-800/80 p-2 text-white">
-                  <div className="flex items-center space-x-3">
-                    <button className="rounded-full p-1 hover:bg-white/20">
-                      <Play className="h-5 w-5" />
-                    </button>
-                    <button className="rounded-full p-1 hover:bg-white/20">
-                      <Volume2 className="h-5 w-5" />
-                    </button>
-                    <button className="rounded-full p-1 hover:bg-white/20">
-                      <RotateCcw className="h-5 w-5" />
-                    </button>
-                    <span className="text-sm">0:00 / {currentPart.duration}</span>
-                  </div>
-                  <div className="flex items-center space-x-3">
-                    <button className="rounded px-2 py-1 hover:bg-white/20">
-                      <span>1×</span>
-                    </button>
-                    <button className="rounded-full p-1 hover:bg-white/20">
-                      <Maximize className="h-5 w-5" />
-                    </button>
-                  </div>
-                </div>
+              <div className="relative">
+                <video width="100%" controls>
+                  <source src={currentPart.content} type="video/mp4"></source>
+                </video>
+              
               </div>
 
               {/* Video tabs */}
