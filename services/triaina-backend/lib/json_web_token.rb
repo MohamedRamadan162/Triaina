@@ -5,7 +5,7 @@ class JsonWebToken
   # secret to encode and decode token
   HMAC_SECRET = ENV["JWT_SECRET"]
 
-  def self.encode(payload, exp = 24.hours.from_now)
+  def self.encode(payload, exp = 30.minutes.from_now)
     payload[:exp] = exp.to_i
     # sign token with application secret
     JWT.encode(payload, HMAC_SECRET)
