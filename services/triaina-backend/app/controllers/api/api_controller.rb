@@ -8,7 +8,7 @@ class Api::ApiController < ApplicationController
   def pundit_user
     {
       user: @current_user,
-      controller: controller_path.sub(/^api\/v1\//, ''),
+      controller: controller_path.sub(/^api\/v1\//, ""),
       action: action_name,
       param_id: params[:id]
     }
@@ -17,6 +17,7 @@ class Api::ApiController < ApplicationController
   # Authenticate user
   def authenticate_request!
     jwt_token = cookies.signed[:jwt]
+    return render_error("Unauthorized", :unauthorized) if Rails.cache.read("blacklist_#{jwt_token}")
     refresh_token = cookies.signed[:refresh_token]
     return render_error("Unauthorized", :unauthorized) unless refresh_token
 

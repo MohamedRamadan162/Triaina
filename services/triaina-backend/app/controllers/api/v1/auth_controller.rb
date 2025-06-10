@@ -49,6 +49,16 @@ class Api::V1::AuthController < Api::ApiController
     end
   end
 
+  # POST /logout
+  def logout
+    refresh_token = cookies.signed[:refresh_token]
+    jwt = cookies.signed[:jwt]
+    RefreshToken.revoke(refresh_token) if refresh_token.present?
+    Rails.cache.write("blacklist_#{jwt}", true, expires_in: 30.minutes) if jwt.present?
+    cookies.delete(:jwt)
+    cookies.delete(:refresh_token)
+    render_success({}, :no_content)
+  end
 
   private
 

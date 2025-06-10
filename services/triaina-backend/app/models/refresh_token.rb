@@ -18,6 +18,14 @@ class RefreshToken < ApplicationRecord
     refresh_token_record.rotate!
   end
 
+  def self.revoke(refresh_token)
+    hashed_token = Digest::SHA256.hexdigest(refresh_token)
+    refresh_token_record = valid_tokens.find_by(hashed_token: hashed_token)
+
+    return nil unless refresh_token_record
+    refresh_token_record.revoke!
+  end
+
   def rotate!
     transaction do
       revoke!
