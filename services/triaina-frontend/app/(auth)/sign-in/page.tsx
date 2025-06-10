@@ -7,11 +7,33 @@ import { LucideChevronLeft } from "lucide-react"
 import { useForm } from "react-hook-form"
 import { authService } from "@/lib/networkService"
 import React from "react"
+import { useEffect } from "react"
 
 export default function SignIn() {
-  const { register, handleSubmit, formState: { errors, isSubmitting }, setError } = useForm();
+  const { register, handleSubmit, formState: { errors, isSubmitting }, setError, setValue } = useForm();
   const [apiError, setApiError] = React.useState<string | null>(null);
   const [apiSuccess, setApiSuccess] = React.useState<string | null>(null);
+  const [autoFilled, setAutoFilled] = React.useState(false);
+
+  useEffect(() => {
+    // Check if we have stored credentials from the signup page
+    const signupEmail = localStorage.getItem('signupEmail');
+    const signupPassword = localStorage.getItem('signupPassword');
+    
+    if (signupEmail && signupPassword && !autoFilled) {
+      // Auto-fill the form
+      setValue('email', signupEmail);
+      setValue('password', signupPassword);
+      setAutoFilled(true);
+      
+      // Clean up the stored credentials
+      localStorage.removeItem('signupEmail');
+      localStorage.removeItem('signupPassword');
+      
+      // Add a welcome message
+      setApiSuccess("Account created successfully! Your credentials are filled in.");
+    }
+  }, [setValue, autoFilled]);
 
   const onSubmit = async (data: any) => {
     setApiError(null);
@@ -38,7 +60,7 @@ export default function SignIn() {
           <CardDescription className="text-center">Enter your email to sign in to your account</CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
-          <form onSubmit={handleSubmit(onSubmit)}>
+          <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
             <div className="space-y-2">
               <Input
                 id="email"

@@ -1,5 +1,6 @@
 "use client"
 import Link from "next/link"
+import { useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
@@ -9,6 +10,7 @@ import { authService } from "@/lib/networkService"
 import React from "react"
 
 export default function SignUp() {
+  const router = useRouter();
   const { register, handleSubmit, formState: { errors, isSubmitting, isSubmitSuccessful }, setError, reset } = useForm();
   const [apiError, setApiError] = React.useState<string | null>(null);
   const [apiSuccess, setApiSuccess] = React.useState<string | null>(null);
@@ -30,8 +32,17 @@ export default function SignUp() {
     try {
       const response = await authService.register(payload);
       if (response.data.success) {
-        setApiSuccess("Account created successfully! You can now sign in.");
+        setApiSuccess("Account created successfully! Redirecting to sign in...");
         reset();
+        
+        // Save credentials temporarily to localStorage for the sign-in page
+        localStorage.setItem('signupEmail', data.email);
+        localStorage.setItem('signupPassword', data.password);
+        
+        // Redirect to sign-in page after a brief delay to show the success message
+        setTimeout(() => {
+          router.push('/sign-in');
+        }, 1500);
       }
     } catch (err: any) {
       setApiError(err?.response?.data?.message || "Registration failed. Please try again.");
@@ -49,7 +60,7 @@ export default function SignUp() {
           <CardDescription className="text-center">Enter your information to create an account</CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
-          <form onSubmit={handleSubmit(onSubmit)}>
+          <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
                 <Input id="firstName" placeholder="First name" {...register("firstName", { required: "First name is required" })} aria-invalid={!!errors.firstName} />
