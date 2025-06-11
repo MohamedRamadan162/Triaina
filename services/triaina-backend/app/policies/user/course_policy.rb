@@ -1,6 +1,6 @@
 class User::CoursePolicy < ApplicationPolicy
   def index?
-    @user.present?
+    allowed?
   end
 
   class Scope < Scope
