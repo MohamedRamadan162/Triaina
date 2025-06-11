@@ -27,15 +27,11 @@ namespace :import do
 
     p 'Importing abilities'
     Ability.create([
-      { name: 'course#show', permission: Permission.find_by(subject: 'course', action: 'view') },
-      { name: 'course#create', permission: Permission.find_by(subject: 'course', action: 'create') },
-      { name: 'course#index', permission: Permission.find_by(subject: 'course', action: 'list') },
-      { name: 'course#update', permission: Permission.find_by(subject: 'course', action: 'manage') },
-      { name: 'course#destroy', permission: Permission.find_by(subject: 'course', action: 'manage') },
-      { name: 'users/courses#index', permission: Permission.find_by(subject: 'course', action: 'list_own') },
-      { name: 'user#show', permission: Permission.find_by(subject: 'user', action: 'view') },
-      { name: 'user#update', permission: Permission.find_by(subject: 'user', action: 'manage') },
-      { name: 'user#destroy', permission: Permission.find_by(subject: 'user', action: 'manage') },
+      { name: 'courses#show', permission: Permission.find_by(subject: 'course', action: 'view') },
+      { name: 'courses#create', permission: Permission.find_by(subject: 'course', action: 'create') },
+      { name: 'courses#index', permission: Permission.find_by(subject: 'course', action: 'list') },
+      { name: 'courses#update', permission: Permission.find_by(subject: 'course', action: 'manage') },
+      { name: 'courses#destroy', permission: Permission.find_by(subject: 'course', action: 'manage') },
     ])
     p 'Abilities imported'
   end
@@ -45,16 +41,17 @@ namespace :import do
     Role.create([
       { name: 'admin', permissions: Permission.all },
       { name: 'instructor', permissions: Permission.where(
-        '(subject = ? AND action IN (?)) OR (subject = ? AND action IN (?))',
-        'course', ['create', 'view', 'manage', 'list_own'],
-        'user', ['view']
+        '(subject = ? AND action IN (?))',
+        'course', ['create', 'view', 'manage'],
       )},
       { name: 'student', permissions: Permission.where(
-        '(subject = ? AND action IN (?)) OR (subject = ? AND action IN (?))',
-        'course', ['create', 'view', 'list_own'],
-        'user', ['view']
+        '(subject = ? AND action IN (?))',
+        'course', ['create', 'view'],
       )},
     ])
     p 'Roles created'
   end
+
+  desc "Import all"
+  task all: %i[permissions abilities roles]
 end

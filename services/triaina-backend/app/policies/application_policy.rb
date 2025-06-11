@@ -12,11 +12,11 @@ class ApplicationPolicy
   end
 
   def allowed?
-    return true if @user.admin?
-    user_has_required_ability?
+    @user.admin? || normal_user_can_access? || user_has_required_ability?
   end
 
   def user_has_required_ability?
+    return false unless @controller.include?("courses")
     required_ability = "#{@controller}##{@action}"
     Enrollment.where(user: @user, course: Course.find_by(id: @param_id)).role.abilities.where(name: required_ability).exists?
   end
@@ -47,6 +47,11 @@ class ApplicationPolicy
 
   def destroy?
     false
+  end
+
+  def normal_user_can_access?
+    normal_user_abilities = ['users/courses#index', 'users#me', 'users#update_me', 'users#delete_me']
+    normal_user_abilities.include?("#{@controller}##{@action}") && @user.present?
   end
 
   def policy_error_message
