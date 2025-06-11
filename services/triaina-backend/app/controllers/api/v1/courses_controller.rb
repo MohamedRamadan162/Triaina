@@ -1,4 +1,6 @@
 class Api::V1::CoursesController < Api::ApiController
+  before_action :authorize_request
+
   ###########################
   # List all courses
   # GET /api/v1/courses
@@ -69,5 +71,9 @@ class Api::V1::CoursesController < Api::ApiController
 
   def update_course_params
     params.permit(:name, :description, :start_date, :end_date)
+  end
+
+  def authorize_request
+    authorize(Course, policy_class: CoursePolicy)
   end
 end

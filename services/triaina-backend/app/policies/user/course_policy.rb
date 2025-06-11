@@ -1,4 +1,4 @@
-class User::CoursesPolicy < ApplicationPolicy
+class User::CoursePolicy < ApplicationPolicy
   def index?
     @user.present?
   end

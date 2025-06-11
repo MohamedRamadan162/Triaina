@@ -8,7 +8,8 @@ namespace :v1 do
     resources :chat_channels, controller: "courses/chat_channels", only: [ :index, :show, :create, :destroy, :update ] do
       resources :chat_messages, controller: "courses/chat_channels/chat_messages", only: [ :index, :show, :create, :destroy, :update ]
     end
-    resources :enrollments, controller: "courses/enrollments", only: [ :index, :show, :create, :destroy ] do
+    resources :enrollments, controller: "courses/enrollments", only: [ :index, :show, :destroy ] do
     end
   end
+  post "courses/enrollments", to: "courses/enrollments#create"
 end
