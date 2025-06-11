@@ -1,4 +1,6 @@
 class Api::V1::Courses::ChatChannelsController < Api::ApiController
+  before_action :authorize_request
+
   ###########################
   # List all chat channels in a course
   # GET /api/v1/courses/:course_id/chat_channels
@@ -60,5 +62,9 @@ class Api::V1::Courses::ChatChannelsController < Api::ApiController
 
   def update_chat_channel_params
     params.permit(:name, :description)
+  end
+
+  def authorize_request
+    authorize(User, policy_class: Course::ChatChannelPolicy)
   end
 end

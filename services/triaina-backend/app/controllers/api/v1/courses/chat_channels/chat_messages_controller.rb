@@ -1,4 +1,6 @@
 class Api::V1::Courses::ChatChannels::ChatMessagesController < Api::ApiController
+  before_action :authorize_request
+
   ###########################
   # List all messages in a chat channel
   # GET /api/v1/courses/:course_id/chat_channels/:chat_channel_id/chat_messages
@@ -65,5 +67,9 @@ class Api::V1::Courses::ChatChannels::ChatMessagesController < Api::ApiControlle
 
   def update_chat_message_params
     params.permit(:content)
+  end
+
+  def authorize_request
+    authorize(User, policy_class: Course::ChatChannel::ChatMessagePolicy)
   end
 end

@@ -1,4 +1,6 @@
 class Api::V1::Courses::Sections::SectionUnitsController < Api::ApiController
+  before_action :authorize_request
+
   ###########################
   # List all units for a sections
   # GET /api/v1/courses/:course_id/sections/:section_id/units
@@ -74,5 +76,9 @@ class Api::V1::Courses::Sections::SectionUnitsController < Api::ApiController
 
   def update_unit_params
     params.permit(:id, :title, :description)
+  end
+
+  def authorize_request
+    authorize(User, policy_class: Course::Section::SectionUnitPolicy)
   end
 end

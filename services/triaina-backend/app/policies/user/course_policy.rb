@@ -4,8 +4,12 @@ class User::CoursePolicy < ApplicationPolicy
   end
 
   class Scope < Scope
+    def initialize(context, scope)
+      super
+    end
+
     def resolve
-      user.courses
+      @user.courses
     end
   end
 end

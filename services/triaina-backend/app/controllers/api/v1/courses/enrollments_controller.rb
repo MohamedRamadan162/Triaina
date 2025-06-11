@@ -1,4 +1,6 @@
 class Api::V1::Courses::EnrollmentsController < Api::ApiController
+  before_action :authorize_request
+
   def index
     course_id = params[:course_id]
     enrollments = Enrollment.where(course_id: course_id)
@@ -41,5 +43,11 @@ class Api::V1::Courses::EnrollmentsController < Api::ApiController
 
     enrollment.destroy!
     render_success({}, :no_content)
+  end
+
+  private
+
+  def authorize_request
+    authorize(User, policy_class: Course::EnrollmentPolicy)
   end
 end

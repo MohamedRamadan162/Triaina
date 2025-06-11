@@ -1,5 +1,7 @@
 services:
   triaina-backend:
+    stdin_open: true
+    tty: true
     build:
       context: ./services/triaina-backend
       dockerfile: Dockerfile.dev

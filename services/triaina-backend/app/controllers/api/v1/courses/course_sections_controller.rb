@@ -1,4 +1,6 @@
 class Api::V1::Courses::CourseSectionsController < Api::ApiController
+  before_action :authorize_request
+
   ###########################
   # List all sections for a course
   # GET /api/v1/courses/:course_id/sections
@@ -73,5 +75,11 @@ class Api::V1::Courses::CourseSectionsController < Api::ApiController
 
   def update_section_params
     params.permit(:id, :title, :description)
+  end
+
+  private
+
+  def authorize_request
+    authorize(User, policy_class: Course::CourseSectionPolicy)
   end
 end
