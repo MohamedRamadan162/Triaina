@@ -16,6 +16,7 @@ class CourseChatChannel < ApplicationCable::Channel
       content: data["message"]
     )
     CourseChatChannel.broadcast_to(@chat_channel, {
+      action: "new_message",
       message: render_message(message)
     })
   end
@@ -25,6 +26,7 @@ class CourseChatChannel < ApplicationCable::Channel
     if message.user == current_user
       message.update!(content: data["message"])
       CourseChatChannel.broadcast_to(@chat_channel, {
+        action: "updated_message",
         message: render_message(message)
       })
     else
@@ -37,6 +39,7 @@ class CourseChatChannel < ApplicationCable::Channel
     if message.user == current_user
       message.destroy!
       CourseChatChannel.broadcast_to(@chat_channel, {
+        action: "deleted_message",
         message_id: message.id
       })
     else
@@ -48,6 +51,7 @@ class CourseChatChannel < ApplicationCable::Channel
     pagy, messages = pagy(@chat_channel.chat_messages.order(created_at: :desc), items: 100, page: data["page"] || 1)
 
     CourseChatChannel.broadcast_to(@chat_channel, {
+      action: "fetched_messages",
       messages: messages.map { |msg| render_message(msg) },
       pagy: {
         page: pagy.page,
