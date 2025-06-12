@@ -11,7 +11,10 @@ class UserSerializer < ApplicationSerializer
         course_id: enrollment.course_id,
         role: enrollment.role.name,
         permissions: enrollment.role.permissions.map do |permission|
-          "#{permission.subject}/#{permission.action}"
+          {
+            subject: permission.subject,
+            action: permission.action
+          }
         end
       }
     end
