@@ -4,6 +4,7 @@ RSpec.describe CourseChatChannel, type: :channel do
   let!(:course_chat) { create(:course_chat) }
   let!(:user) { create(:user) }
   let!(:other_user) { create(:user) }
+  let!(:enrollment) { create(:enrollment, user: user, course: course_chat.course) }
   let!(:existing_message) { create(:chat_message, course_chat: course_chat, user: user, content: "Original message") }
 
   before do
@@ -107,7 +108,7 @@ RSpec.describe CourseChatChannel, type: :channel do
 
         expect {
           perform :delete_message, { "message_id" => message_id }
-        }.to have_broadcasted_to(course_chat).with({ message_id: message_id })
+        }.to have_broadcasted_to(course_chat).with({ action: "deleted_message", message_id: message_id })
 
         expect(ChatMessage.find_by(id: message_id)).to be_nil
       end

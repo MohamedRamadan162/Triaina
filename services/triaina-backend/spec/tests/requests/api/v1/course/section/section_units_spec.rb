@@ -2,7 +2,7 @@ require 'rails_helper'
 
 RSpec.describe "Api::V1::SectionUnitsController", type: :request do
   describe "Section Units Management" do
-    let!(:user) { create(:user) }
+    let!(:user) { create(:user, admin: true) }
     let!(:unit) { create(:section_unit) }
     let!(:section) { unit.course_section }
     let!(:course) { section.course }

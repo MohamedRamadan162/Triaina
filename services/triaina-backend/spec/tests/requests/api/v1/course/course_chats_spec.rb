@@ -2,7 +2,7 @@ require 'rails_helper'
 
 RSpec.describe "Api::V1::Courses::CourseChatsController", type: :request do
   describe "Chat Channels Management" do
-    let!(:user) { create(:user) }
+    let!(:user) { create(:user, admin: true) }
     let!(:course) { create(:course) }
     let!(:course_chat) { create(:course_chat, course: course) }
 
