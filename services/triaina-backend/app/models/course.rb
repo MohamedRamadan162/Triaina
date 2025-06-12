@@ -3,7 +3,8 @@ class Course < ApplicationRecord
   belongs_to :user, class_name: "User", foreign_key: "created_by"
   has_many :course_sections, dependent: :destroy
   has_many :section_units, through: :course_sections
-  has_many :course_chats, class_name: "CourseChat", dependent: :destroy
+  # Using prefix :: forces rails to look in the root thus not confusing it for Course::Chat
+  has_many :course_chats, class_name: "::CourseChat", dependent: :destroy
   has_many :chat_messages, through: :course_chats
 
   ########################### Validations #########################
