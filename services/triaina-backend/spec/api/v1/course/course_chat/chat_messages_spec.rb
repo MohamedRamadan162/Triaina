@@ -1,9 +1,9 @@
 require 'swagger_helper'
 
-RSpec.describe 'Api::V1::Courses::ChatChannels::ChatMessagesController', type: :request do
-  path '/api/v1/courses/{course_id}/chat_channels/{chat_channel_id}/chat_messages' do
+RSpec.describe 'Api::V1::Courses::CourseChats::ChatMessagesController', type: :request do
+  path '/api/v1/courses/{course_id}/course_chats/{course_chat_id}/chat_messages' do
     parameter name: :course_id, in: :path, type: :string, description: 'Course ID'
-    parameter name: :chat_channel_id, in: :path, type: :string, description: 'Chat Channel ID'
+    parameter name: :course_chat_id, in: :path, type: :string, description: 'Chat Channel ID'
 
     get 'List all messages in a chat channel' do
       tags 'Chat Messages'
@@ -12,7 +12,7 @@ RSpec.describe 'Api::V1::Courses::ChatChannels::ChatMessagesController', type: :
 
       response '200', 'list of chat messages' do
         description 'Returns all messages in the given chat channel ordered by created_at'
-        response_ref 'Course/ChatChannel/ChatMessage/List'
+        response_ref 'Course/CourseChat/ChatMessage/List'
         run_test!
       end
 
@@ -46,7 +46,7 @@ RSpec.describe 'Api::V1::Courses::ChatChannels::ChatMessagesController', type: :
 
       response '201', 'message created' do
         description 'Returns the created chat message'
-        response_ref 'Course/ChatChannel/ChatMessage/Create'
+        response_ref 'Course/CourseChat/ChatMessage/Create'
         run_test!
       end
 
@@ -70,9 +70,9 @@ RSpec.describe 'Api::V1::Courses::ChatChannels::ChatMessagesController', type: :
     end
   end
 
-  path '/api/v1/courses/{course_id}/chat_channels/{chat_channel_id}/chat_messages/{id}' do
+  path '/api/v1/courses/{course_id}/course_chats/{course_chat_id}/chat_messages/{id}' do
     parameter name: :course_id, in: :path, type: :string, description: 'Course ID'
-    parameter name: :chat_channel_id, in: :path, type: :string, description: 'Chat Channel ID'
+    parameter name: :course_chat_id, in: :path, type: :string, description: 'Chat Channel ID'
     parameter name: :id, in: :path, type: :string, description: 'Chat Message ID'
 
     get 'Retrieves a chat message by id' do
@@ -82,7 +82,7 @@ RSpec.describe 'Api::V1::Courses::ChatChannels::ChatMessagesController', type: :
 
       response '200', 'message found' do
         description 'Returns the requested chat message'
-        response_ref 'Course/ChatChannel/ChatMessage/Show'
+        response_ref 'Course/CourseChat/ChatMessage/Show'
         run_test!
       end
 
@@ -116,7 +116,7 @@ RSpec.describe 'Api::V1::Courses::ChatChannels::ChatMessagesController', type: :
 
       response '200', 'message updated' do
         description 'Returns the updated chat message'
-        response_ref 'Course/ChatChannel/ChatMessage/Update'
+        response_ref 'Course/CourseChat/ChatMessage/Update'
         run_test!
       end
 

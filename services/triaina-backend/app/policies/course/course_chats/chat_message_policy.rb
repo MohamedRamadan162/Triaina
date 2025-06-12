@@ -1,4 +1,4 @@
-class Course::ChatChannelPolicy < ApplicationPolicy
+class Course::CourseChat::ChatMessagePolicy < ApplicationPolicy
   def index?
     allowed?
   end

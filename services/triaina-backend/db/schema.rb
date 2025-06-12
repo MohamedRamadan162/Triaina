@@ -10,16 +10,16 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_05_29_152227) do
+ActiveRecord::Schema[8.0].define(version: 2025_06_12_000452) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
-  enable_extension "pgcrypto"
 
   create_table "abilities", force: :cascade do |t|
     t.string "name"
     t.bigint "permission_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.index ["name", "permission_id"], name: "index_abilities_on_name_and_permission_id", unique: true
     t.index ["permission_id"], name: "index_abilities_on_permission_id"
   end
 
@@ -51,23 +51,23 @@ ActiveRecord::Schema[8.0].define(version: 2025_05_29_152227) do
     t.index ["blob_id", "variation_digest"], name: "index_active_storage_variant_records_uniqueness", unique: true
   end
 
-  create_table "chat_channels", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+  create_table "chat_messages", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.text "content", null: false
+    t.uuid "course_chat_id", null: false
+    t.uuid "user_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["course_chat_id"], name: "index_chat_messages_on_course_chat_id"
+    t.index ["user_id"], name: "index_chat_messages_on_user_id"
+  end
+
+  create_table "course_chats", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.string "name", null: false
     t.string "description"
     t.uuid "course_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["course_id"], name: "index_chat_channels_on_course_id"
-  end
-
-  create_table "chat_messages", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
-    t.text "content", null: false
-    t.uuid "chat_channel_id", null: false
-    t.uuid "user_id", null: false
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.index ["chat_channel_id"], name: "index_chat_messages_on_chat_channel_id"
-    t.index ["user_id"], name: "index_chat_messages_on_user_id"
+    t.index ["course_id"], name: "index_course_chats_on_course_id"
   end
 
   create_table "course_sections", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
@@ -107,10 +107,11 @@ ActiveRecord::Schema[8.0].define(version: 2025_05_29_152227) do
   end
 
   create_table "permissions", force: :cascade do |t|
-    t.string "action"
-    t.string "subject"
+    t.string "action", null: false
+    t.string "subject", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.index ["action", "subject"], name: "index_permissions_on_action_and_subject", unique: true
   end
 
   create_table "refresh_tokens", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
@@ -135,10 +136,11 @@ ActiveRecord::Schema[8.0].define(version: 2025_05_29_152227) do
   end
 
   create_table "roles", force: :cascade do |t|
-    t.string "name"
+    t.string "name", null: false
     t.text "description"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.index ["name"], name: "index_roles_on_name", unique: true
   end
 
   create_table "section_units", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
@@ -174,9 +176,9 @@ ActiveRecord::Schema[8.0].define(version: 2025_05_29_152227) do
   add_foreign_key "abilities", "permissions"
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
-  add_foreign_key "chat_channels", "courses", on_delete: :cascade
-  add_foreign_key "chat_messages", "chat_channels", on_delete: :cascade
+  add_foreign_key "chat_messages", "course_chats", on_delete: :cascade
   add_foreign_key "chat_messages", "users", on_delete: :cascade
+  add_foreign_key "course_chats", "courses", on_delete: :cascade
   add_foreign_key "courses", "users", column: "created_by", on_delete: :cascade
   add_foreign_key "enrollments", "courses"
   add_foreign_key "enrollments", "roles"

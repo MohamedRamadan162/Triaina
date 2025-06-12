@@ -2,8 +2,8 @@ class CourseChatChannel < ApplicationCable::Channel
   include Pagy::Backend
 
   def subscribed
-    @chat_channel = ChatChannel.find(params[:channel_id])
-    stream_for @chat_channel
+    @course_chat = CourseChat.find(params[:channel_id])
+    stream_for @course_chat
   end
 
   def unsubscribed
@@ -11,21 +11,21 @@ class CourseChatChannel < ApplicationCable::Channel
 
   # Called by client to send message
   def send_message(data)
-    message = @chat_channel.chat_messages.create!(
+    message = @course_chat.chat_messages.create!(
       user: current_user,
       content: data["message"]
     )
-    CourseChatChannel.broadcast_to(@chat_channel, {
+    CourseCourseChat.broadcast_to(@course_chat, {
       action: "new_message",
       message: render_message(message)
     })
   end
 
   def update_message(data)
-    message = @chat_channel.chat_messages.find(data["message_id"])
+    message = @course_chat.chat_messages.find(data["message_id"])
     if message.user == current_user
       message.update!(content: data["message"])
-      CourseChatChannel.broadcast_to(@chat_channel, {
+      CourseCourseChat.broadcast_to(@course_chat, {
         action: "updated_message",
         message: render_message(message)
       })
@@ -35,10 +35,10 @@ class CourseChatChannel < ApplicationCable::Channel
   end
 
   def delete_message(data)
-    message = @chat_channel.chat_messages.find(data["message_id"])
+    message = @course_chat.chat_messages.find(data["message_id"])
     if message.user == current_user
       message.destroy!
-      CourseChatChannel.broadcast_to(@chat_channel, {
+      CourseCourseChat.broadcast_to(@course_chat, {
         action: "deleted_message",
         message_id: message.id
       })
@@ -48,9 +48,9 @@ class CourseChatChannel < ApplicationCable::Channel
   end
 
   def fetch_messages(data)
-    pagy, messages = pagy(@chat_channel.chat_messages.order(created_at: :desc), items: 100, page: data["page"] || 1)
+    pagy, messages = pagy(@course_chat.chat_messages.order(created_at: :desc), items: 100, page: data["page"] || 1)
 
-    CourseChatChannel.broadcast_to(@chat_channel, {
+    CourseCourseChat.broadcast_to(@course_chat, {
       action: "fetched_messages",
       messages: messages.map { |msg| render_message(msg) },
       pagy: {
@@ -63,7 +63,7 @@ class CourseChatChannel < ApplicationCable::Channel
     })
 
   rescue Pagy::OverflowError
-    CourseChatChannel.broadcast_to(@chat_channel, {
+    CourseCourseChat.broadcast_to(@course_chat, {
       type: "error",
       message: "Page not found"
     })

@@ -1,10 +1,10 @@
 require 'rails_helper'
 
 RSpec.describe CourseChatChannel, type: :channel do
-  let!(:chat_channel) { create(:chat_channel) }
+  let!(:course_chat) { create(:course_chat) }
   let!(:user) { create(:user) }
   let!(:other_user) { create(:user) }
-  let!(:existing_message) { create(:chat_message, chat_channel: chat_channel, user: user, content: "Original message") }
+  let!(:existing_message) { create(:chat_message, course_chat: course_chat, user: user, content: "Original message") }
 
   before do
     stub_connection current_user: user
@@ -12,10 +12,10 @@ RSpec.describe CourseChatChannel, type: :channel do
 
   describe '#subscribed' do
     it 'successfully subscribes to stream' do
-      subscribe(channel_id: chat_channel.id)
+      subscribe(channel_id: course_chat.id)
 
       expect(subscription).to be_confirmed
-      expect(subscription).to have_stream_for(chat_channel)
+      expect(subscription).to have_stream_for(course_chat)
     end
 
     it 'raises error if chat channel does not exist' do
@@ -27,13 +27,13 @@ RSpec.describe CourseChatChannel, type: :channel do
 
   describe '#send_message' do
     before do
-      subscribe(channel_id: chat_channel.id)
+      subscribe(channel_id: course_chat.id)
     end
 
     it 'broadcasts message on send_message' do
       expect {
         perform :send_message, { "message" => "Hello World" }
-      }.to have_broadcasted_to(chat_channel).with(hash_including(:message))
+      }.to have_broadcasted_to(course_chat).with(hash_including(:message))
     end
 
     it 'creates a new message in the database' do
@@ -45,13 +45,13 @@ RSpec.describe CourseChatChannel, type: :channel do
       new_message = ChatMessage.order(created_at: :desc).first
       expect(new_message.content).to eq("Test message")
       expect(new_message.user).to eq(user)
-      expect(new_message.chat_channel).to eq(chat_channel)
+      expect(new_message.course_chat).to eq(course_chat)
     end
 
     it 'broadcasts serialized message' do
       expect {
         perform :send_message, { "message" => "Test message" }
-      }.to have_broadcasted_to(chat_channel).with { |data|
+      }.to have_broadcasted_to(course_chat).with { |data|
         expect(data).to have_key(:message)
         expect(data[:message]).to include("content" => "Test message")
       }
@@ -60,14 +60,14 @@ RSpec.describe CourseChatChannel, type: :channel do
 
   describe '#update_message' do
     before do
-      subscribe(channel_id: chat_channel.id)
+      subscribe(channel_id: course_chat.id)
     end
 
     context 'when user owns the message' do
       it 'updates the message and broadcasts' do
         expect {
           perform :update_message, { "message_id" => existing_message.id, "message" => "Updated content" }
-        }.to have_broadcasted_to(chat_channel).with(hash_including(:message))
+        }.to have_broadcasted_to(course_chat).with(hash_including(:message))
 
         existing_message.reload
         expect(existing_message.content).to eq("Updated content")
@@ -75,7 +75,7 @@ RSpec.describe CourseChatChannel, type: :channel do
     end
 
     context 'when user does not own the message' do
-      let!(:other_user_message) { create(:chat_message, chat_channel: chat_channel, user: other_user) }
+      let!(:other_user_message) { create(:chat_message, course_chat: course_chat, user: other_user) }
 
       it 'rejects the update' do
         expect(subscription).to receive(:reject)
@@ -98,7 +98,7 @@ RSpec.describe CourseChatChannel, type: :channel do
 
   describe '#delete_message' do
     before do
-      subscribe(channel_id: chat_channel.id)
+      subscribe(channel_id: course_chat.id)
     end
 
     context 'when user owns the message' do
@@ -107,7 +107,7 @@ RSpec.describe CourseChatChannel, type: :channel do
 
         expect {
           perform :delete_message, { "message_id" => message_id }
-        }.to have_broadcasted_to(chat_channel).with({ message_id: message_id })
+        }.to have_broadcasted_to(course_chat).with({ message_id: message_id })
 
         expect(ChatMessage.find_by(id: message_id)).to be_nil
       end
@@ -120,7 +120,7 @@ RSpec.describe CourseChatChannel, type: :channel do
     end
 
     context 'when user does not own the message' do
-      let!(:other_user_message) { create(:chat_message, chat_channel: chat_channel, user: other_user) }
+      let!(:other_user_message) { create(:chat_message, course_chat: course_chat, user: other_user) }
 
       it 'rejects the deletion' do
         expect(subscription).to receive(:reject)
@@ -141,18 +141,18 @@ RSpec.describe CourseChatChannel, type: :channel do
   end
 
   describe '#fetch_messages' do
-    let!(:message1) { create(:chat_message, chat_channel: chat_channel, created_at: 2.hours.ago) }
-    let!(:message2) { create(:chat_message, chat_channel: chat_channel, created_at: 1.hour.ago) }
-    let!(:message3) { create(:chat_message, chat_channel: chat_channel, created_at: 30.minutes.ago) }
+    let!(:message1) { create(:chat_message, course_chat: course_chat, created_at: 2.hours.ago) }
+    let!(:message2) { create(:chat_message, course_chat: course_chat, created_at: 1.hour.ago) }
+    let!(:message3) { create(:chat_message, course_chat: course_chat, created_at: 30.minutes.ago) }
 
     before do
-      subscribe(channel_id: chat_channel.id)
+      subscribe(channel_id: course_chat.id)
     end
 
     it 'broadcasts all messages in descending ordered by created_at' do
       expect {
         perform :fetch_messages
-      }.to have_broadcasted_to(chat_channel).with { |data|
+      }.to have_broadcasted_to(course_chat).with { |data|
         expect(data).to have_key(:messages)
         messages = data[:messages]
 
@@ -175,13 +175,13 @@ RSpec.describe CourseChatChannel, type: :channel do
 
       expect {
         perform :fetch_messages
-      }.to have_broadcasted_to(chat_channel).with(hash_including(:messages))
+      }.to have_broadcasted_to(course_chat).with(hash_including(:messages))
     end
   end
 
   describe '#unsubscribed' do
     it 'successfully unsubscribes' do
-      subscribe(channel_id: chat_channel.id)
+      subscribe(channel_id: course_chat.id)
 
       expect { unsubscribe }.not_to raise_error
       expect(subscription).not_to have_streams

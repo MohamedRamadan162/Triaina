@@ -12,6 +12,7 @@ class ApplicationPolicy
   end
 
   def allowed?
+    puts "User is #{@user.inspect} trying to access #{@controller}##{@action} with param_id #{@param_id.inspect}"
     @user.admin? || normal_user_can_access? || user_has_required_ability?
   end
 

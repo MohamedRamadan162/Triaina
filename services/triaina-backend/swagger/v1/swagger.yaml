@@ -88,7 +88,7 @@ paths:
               required:
               - email
               - password
-  "/api/v1/courses/{course_id}/chat_channels/{chat_channel_id}/chat_messages":
+  "/api/v1/courses/{course_id}/course_chats/{course_chat_id}/chat_messages":
     parameters:
     - name: course_id
       in: path
@@ -96,7 +96,7 @@ paths:
       required: true
       schema:
         type: string
-    - name: chat_channel_id
+    - name: course_chat_id
       in: path
       description: Chat Channel ID
       required: true
@@ -115,7 +115,7 @@ paths:
           content:
             application/json:
               schema:
-                "$ref": "#/components/x-responses/Course/ChatChannel/ChatMessage/List"
+                "$ref": "#/components/x-responses/Course/CourseChat/ChatMessage/List"
         '401':
           description: unauthorized
           content:
@@ -142,7 +142,7 @@ paths:
           content:
             application/json:
               schema:
-                "$ref": "#/components/x-responses/Course/ChatChannel/ChatMessage/Create"
+                "$ref": "#/components/x-responses/Course/CourseChat/ChatMessage/Create"
         '401':
           description: unauthorized
           content:
@@ -177,7 +177,7 @@ paths:
                   description: URL of an attached file (optional)
               required:
               - content
-  "/api/v1/courses/{course_id}/chat_channels/{chat_channel_id}/chat_messages/{id}":
+  "/api/v1/courses/{course_id}/course_chats/{course_chat_id}/chat_messages/{id}":
     parameters:
     - name: course_id
       in: path
@@ -185,7 +185,7 @@ paths:
       required: true
       schema:
         type: string
-    - name: chat_channel_id
+    - name: course_chat_id
       in: path
       description: Chat Channel ID
       required: true
@@ -210,7 +210,7 @@ paths:
           content:
             application/json:
               schema:
-                "$ref": "#/components/x-responses/Course/ChatChannel/ChatMessage/Show"
+                "$ref": "#/components/x-responses/Course/CourseChat/ChatMessage/Show"
         '401':
           description: unauthorized
           content:
@@ -237,7 +237,7 @@ paths:
           content:
             application/json:
               schema:
-                "$ref": "#/components/x-responses/Course/ChatChannel/ChatMessage/Update"
+                "$ref": "#/components/x-responses/Course/CourseChat/ChatMessage/Update"
         '401':
           description: unauthorized
           content:
@@ -293,7 +293,7 @@ paths:
             application/json:
               schema:
                 "$ref": "#/components/x-responses/Error/NotFound"
-  "/api/v1/courses/{course_id}/chat_channels":
+  "/api/v1/courses/{course_id}/course_chats":
     parameters:
     - name: course_id
       in: path
@@ -302,19 +302,19 @@ paths:
       schema:
         type: string
     get:
-      summary: List all chat channels in a course
+      summary: List all course chats in a course
       tags:
-      - Chat Channels
+      - Course Chats
       security:
       - cookie_auth: []
-      description: Unauthorized access to list chat channels
+      description: Unauthorized access to list course chats
       responses:
         '200':
-          description: list of chat channels
+          description: list of course chats
           content:
             application/json:
               schema:
-                "$ref": "#/components/x-responses/Course/ChatChannel/List"
+                "$ref": "#/components/x-responses/Course/CourseChat/List"
         '401':
           description: unauthorized
           content:
@@ -324,7 +324,7 @@ paths:
     post:
       summary: Create a new chat channel
       tags:
-      - Chat Channels
+      - Course Chats
       security:
       - cookie_auth: []
       parameters: []
@@ -335,7 +335,7 @@ paths:
           content:
             application/json:
               schema:
-                "$ref": "#/components/x-responses/Course/ChatChannel/Create"
+                "$ref": "#/components/x-responses/Course/CourseChat/Create"
         '401':
           description: unauthorized
           content:
@@ -358,7 +358,7 @@ paths:
                   description: Description of the chat channel
               required:
               - name
-  "/api/v1/courses/{course_id}/chat_channels/{id}":
+  "/api/v1/courses/{course_id}/course_chats/{id}":
     parameters:
     - name: course_id
       in: path
@@ -375,7 +375,7 @@ paths:
     get:
       summary: Get a specific chat channel
       tags:
-      - Chat Channels
+      - Course Chats
       security:
       - cookie_auth: []
       description: Unauthorized access to chat channel
@@ -385,7 +385,7 @@ paths:
           content:
             application/json:
               schema:
-                "$ref": "#/components/x-responses/Course/ChatChannel/Show"
+                "$ref": "#/components/x-responses/Course/CourseChat/Show"
         '401':
           description: unauthorized
           content:
@@ -395,7 +395,7 @@ paths:
     patch:
       summary: Update a chat channel
       tags:
-      - Chat Channels
+      - Course Chats
       security:
       - cookie_auth: []
       parameters: []
@@ -406,7 +406,7 @@ paths:
           content:
             application/json:
               schema:
-                "$ref": "#/components/x-responses/Course/ChatChannel/Update"
+                "$ref": "#/components/x-responses/Course/CourseChat/Update"
         '401':
           description: unauthorized
           content:
@@ -429,7 +429,7 @@ paths:
     delete:
       summary: Delete a chat channel
       tags:
-      - Chat Channels
+      - Course Chats
       security:
       - cookie_auth: []
       description: Unauthorized access to delete chat channel
@@ -1308,7 +1308,7 @@ components:
           type: string
           format: date-time
           example: '2025-01-01T00:00:00Z'
-    ChatChannel:
+    CourseChat:
       type: object
       properties:
         id:
@@ -1567,7 +1567,7 @@ components:
                 example: true
               unit:
                 "$ref": "#/components/schemas/Unit"
-      ChatChannel:
+      CourseChat:
         List:
           type: object
           required:
@@ -1577,10 +1577,10 @@ components:
             success:
               type: boolean
               example: true
-            chat_channels:
+            course_chats:
               type: array
               items:
-                "$ref": "#/components/schemas/ChatChannel"
+                "$ref": "#/components/schemas/CourseChat"
         Show:
           type: object
           required:
@@ -1590,8 +1590,8 @@ components:
             success:
               type: boolean
               example: true
-            chat_channel:
-              "$ref": "#/components/schemas/ChatChannel"
+            course_chat:
+              "$ref": "#/components/schemas/CourseChat"
         Create:
           type: object
           required:
@@ -1601,8 +1601,8 @@ components:
             success:
               type: boolean
               example: true
-            chat_channel:
-              "$ref": "#/components/schemas/ChatChannel"
+            course_chat:
+              "$ref": "#/components/schemas/CourseChat"
         Update:
           type: object
           required:
@@ -1612,8 +1612,8 @@ components:
             success:
               type: boolean
               example: true
-            chat_channel:
-              "$ref": "#/components/schemas/ChatChannel"
+            course_chat:
+              "$ref": "#/components/schemas/CourseChat"
         ChatMessage:
           List:
             type: object

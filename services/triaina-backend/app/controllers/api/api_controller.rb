@@ -10,7 +10,7 @@ class Api::ApiController < ApplicationController
       user: @current_user,
       controller: controller_path.sub(/^api\/v1\//, ""),
       action: action_name,
-      param_id: params[:id]
+      param_id: params[:course_id] || params[:id]
     }
   end
 

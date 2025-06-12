@@ -1,29 +1,29 @@
 require 'swagger_helper'
 
-RSpec.describe 'Api::V1::Courses::ChatChannelsController', type: :request do
-  path '/api/v1/courses/{course_id}/chat_channels' do
+RSpec.describe 'Api::V1::Courses::CourseChatsController', type: :request do
+  path '/api/v1/courses/{course_id}/course_chats' do
     parameter name: :course_id, in: :path, type: :string, description: 'Course ID'
 
-    get 'List all chat channels in a course' do
-      tags 'Chat Channels'
+    get 'List all course chats in a course' do
+      tags 'Course Chats'
       produces 'application/json'
       security [ cookie_auth: [] ]
 
-      response '200', 'list of chat channels' do
-        description 'Returns all chat channels in the given course ordered by created_at'
-        response_ref 'Course/ChatChannel/List'
+      response '200', 'list of course chats' do
+        description 'Returns all course chats in the given course ordered by created_at'
+        response_ref 'Course/CourseChat/List'
         run_test!
       end
 
       response '401', 'unauthorized' do
-        description 'Unauthorized access to list chat channels'
+        description 'Unauthorized access to list course chats'
         response_ref 'Error/Unauthorized'
         run_test!
       end
     end
 
     post 'Create a new chat channel' do
-      tags 'Chat Channels'
+      tags 'Course Chats'
       consumes 'application/json'
       produces 'application/json'
       security [ cookie_auth: [] ]
@@ -39,7 +39,7 @@ RSpec.describe 'Api::V1::Courses::ChatChannelsController', type: :request do
 
       response '201', 'channel created' do
         description 'Returns the created chat channel'
-        response_ref 'Course/ChatChannel/Create'
+        response_ref 'Course/CourseChat/Create'
         run_test!
       end
 
@@ -51,18 +51,18 @@ RSpec.describe 'Api::V1::Courses::ChatChannelsController', type: :request do
     end
   end
 
-  path '/api/v1/courses/{course_id}/chat_channels/{id}' do
+  path '/api/v1/courses/{course_id}/course_chats/{id}' do
     parameter name: :course_id, in: :path, type: :string, description: 'Course ID'
     parameter name: :id, in: :path, type: :string, description: 'Chat Channel ID'
 
     get 'Get a specific chat channel' do
-      tags 'Chat Channels'
+      tags 'Course Chats'
       produces 'application/json'
       security [ cookie_auth: [] ]
 
       response '200', 'channel found' do
         description 'Returns the requested chat channel'
-        response_ref 'Course/ChatChannel/Show'
+        response_ref 'Course/CourseChat/Show'
         run_test!
       end
 
@@ -74,7 +74,7 @@ RSpec.describe 'Api::V1::Courses::ChatChannelsController', type: :request do
     end
 
     patch 'Update a chat channel' do
-      tags 'Chat Channels'
+      tags 'Course Chats'
       consumes 'application/json'
       produces 'application/json'
       security [ cookie_auth: [] ]
@@ -90,7 +90,7 @@ RSpec.describe 'Api::V1::Courses::ChatChannelsController', type: :request do
 
       response '200', 'channel updated' do
         description 'Returns the updated chat channel'
-        response_ref 'Course/ChatChannel/Update'
+        response_ref 'Course/CourseChat/Update'
         run_test!
       end
 
@@ -102,7 +102,7 @@ RSpec.describe 'Api::V1::Courses::ChatChannelsController', type: :request do
     end
 
     delete 'Delete a chat channel' do
-      tags 'Chat Channels'
+      tags 'Course Chats'
       produces 'application/json'
       security [ cookie_auth: [] ]
 
