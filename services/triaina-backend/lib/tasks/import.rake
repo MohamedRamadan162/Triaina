@@ -3,12 +3,9 @@
 namespace :import do
   desc "Import permissions"
   task permissions: :environment do
-    p "Destroying old permissions"
-    Permission.destroy_all
-    p "Old permissions destroyed"
+    puts "Importing permissions"
 
-    p "Importing permissions"
-    Permission.create([
+    permissions = [
       { subject: "course", action: "create" },
       { subject: "course", action: "view" },
       { subject: "course", action: "manage" },
@@ -16,64 +13,84 @@ namespace :import do
       { subject: "course", action: "list own" },
       { subject: "user", action: "view" },
       { subject: "user", action: "manage" }
-    ])
-    p "Permissions imported"
+    ]
+
+    permissions.each do |attrs|
+      Permission.find_or_create_by!(attrs)
+    end
+
+    puts "Permissions imported"
   end
 
   task abilities: :environment do
-    p "Destroying old abilities"
-    Ability.destroy_all
-    p "Old abilities destroyed"
+    puts "Importing abilities"
 
-    p "Importing abilities"
-    Ability.create([
-      { name: "courses#show", permission: Permission.find_by(subject: "course", action: "view") },
-      { name: "courses#create", permission: Permission.find_by(subject: "course", action: "create") },
-      { name: "courses#index", permission: Permission.find_by(subject: "course", action: "list") },
-      { name: "courses#update", permission: Permission.find_by(subject: "course", action: "manage") },
-      { name: "courses#destroy", permission: Permission.find_by(subject: "course", action: "manage") },
-      { name: "courses/course_chats#show", permission: Permission.find_by(subject: "course", action: "view") },
-      { name: "courses/course_chats#create", permission: Permission.find_by(subject: "course", action: "create") },
-      { name: "courses/course_chats#index", permission: Permission.find_by(subject: "course", action: "view") },
-      { name: "courses/course_chats#update", permission: Permission.find_by(subject: "course", action: "manage") },
-      { name: "courses/course_chats#destroy", permission: Permission.find_by(subject: "course", action: "manage") },
-      { name: "courses/course_chats/chat_messages#show", permission: Permission.find_by(subject: "course", action: "view") },
-      { name: "courses/course_chats/chat_messages#create", permission: Permission.find_by(subject: "course", action: "create") },
-      { name: "courses/course_chats/chat_messages#index", permission: Permission.find_by(subject: "course", action: "view") },
-      { name: "courses/course_chats/chat_messages#update", permission: Permission.find_by(subject: "course", action: "manage") },
-      { name: "courses/course_chats/chat_messages#destroy", permission: Permission.find_by(subject: "course", action: "manage") },
-      { name: "courses/course_sections#show", permission: Permission.find_by(subject: "course", action: "view") },
-      { name: "courses/course_sections#create", permission: Permission.find_by(subject: "course", action: "create") },
-      { name: "courses/course_sections#index", permission: Permission.find_by(subject: "course", action: "view") },
-      { name: "courses/course_sections#update", permission: Permission.find_by(subject: "course", action: "manage") },
-      { name: "courses/course_sections#destroy", permission: Permission.find_by(subject: "course", action: "manage") },
-      { name: "courses/sections/section_units#show", permission: Permission.find_by(subject: "course", action: "view") },
-      { name: "courses/sections/section_units#create", permission: Permission.find_by(subject: "course", action: "create") },
-      { name: "courses/sections/section_units#index", permission: Permission.find_by(subject: "course", action: "view") },
-      { name: "courses/sections/section_units#update", permission: Permission.find_by(subject: "course", action: "manage") },
-      { name: "courses/sections/section_units#destroy", permission: Permission.find_by(subject: "course", action: "manage") }
-    ])
-    p "Abilities imported"
+    abilities = [
+      "courses#show",
+      "courses#create",
+      "courses#index",
+      "courses#update",
+      "courses#destroy",
+      "courses/course_chats#show",
+      "courses/course_chats#create",
+      "courses/course_chats#index",
+      "courses/course_chats#update",
+      "courses/course_chats#destroy",
+      "courses/course_chats/chat_messages#show",
+      "courses/course_chats/chat_messages#create",
+      "courses/course_chats/chat_messages#index",
+      "courses/course_chats/chat_messages#update",
+      "courses/course_chats/chat_messages#destroy",
+      "courses/course_sections#show",
+      "courses/course_sections#create",
+      "courses/course_sections#index",
+      "courses/course_sections#update",
+      "courses/course_sections#destroy",
+      "courses/sections/section_units#show",
+      "courses/sections/section_units#create",
+      "courses/sections/section_units#index",
+      "courses/sections/section_units#update",
+      "courses/sections/section_units#destroy"
+    ]
+
+    permission = Permission.find_by!(subject: "course", action: "view")
+    manage = Permission.find_by!(subject: "course", action: "manage")
+    create = Permission.find_by!(subject: "course", action: "create")
+
+    ability_map = abilities.map do |name|
+      action = if name.include?("create")
+        create
+      elsif name.include?("update") || name.include?("destroy")
+        manage
+      else
+        permission
+      end
+
+      { name:, permission_id: action.id }
+    end
+
+    ability_map.each do |attrs|
+      Ability.find_or_create_by!(name: attrs[:name]) do |a|
+        a.permission_id = attrs[:permission_id]
+      end
+    end
+
+    puts "Abilities imported"
   end
 
   task roles: :environment do
-    p "Destroying old roles"
-    Role.destroy_all
-    p "Old roles destroyed"
+    puts "Creating roles"
 
-    p "Creating roles"
-    Role.create([
-      { name: "admin", permissions: Permission.all },
-      { name: "instructor", permissions: Permission.where(
-        "(subject = ? AND action IN (?))",
-        "course", [ "create", "view", "manage" ],
-      ) },
-      { name: "student", permissions: Permission.where(
-        "(subject = ? AND action IN (?))",
-        "course", [ "create", "view" ],
-      ) }
-    ])
-    p "Roles created"
+    admin = Role.find_or_create_by!(name: "admin")
+    admin.permissions = Permission.all
+
+    instructor = Role.find_or_create_by!(name: "instructor")
+    instructor.permissions = Permission.where(subject: "course", action: %w[create view manage])
+
+    student = Role.find_or_create_by!(name: "student")
+    student.permissions = Permission.where(subject: "course", action: %w[create view])
+
+    puts "Roles created"
   end
 
   desc "Import all"
