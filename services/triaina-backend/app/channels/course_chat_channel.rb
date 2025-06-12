@@ -3,6 +3,7 @@ class CourseChatChannel < ApplicationCable::Channel
 
   def subscribed
     @course_chat = CourseChat.find(params[:channel_id])
+    reject unless self.current_user.admin? || Enrollment.exists?(course_id: @course_chat.course_id, user_id: current_user.id)
     stream_for @course_chat
   end
 
@@ -15,7 +16,7 @@ class CourseChatChannel < ApplicationCable::Channel
       user: current_user,
       content: data["message"]
     )
-    CourseCourseChat.broadcast_to(@course_chat, {
+    CourseChatChannel.broadcast_to(@course_chat, {
       action: "new_message",
       message: render_message(message)
     })
@@ -25,7 +26,7 @@ class CourseChatChannel < ApplicationCable::Channel
     message = @course_chat.chat_messages.find(data["message_id"])
     if message.user == current_user
       message.update!(content: data["message"])
-      CourseCourseChat.broadcast_to(@course_chat, {
+      CourseChatChannel.broadcast_to(@course_chat, {
         action: "updated_message",
         message: render_message(message)
       })
@@ -38,7 +39,7 @@ class CourseChatChannel < ApplicationCable::Channel
     message = @course_chat.chat_messages.find(data["message_id"])
     if message.user == current_user
       message.destroy!
-      CourseCourseChat.broadcast_to(@course_chat, {
+      CourseChatChannel.broadcast_to(@course_chat, {
         action: "deleted_message",
         message_id: message.id
       })
@@ -50,7 +51,7 @@ class CourseChatChannel < ApplicationCable::Channel
   def fetch_messages(data)
     pagy, messages = pagy(@course_chat.chat_messages.order(created_at: :desc), items: 100, page: data["page"] || 1)
 
-    CourseCourseChat.broadcast_to(@course_chat, {
+    CourseChatChannel.broadcast_to(@course_chat, {
       action: "fetched_messages",
       messages: messages.map { |msg| render_message(msg) },
       pagy: {
@@ -63,7 +64,7 @@ class CourseChatChannel < ApplicationCable::Channel
     })
 
   rescue Pagy::OverflowError
-    CourseCourseChat.broadcast_to(@course_chat, {
+    CourseChatChannel.broadcast_to(@course_chat, {
       type: "error",
       message: "Page not found"
     })
