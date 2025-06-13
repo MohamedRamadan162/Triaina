@@ -117,4 +117,44 @@ RSpec.describe 'Api::V1::SectionUnitsController', type: :request do
       end
     end
   end
+
+  path '/api/v1/courses/{course_id}/sections/{section_id}/units/{unit_id}/transcription' do
+    post 'Get transcription' do
+      tags 'Section Units'
+      produces 'application/json'
+      security [ cookie_auth: [] ]
+      parameter name: :unit_id, in: :path, type: :string, description: 'Section Unit ID'
+
+      response '200', 'transcription generation started' do
+        description 'Transcription job has been triggered'
+        run_test!
+      end
+
+      response '401', 'unauthorized' do
+        description 'Unauthorized access'
+        response_ref 'Error/Unauthorized'
+        run_test!
+      end
+    end
+  end
+
+  path '/api/v1/courses/{course_id}/sections/{section_id}/units/{unit_id}/summary' do
+    post 'Get summary' do
+      tags 'Section Units'
+      produces 'application/json'
+      security [ cookie_auth: [] ]
+      parameter name: :unit_id, in: :path, type: :string, description: 'Section Unit ID'
+
+      response '200', 'summary generation started' do
+        description 'Summary job has been triggered'
+        run_test!
+      end
+
+      response '401', 'unauthorized' do
+        description 'Unauthorized access'
+        response_ref 'Error/Unauthorized'
+        run_test!
+      end
+    end
+  end
 end

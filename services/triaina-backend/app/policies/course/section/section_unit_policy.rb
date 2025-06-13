@@ -18,4 +18,12 @@ class Course::Section::SectionUnitPolicy < ApplicationPolicy
   def destroy?
     allowed?
   end
+
+  def transcription?
+    allowed?
+  end
+
+  def summary?
+    allowed?
+  end
 end

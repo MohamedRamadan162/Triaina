@@ -442,136 +442,6 @@ paths:
             application/json:
               schema:
                 "$ref": "#/components/x-responses/Error/Unauthorized"
-  "/api/v1/courses/{course_id}/enrollments":
-    parameters:
-    - name: course_id
-      in: path
-      description: Course ID
-      required: true
-      schema:
-        type: string
-    get:
-      summary: List all enrollments in a course
-      tags:
-      - Enrollments
-      security:
-      - cookie_auth: []
-      description: Unauthorized access to list enrollments
-      responses:
-        '200':
-          description: list of enrollments
-          content:
-            application/json:
-              schema:
-                "$ref": "#/components/x-responses/Course/Enrollment/List"
-        '401':
-          description: unauthorized
-          content:
-            application/json:
-              schema:
-                "$ref": "#/components/x-responses/Error/Unauthorized"
-  "/api/v1/courses/{course_id}/enrollments/{enrollment_id}":
-    parameters:
-    - name: course_id
-      in: path
-      description: Course ID
-      required: true
-      schema:
-        type: string
-    - name: enrollment_id
-      in: path
-      description: Enrollment ID
-      required: true
-      schema:
-        type: string
-    get:
-      summary: Get a specific enrollment
-      tags:
-      - Enrollments
-      security:
-      - cookie_auth: []
-      description: Unauthorized access to enrollment
-      responses:
-        '200':
-          description: enrollment found
-          content:
-            application/json:
-              schema:
-                "$ref": "#/components/x-responses/Course/Enrollment/Show"
-        '404':
-          description: enrollment not found
-          content:
-            application/json:
-              schema:
-                "$ref": "#/components/x-responses/Error/NotFound"
-        '401':
-          description: unauthorized
-          content:
-            application/json:
-              schema:
-                "$ref": "#/components/x-responses/Error/Unauthorized"
-    delete:
-      summary: Delete an enrollment
-      tags:
-      - Enrollments
-      security:
-      - cookie_auth: []
-      description: Unauthorized access to delete enrollment
-      responses:
-        '204':
-          description: enrollment deleted
-        '404':
-          description: enrollment not found
-          content:
-            application/json:
-              schema:
-                "$ref": "#/components/x-responses/Error/NotFound"
-        '401':
-          description: unauthorized
-          content:
-            application/json:
-              schema:
-                "$ref": "#/components/x-responses/Error/Unauthorized"
-  "/api/v1/courses/enrollments":
-    post:
-      summary: Create a new enrollment using course join code
-      tags:
-      - Enrollments
-      security:
-      - cookie_auth: []
-      parameters: []
-      description: Unauthorized access to create enrollment
-      responses:
-        '201':
-          description: enrollment created
-          content:
-            application/json:
-              schema:
-                "$ref": "#/components/x-responses/Course/Enrollment/Create"
-        '404':
-          description: course not found
-          content:
-            application/json:
-              schema:
-                "$ref": "#/components/x-responses/Error/NotFound"
-        '401':
-          description: unauthorized
-          content:
-            application/json:
-              schema:
-                "$ref": "#/components/x-responses/Error/Unauthorized"
-      requestBody:
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                course_join_code:
-                  type: string
-                  example: JOIN123
-                  description: Unique join code for the course
-              required:
-              - course_join_code
   "/api/v1/courses/{course_id}/sections":
     parameters:
     - name: course_id
@@ -713,6 +583,329 @@ paths:
       responses:
         '204':
           description: section deleted
+        '401':
+          description: unauthorized
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/x-responses/Error/Unauthorized"
+  "/api/v1/courses/{course_id}/enrollments":
+    parameters:
+    - name: course_id
+      in: path
+      description: Course ID
+      required: true
+      schema:
+        type: string
+    get:
+      summary: List all enrollments in a course
+      tags:
+      - Enrollments
+      security:
+      - cookie_auth: []
+      description: Unauthorized access to list enrollments
+      responses:
+        '200':
+          description: list of enrollments
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/x-responses/Course/Enrollment/List"
+        '401':
+          description: unauthorized
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/x-responses/Error/Unauthorized"
+  "/api/v1/courses/{course_id}/enrollments/{enrollment_id}":
+    parameters:
+    - name: course_id
+      in: path
+      description: Course ID
+      required: true
+      schema:
+        type: string
+    - name: enrollment_id
+      in: path
+      description: Enrollment ID
+      required: true
+      schema:
+        type: string
+    get:
+      summary: Get a specific enrollment
+      tags:
+      - Enrollments
+      security:
+      - cookie_auth: []
+      description: Unauthorized access to enrollment
+      responses:
+        '200':
+          description: enrollment found
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/x-responses/Course/Enrollment/Show"
+        '404':
+          description: enrollment not found
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/x-responses/Error/NotFound"
+        '401':
+          description: unauthorized
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/x-responses/Error/Unauthorized"
+    delete:
+      summary: Delete an enrollment
+      tags:
+      - Enrollments
+      security:
+      - cookie_auth: []
+      description: Unauthorized access to delete enrollment
+      responses:
+        '204':
+          description: enrollment deleted
+        '404':
+          description: enrollment not found
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/x-responses/Error/NotFound"
+        '401':
+          description: unauthorized
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/x-responses/Error/Unauthorized"
+  "/api/v1/courses/enrollments":
+    post:
+      summary: Create a new enrollment using course join code
+      tags:
+      - Enrollments
+      security:
+      - cookie_auth: []
+      parameters: []
+      description: Unauthorized access to create enrollment
+      responses:
+        '201':
+          description: enrollment created
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/x-responses/Course/Enrollment/Create"
+        '404':
+          description: course not found
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/x-responses/Error/NotFound"
+        '401':
+          description: unauthorized
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/x-responses/Error/Unauthorized"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                course_join_code:
+                  type: string
+                  example: JOIN123
+                  description: Unique join code for the course
+              required:
+              - course_join_code
+  "/api/v1/courses/{course_id}/sections/{section_id}/units":
+    get:
+      summary: List all section units for a course section
+      tags:
+      - Section Units
+      security:
+      - cookie_auth: []
+      description: Unauthorized access to list section units
+      responses:
+        '200':
+          description: list of section units
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/x-responses/Course/Section/Unit/List"
+        '401':
+          description: unauthorized
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/x-responses/Error/Unauthorized"
+    post:
+      summary: Create a new section unit
+      tags:
+      - Section Units
+      security:
+      - cookie_auth: []
+      parameters: []
+      description: Unauthorized access to create section unit
+      responses:
+        '201':
+          description: unit created
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/x-responses/Course/Section/Unit/Create"
+        '401':
+          description: unauthorized
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/x-responses/Error/Unauthorized"
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                title:
+                  type: string
+                  example: Updated Unit Title
+                  description: Title of the section unit
+                description:
+                  type: string
+                  example: Updated unit description
+                  description: Description of the section unit
+                section_id:
+                  type: integer
+                  example: 123
+                  description: ID of the parent course section
+                content:
+                  type: string
+                  format: binary
+                  description: File content of the section unit
+              required:
+              - title
+              - content
+  "/api/v1/courses/{course_id}/sections/{section_id}/units/{unit_id}":
+    parameters:
+    - name: unit_id
+      in: path
+      description: Section Unit ID
+      required: true
+      schema:
+        type: string
+    get:
+      summary: Get a specific section unit
+      tags:
+      - Section Units
+      security:
+      - cookie_auth: []
+      description: Unauthorized access to section unit
+      responses:
+        '200':
+          description: unit found
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/x-responses/Course/Section/Unit/Show"
+        '401':
+          description: unauthorized
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/x-responses/Error/Unauthorized"
+    put:
+      summary: Update a section unit
+      tags:
+      - Section Units
+      security:
+      - cookie_auth: []
+      parameters: []
+      description: Unauthorized access to update section unit
+      responses:
+        '200':
+          description: unit updated
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/x-responses/Course/Section/Unit/Update"
+        '401':
+          description: unauthorized
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/x-responses/Error/Unauthorized"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                title:
+                  type: string
+                  example: Updated Unit Title
+                description:
+                  type: string
+                  example: Updated unit description
+              required: []
+    delete:
+      summary: Delete a section unit
+      tags:
+      - Section Units
+      security:
+      - cookie_auth: []
+      description: Unauthorized access to delete section unit
+      responses:
+        '204':
+          description: unit deleted
+        '401':
+          description: unauthorized
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/x-responses/Error/Unauthorized"
+  "/api/v1/courses/{course_id}/sections/{section_id}/units/{unit_id}/transcription":
+    post:
+      summary: Get transcription
+      tags:
+      - Section Units
+      security:
+      - cookie_auth: []
+      parameters:
+      - name: unit_id
+        in: path
+        description: Section Unit ID
+        required: true
+        schema:
+          type: string
+      description: Unauthorized access
+      responses:
+        '200':
+          description: transcription generation started
+        '401':
+          description: unauthorized
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/x-responses/Error/Unauthorized"
+  "/api/v1/courses/{course_id}/sections/{section_id}/units/{unit_id}/summary":
+    post:
+      summary: Get summary
+      tags:
+      - Section Units
+      security:
+      - cookie_auth: []
+      parameters:
+      - name: unit_id
+        in: path
+        description: Section Unit ID
+        required: true
+        schema:
+          type: string
+      description: Unauthorized access
+      responses:
+        '200':
+          description: summary generation started
         '401':
           description: unauthorized
           content:
@@ -866,151 +1059,6 @@ paths:
           description: course deleted
         '401':
           description: unauthorized
-  "/api/v1/courses/{course_id}/sections/{section_id}/units":
-    get:
-      summary: List all section units for a course section
-      tags:
-      - Section Units
-      security:
-      - cookie_auth: []
-      description: Unauthorized access to list section units
-      responses:
-        '200':
-          description: list of section units
-          content:
-            application/json:
-              schema:
-                "$ref": "#/components/x-responses/Course/Section/Unit/List"
-        '401':
-          description: unauthorized
-          content:
-            application/json:
-              schema:
-                "$ref": "#/components/x-responses/Error/Unauthorized"
-    post:
-      summary: Create a new section unit
-      tags:
-      - Section Units
-      security:
-      - cookie_auth: []
-      parameters: []
-      description: Unauthorized access to create section unit
-      responses:
-        '201':
-          description: unit created
-          content:
-            application/json:
-              schema:
-                "$ref": "#/components/x-responses/Course/Section/Unit/Create"
-        '401':
-          description: unauthorized
-          content:
-            application/json:
-              schema:
-                "$ref": "#/components/x-responses/Error/Unauthorized"
-      requestBody:
-        content:
-          multipart/form-data:
-            schema:
-              type: object
-              properties:
-                title:
-                  type: string
-                  example: Updated Unit Title
-                  description: Title of the section unit
-                description:
-                  type: string
-                  example: Updated unit description
-                  description: Description of the section unit
-                section_id:
-                  type: integer
-                  example: 123
-                  description: ID of the parent course section
-                content:
-                  type: string
-                  format: binary
-                  description: File content of the section unit
-              required:
-              - title
-              - content
-  "/api/v1/courses/{course_id}/sections/{section_id}/units/{unit_id}":
-    parameters:
-    - name: unit_id
-      in: path
-      description: Section Unit ID
-      required: true
-      schema:
-        type: string
-    get:
-      summary: Get a specific section unit
-      tags:
-      - Section Units
-      security:
-      - cookie_auth: []
-      description: Unauthorized access to section unit
-      responses:
-        '200':
-          description: unit found
-          content:
-            application/json:
-              schema:
-                "$ref": "#/components/x-responses/Course/Section/Unit/Show"
-        '401':
-          description: unauthorized
-          content:
-            application/json:
-              schema:
-                "$ref": "#/components/x-responses/Error/Unauthorized"
-    put:
-      summary: Update a section unit
-      tags:
-      - Section Units
-      security:
-      - cookie_auth: []
-      parameters: []
-      description: Unauthorized access to update section unit
-      responses:
-        '200':
-          description: unit updated
-          content:
-            application/json:
-              schema:
-                "$ref": "#/components/x-responses/Course/Section/Unit/Update"
-        '401':
-          description: unauthorized
-          content:
-            application/json:
-              schema:
-                "$ref": "#/components/x-responses/Error/Unauthorized"
-      requestBody:
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                title:
-                  type: string
-                  example: Updated Unit Title
-                description:
-                  type: string
-                  example: Updated unit description
-              required: []
-    delete:
-      summary: Delete a section unit
-      tags:
-      - Section Units
-      security:
-      - cookie_auth: []
-      description: Unauthorized access to delete section unit
-      responses:
-        '204':
-          description: unit deleted
-        '401':
-          description: unauthorized
-          content:
-            application/json:
-              schema:
-                "$ref": "#/components/x-responses/Error/Unauthorized"
   "/api/v1/users/{id}/courses":
     get:
       summary: List all courses for a user

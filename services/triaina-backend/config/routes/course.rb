@@ -3,6 +3,8 @@ namespace :v1 do
   resources :courses, controller: "courses", only: [ :index, :show, :create, :destroy, :update ] do
     resources :sections, controller: "courses/course_sections", only: [ :index, :show, :create, :destroy, :update ] do
       resources :units, controller: "courses/sections/section_units", only: [ :index, :show, :create, :destroy, :update ] do
+        get "transcription", to: "courses/sections/section_units#transcription", as: "transcription"
+        get "summary", to: "courses/sections/section_units#summary", as: "summary"
       end
     end
     resources :course_chats, controller: "courses/course_chats", only: [ :index, :show, :create, :destroy, :update ] do

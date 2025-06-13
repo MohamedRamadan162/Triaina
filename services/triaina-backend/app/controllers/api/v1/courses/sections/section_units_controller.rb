@@ -64,6 +64,34 @@ class Api::V1::Courses::Sections::SectionUnitsController < Api::ApiController
     render_success(unit: serializer(unit))
   end
 
+  def transcription
+    unit = Rails.cache.fetch("unit_#{params[:unit_id]}") do
+      SectionUnit.find(params[:unit_id])
+    end
+
+    if unit.transcription.attached?
+      render_success(transcription: JSON.parse(unit.transcription.download))
+    elsif unit.content.attached? && (unit.content.content_type.start_with?("video/") || unit.content.content_type.start_with?("audio/"))
+      render_error("Transcription generating", :not_found)
+    else
+      render_error("Transcription not available", :not_found)
+    end
+  end
+
+  def summary
+    unit = Rails.cache.fetch("unit_#{params[:unit_id]}") do
+      SectionUnit.find(params[:unit_id])
+    end
+
+    if unit.summary.attached?
+      render_success(summary: unit.summary.download)
+    elsif unit.content.attached?
+      render_error("Summary generating", :not_found)
+    else
+      render_error("Summary not available", :not_found)
+    end
+  end
+
   private
 
   def get_id_params

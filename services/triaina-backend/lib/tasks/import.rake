@@ -50,7 +50,9 @@ namespace :import do
       "courses/sections/section_units#create",
       "courses/sections/section_units#index",
       "courses/sections/section_units#update",
-      "courses/sections/section_units#destroy"
+      "courses/sections/section_units#destroy",
+      "courses/sections/section_units#transcription",
+      "courses/sections/section_units#summary"
     ]
 
     permission = Permission.find_by!(subject: "course", action: "view")
