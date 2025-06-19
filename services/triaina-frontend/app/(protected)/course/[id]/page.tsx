@@ -7,32 +7,51 @@ import { courseService } from "@/lib/networkService"
 import { useEffect } from "react"
 import { useCourse } from "@/context/CourseContext"
 
-export default function CourseDetailPage({ params }: { params: { id: string } }) {
-  const { course, setCourse, loading, setLoading, error, setError } = useCourse()
+export default function CourseDetailPage({ params }: { params: { id: string } }) {  const { course, setCourse, chatChannels, setChatChannels, loading, setLoading, error, setError } = useCourse()
 
   useEffect(() => {
     // Only fetch if we don't already have the course or it's a different course
     if (!course || course.id !== params.id) {
       // For now, use the provided id - later you can use params.id
-      const courseId = 'b3a78d2a-0c6d-4f3b-b95c-23e19bd3f9b7'
+      const courseId = '5cdbd834-204b-4e10-8f2d-53019312f396'
       setLoading(true)
-      courseService.getCourse(courseId)
+
+      // Make both API calls
+      const coursePromise = courseService.getCourse(courseId)
         .then((res: any) => {
           if (res.data && res.data.success) {
             setCourse(res.data.course)
           } else {
-            setError('Failed to fetch course')
+            throw new Error('Failed to fetch course')
           }
         })
-        .catch(() => setError('Failed to fetch course'))
-        .finally(() => setLoading(false))
+
+      const channelsPromise = courseService.getChatChannels(courseId)
+        .then((res: any) => {
+          if (res.data && res.data.success) {
+            // Store the chat channels in context
+            setChatChannels(res.data.chat_channels)
+            console.log('Chat channels loaded:', res.data.chat_channels)
+          } else {
+            throw new Error('Failed to fetch chat channels')
+          }
+        })
+
+      // Handle all promises
+      Promise.all([coursePromise, channelsPromise])
+        .catch((error) => {
+          setError(error.message || 'Failed to fetch data')
+        })
+        .finally(() => {
+          setLoading(false)
+        })
     }
   }, [params.id]) // Only depend on params.id
 
   if (loading) return <div className="flex h-screen items-center justify-center">Loading...</div>
   if (error) return <div className="flex h-screen items-center justify-center text-red-500">{error}</div>
   if (!course) return null
-
+  
   // Map API data to UI structure
   const mappedCourse = {
     title: course.name,
@@ -40,48 +59,11 @@ export default function CourseDetailPage({ params }: { params: { id: string } })
       id: section.id, // Always use the actual section ID
       title: section.title || `Section ${section.order_index || idx + 1}`,
     })),
-    channels: [
-      { id: 1, name: "general-chat" },
-      { id: 2, name: "general-chat" },
-      { id: 3, name: "general-chat" },
-      { id: 4, name: "general-chat" },
-      { id: 5, name: "general-chat" },
-    ],
-    messages: [
-      // You can keep the sample messages or fetch from API if available
-      {
-        id: 1,
-        user: "User 1",
-        time: "10:30 AM",
-        content:
-          "Lorem ipsum dolor sit amet consectetur, adipisicing elit. Ad quam officia veniam provident ullam enim laboriosam eveniet voluptate neque et? Harum quo",
-        color: "bg-red-500",
-      },
-      {
-        id: 2,
-        user: "User 3",
-        time: "10:35 AM",
-        content:
-          "Lorem ipsum dolor sit amet consectetur, adipisicing elit. Ad quam officia veniam provident ullam enim laboriosam eveniet voluptate neque et? Harum quo",
-        color: "bg-yellow-500",
-      },
-      {
-        id: 3,
-        user: "User 2",
-        time: "10:40 AM",
-        content:
-          "Lorem ipsum dolor sit amet consectetur, adipisicing elit. Ad quam officia veniam provident ullam enim laboriosam eveniet voluptate neque et? Harum quo",
-        color: "bg-blue-500",
-      },
-      {
-        id: 4,
-        user: "User 1",
-        time: "10:45 AM",
-        content:
-          "Lorem ipsum dolor sit amet consectetur, adipisicing elit. Ad quam officia veniam provident ullam enim laboriosam eveniet voluptate neque et? Harum quo",
-        color: "bg-red-500",
-      },
-    ],
+    channels: chatChannels.map((channel: any, idx: number) => ({
+      id: channel.id, // Always use the actual channel ID
+      name: channel.name || `Chat ${idx + 1}`,
+    })),
+    
   }
 
   return (
@@ -98,52 +80,18 @@ export default function CourseDetailPage({ params }: { params: { id: string } })
         <div className="flex items-center justify-between border-b border-gray-200 px-4 py-2">
           <div className="flex items-center">
             <h1 className="mr-2 font-medium">{mappedCourse.title}</h1>
-            <span className="flex items-center text-gray-500">
-              <Hash className="mr-1 h-4 w-4" />
-              general-chat
-            </span>
-          </div>
-          <div className="flex items-center space-x-4">
-            <button>
-              <Pin className="h-5 w-5 text-gray-500" />
-            </button>
-            <button>
-              <Paperclip className="h-5 w-5 text-gray-500" />
-            </button>
           </div>
         </div>
-
-        {/* Tabs */}
-        <div className="flex border-b border-gray-200 px-4">
-          <button className="flex items-center border-b-2 border-black py-2 pr-4 font-medium">
-            <MessageSquare className="mr-2 h-4 w-4" />
-            Messages
-          </button>
-          <button className="flex items-center py-2 px-4 text-gray-500 hover:text-black">
-            <Pin className="mr-2 h-4 w-4" />
-            Pins
-          </button>
-          <button className="flex items-center py-2 px-4 text-gray-500 hover:text-black">
-            <Paperclip className="mr-2 h-4 w-4" />
-            Files
-          </button>
-        </div>
-
-        {/* Messages */}
-        <div className="flex-1 overflow-y-auto p-4">
-          {mappedCourse.messages.map((message) => (
-            <ChatMessage key={message.id} message={message} />
-          ))}
-        </div>
-
-        {/* Message input */}
-        <div className="border-t border-gray-200 p-4">
-          <div className="flex items-center rounded-md border border-gray-300 bg-white p-2">
-            <button className="mr-2 text-gray-400">
-              <span className="text-xl">😊</span>
-            </button>
-            <input type="text" placeholder={`Message # general-chat`} className="flex-1 bg-transparent outline-none" />
-            <button className="ml-2 rounded-md bg-gray-100 px-3 py-1 text-gray-500 hover:bg-gray-200">Send</button>
+        <div className="flex flex-1">
+          <div className="flex-1 p-4">
+            <div className="overflow-hidden rounded-md bg-gray-100">
+              {/* Tab content */}
+              <div className="p-4">
+                <p className="text-gray-600">
+                  Select a channel or chapter from the sidebar to view messages or content.
+                </p>
+              </div>
+            </div>
           </div>
         </div>
       </div>

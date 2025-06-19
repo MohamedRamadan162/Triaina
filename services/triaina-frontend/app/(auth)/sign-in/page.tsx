@@ -1,5 +1,6 @@
 "use client"
 import Link from "next/link"
+import { useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
@@ -8,14 +9,22 @@ import { useForm } from "react-hook-form"
 import { authService } from "@/lib/networkService"
 import React from "react"
 import { useEffect } from "react"
+import { useAuth } from "@/context/AuthContext"
 
 export default function SignIn() {
   const { register, handleSubmit, formState: { errors, isSubmitting }, setError, setValue } = useForm();
   const [apiError, setApiError] = React.useState<string | null>(null);
   const [apiSuccess, setApiSuccess] = React.useState<string | null>(null);
   const [autoFilled, setAutoFilled] = React.useState(false);
-
+  const { login, isAuthenticated } = useAuth();
+  const router = useRouter();
   useEffect(() => {
+    // Redirect if already authenticated
+    if (isAuthenticated) {
+      router.push('/home');
+      return;
+    }
+    
     // Check if we have stored credentials from the signup page
     const signupEmail = localStorage.getItem('signupEmail');
     const signupPassword = localStorage.getItem('signupPassword');
@@ -33,16 +42,20 @@ export default function SignIn() {
       // Add a welcome message
       setApiSuccess("Account created successfully! Your credentials are filled in.");
     }
-  }, [setValue, autoFilled]);
-
-  const onSubmit = async (data: any) => {
+  }, [setValue, autoFilled, isAuthenticated, router]);  const onSubmit = async (data: any) => {
     setApiError(null);
     setApiSuccess(null);
     try {
-      const response = await authService.login(data.email, data.password);
+      // Use our auth context login function
+      const response = await login(data.email, data.password);
+      
       if (response.data.success) {
-        setApiSuccess("Signed in successfully!");
-        // Optionally redirect or update user context here
+        setApiSuccess("Signed in successfully! Redirecting...");
+        
+        // Redirect to home page after a brief delay to show success message
+        setTimeout(() => {
+          router.push('/home');
+        }, 1500);
       }
     } catch (err: any) {
       setApiError(err?.response?.data?.message || "Sign in failed. Please try again.");

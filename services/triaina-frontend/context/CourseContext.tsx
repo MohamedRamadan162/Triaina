@@ -1,8 +1,25 @@
 "use client";
 
 import React, { createContext, useContext, useState, ReactNode } from 'react';
+import { User } from './AuthContext';
 
 // Define types for our course data
+export interface Message {
+  id: string;
+  content: string;
+  chat_id: string;
+  user: User
+  created_at: string;
+  updated_at: string;
+} 
+export interface Chat {
+  id: string;
+  name: string;
+  messages: Message[];
+  course_id: string;
+  created_at: string;
+  updated_at: string;
+}
 export interface Unit {
   id: string;
   content_url: string | null;
@@ -28,6 +45,7 @@ export interface Course {
   join_code: string;
   name: string;
   sections: Section[];
+  chats: Chat[];
   start_date: string;
 }
 
@@ -35,6 +53,10 @@ export interface Course {
 interface CourseContextType {
   course: Course | null;
   setCourse: (course: Course) => void;
+  chatChannels: Chat[];
+  setChatChannels: (channels: Chat[]) => void;
+  currentChatMessages: Message[];
+  setCurrentChatMessages: (messages: Message[]) => void;
   loading: boolean;
   setLoading: (loading: boolean) => void;
   error: string | null;
@@ -45,6 +67,10 @@ interface CourseContextType {
 const CourseContext = createContext<CourseContextType>({
   course: null,
   setCourse: () => {},
+  chatChannels: [],
+  setChatChannels: () => {},
+  currentChatMessages: [],
+  setCurrentChatMessages: () => {},
   loading: false,
   setLoading: () => {},
   error: null,
@@ -54,11 +80,24 @@ const CourseContext = createContext<CourseContextType>({
 // Provider component
 export const CourseProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [course, setCourse] = useState<Course | null>(null);
+  const [chatChannels, setChatChannels] = useState<Chat[]>([]);
+  const [currentChatMessages, setCurrentChatMessages] = useState<Message[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
 
   return (
-    <CourseContext.Provider value={{ course, setCourse, loading, setLoading, error, setError }}>
+    <CourseContext.Provider value={{ 
+      course, 
+      setCourse, 
+      chatChannels, 
+      setChatChannels,
+      currentChatMessages,
+      setCurrentChatMessages,
+      loading, 
+      setLoading, 
+      error, 
+      setError,
+    }}>
       {children}
     </CourseContext.Provider>
   );

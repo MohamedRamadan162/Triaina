@@ -1,11 +1,13 @@
 import { InternalAxiosRequestConfig } from 'axios';
 
 const authInterceptor = (config: InternalAxiosRequestConfig) => {
-    const token = localStorage.getItem('token');
-    if (token) {
-        config.headers.Authorization = `Bearer ${token}`;
-    }
+    // With cookie-based authentication, we don't need to add the Authorization header
+    // The cookie will be automatically included in requests to the same domain
+    
+    // Set withCredentials to true to ensure cookies are sent with cross-domain requests
+    config.withCredentials = true;
+    
     return config;
 };
 
-export default authInterceptor; 
+export default authInterceptor;

@@ -1,6 +1,26 @@
+"use client"
 import { Plus } from "lucide-react"
+import { useAuth } from "@/context/AuthContext"
+import { useMemo, useCallback } from "react"
 
 export default function ProfileDetails() {
+  const { user } = useAuth();
+  
+  // Create initials from name - memoized to prevent recalculation
+  const getInitials = useCallback((name: string) => {
+    return name
+      .split(' ')
+      .map(part => part[0])
+      .join('')
+      .toUpperCase()
+      .slice(0, 2);
+  }, []);
+  
+  // Memoize the initials calculation to prevent re-renders
+  const initials = useMemo(() => {
+    return user?.name ? getInitials(user.name) : "??";
+  }, [user, getInitials]);
+
   return (
     <div className="max-w-2xl">
       <h2 className="text-2xl font-semibold text-gray-900 mb-8">Profile details</h2>
@@ -11,9 +31,9 @@ export default function ProfileDetails() {
         <div className="flex items-center justify-between">
           <div className="flex items-center">
             <div className="h-12 w-12 rounded-full bg-[#ff00ff] flex items-center justify-center text-white font-bold mr-4">
-              JO
+              {initials}
             </div>
-            <span className="text-gray-900 font-medium">John Doe</span>
+            <span className="text-gray-900 font-medium">{user?.name || "Loading..."}</span>
           </div>
           <button className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50">
             Update profile
@@ -25,7 +45,7 @@ export default function ProfileDetails() {
       <div className="bg-white rounded-lg border border-gray-200 p-6 mb-6">
         <h3 className="text-lg font-medium text-gray-900 mb-4">Email addresses</h3>
         <div className="space-y-4">
-          <div className="text-gray-700">example@personal.com</div>
+          <div className="text-gray-700">{user?.email || "No email available"}</div>
           <button className="flex items-center text-sm font-medium text-gray-600 hover:text-gray-900">
             <Plus className="mr-2 h-4 w-4" />
             Add email address

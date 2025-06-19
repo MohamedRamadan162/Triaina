@@ -38,8 +38,10 @@ export default function CourseChannels({ course }: CourseChannelsProps) {
           {course.channels.map((channel) => (
             <Link
               key={channel.id}
-              href={`/course/${courseId}`}
-              className="flex items-center rounded px-2 py-1 text-sm hover:bg-gray-200"
+              href={`/course/${courseId}/chat/${channel.id}`}
+              className={`flex items-center rounded px-2 py-1 text-sm hover:bg-gray-200 ${
+                params?.chatId === channel.id ? 'bg-gray-200 font-medium' : ''
+              }`}
             >
               <Hash className="mr-1 h-4 w-4 text-gray-500" />
               <span>{channel.name}</span>
