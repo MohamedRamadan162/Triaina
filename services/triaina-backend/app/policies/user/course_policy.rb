@@ -1,11 +1,15 @@
-class User::CoursesPolicy < ApplicationPolicy
+class User::CoursePolicy < ApplicationPolicy
   def index?
-    @user.present?
+    allowed?
   end
 
   class Scope < Scope
+    def initialize(context, scope)
+      super
+    end
+
     def resolve
-      user.courses
+      @user.courses
     end
   end
 end

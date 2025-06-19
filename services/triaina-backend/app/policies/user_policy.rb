@@ -2,34 +2,34 @@
 
 class UserPolicy < ApplicationPolicy
   def me?
-    @user.present? && @user.id == record.id
+    allowed? && @user.present? && @user.id == record.id
   end
 
   def update_me?
-    @user.present? && @user.id == record.id
+    allowed? && @user.present? && @user.id == record.id
   end
 
   def delete_me?
-    @user.present? && @user.id == record.id
+    allowed? && @user.present? && @user.id == record.id
   end
 
   def index?
-    @user.admin?
+    allowed?
   end
 
   def show?
-    @user.admin?
+    allowed?
   end
 
   def create?
-    @user.admin?
+    allowed?
   end
 
   def update?
-    @user.admin?
+    allowed?
   end
 
   def destroy?
-    @user.admin?
+    allowed?
   end
 end

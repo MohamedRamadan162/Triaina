@@ -3,7 +3,7 @@ require 'rails_helper'
 RSpec.describe "Courses", type: :request do
   # Create user
   let(:user) {
-    create(:user)
+    create(:user, admin: true)
   }
 
   describe "when authenticated" do

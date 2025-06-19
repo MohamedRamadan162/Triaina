@@ -206,7 +206,7 @@ RSpec.configure do |config|
               created_at: { type: :string, format: 'date-time', example: '2025-01-01T00:00:00Z' },
               updated_at: { type: :string, format: 'date-time', example: '2025-01-01T00:00:00Z' }
             }),
-          ChatChannel: model_schema(
+          CourseChat: model_schema(
             {
               id: { type: :uuid, example: "f47ac10b-58cc-4372-a567-0e02b2c3d479" },
               name: { type: :string, example: 'General' },
@@ -254,11 +254,11 @@ RSpec.configure do |config|
                 Update: response_model_schema_ref('Unit', 'unit')
               }
             },
-            ChatChannel: {
-              List: response_model_schema_ref('ChatChannel', 'chat_channels', is_array: true),
-              Show: response_model_schema_ref('ChatChannel', 'chat_channel'),
-              Create: response_model_schema_ref('ChatChannel', 'chat_channel'),
-              Update: response_model_schema_ref('ChatChannel', 'chat_channel'),
+            CourseChat: {
+              List: response_model_schema_ref('CourseChat', 'course_chats', is_array: true),
+              Show: response_model_schema_ref('CourseChat', 'course_chat'),
+              Create: response_model_schema_ref('CourseChat', 'course_chat'),
+              Update: response_model_schema_ref('CourseChat', 'course_chat'),
               ChatMessage: {
                 List: response_model_schema_ref('ChatMessage', 'chat_messages', is_array: true),
                 Show: response_model_schema_ref('ChatMessage', 'chat_message'),

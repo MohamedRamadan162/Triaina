@@ -2,7 +2,7 @@ require 'rails_helper'
 
 RSpec.describe "Api::V1::Courses::CourseSectionsController", type: :request do
   describe "Course Sections Management" do
-    let!(:user) { create(:user) }
+    let!(:user) { create(:user, admin: true) }
     let!(:section) { create(:course_section) }
     let!(:course) { section.course }
 

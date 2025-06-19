@@ -66,6 +66,9 @@ class KarafkaApp < Karafka::App
     topic "user_signed_up" do
       consumer UserSignupConsumer
     end
+    topic "section_unit_created" do
+      consumer SectionUnitCreatedConsumer
+    end
   end
 end
 

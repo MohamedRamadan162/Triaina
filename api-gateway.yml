@@ -7,3 +7,6 @@ services:
       - name: users-route
         paths:
           - /
+    connect_timeout: 1200000   # 120 seconds to establish connection
+    write_timeout:   1200000   # 120 seconds between write operations
+    read_timeout:    3000000    # 300 seconds to receive response
