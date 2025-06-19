@@ -1,3 +1,5 @@
+import { getInitials} from "@/lib/generalFuncitons"
+
 interface ChatMessageProps {
   message: {
     id: string
@@ -13,7 +15,7 @@ export default function ChatMessage({ message }: ChatMessageProps) {
     <div className="mb-4 flex">
       <div className={`mr-3 flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-md ${message.color}`}>
         <span className="text-white">
-          {message.user.split(' ').map(part => part[0]).join('').toUpperCase().slice(0, 2)}
+          {getInitials(message.user)}
         </span>
       </div>
       <div className="flex-1">

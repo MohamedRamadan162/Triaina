@@ -4,14 +4,16 @@ import Sidebar from "@/components/sidebar"
 import CourseChannels from "@/components/course-channels"
 import ChatMessage from "@/components/chat-message"
 import { courseService } from "@/lib/networkService"
-import { useEffect, useState, useRef } from "react"
+import { useEffect, useState, useRef, use } from "react"
 import { useCourse } from "@/context/CourseContext"
 import ActionCable from "actioncable"
 import { useRouter } from "next/navigation"
 import { useAuth } from "@/context/AuthContext"
 import { Message } from "@/context/CourseContext"
+import { getUserColor } from "@/lib/generalFuncitons"
 
-export default function ChannelDetailPage({ params }: { params: { id: string, chatId: string } }) {
+export default function ChannelDetailPage({ params }: { params: Promise<{ id: string, chatId: string }> }) {
+    const { id, chatId } = use(params)
     const {
         course,
         setCourse,
@@ -27,14 +29,14 @@ export default function ChannelDetailPage({ params }: { params: { id: string, ch
     const router = useRouter()
     useEffect(() => {
         if (!loading && (!course || error)) {
-            router.push(`/course/${params.id}`)
+            router.push(`/course/${id}`)
         }
-    }, [params.id]) // Only depend on params.id
+    }, [id]) // Only depend on params.id
 
     if (loading) return <div className="flex h-screen items-center justify-center">Loading...</div>
     if (error) return <div className="flex h-screen items-center justify-center text-red-500">{error}</div>
     if (!course) return null
-    const currentChannel = chatChannels.find(channel => channel.id === params.chatId)
+    const currentChannel = chatChannels.find(channel => channel.id === chatId)
     if (!currentChannel) return <div className="flex h-screen items-center justify-center">Chapter not found</div>
 
     // Map API data to UI structure
@@ -52,7 +54,7 @@ export default function ChannelDetailPage({ params }: { params: { id: string, ch
 
     const currentChat = {
         id: currentChannel.id, // Use the actual section ID for navigation
-        name: currentChannel.name || `Chapter ${params.chatId}`,
+        name: currentChannel.name || `Chapter ${chatId}`,
     }
 
     interface GroupChatProps {
@@ -211,7 +213,7 @@ export default function ChannelDetailPage({ params }: { params: { id: string, ch
                                         return updated;
                                     } else {
                                         // Add new message
-                                        return [...prevMessages, data.message];
+                                        return [data.message, ...prevMessages];
                                     }
                                 });
 
@@ -346,17 +348,17 @@ export default function ChannelDetailPage({ params }: { params: { id: string, ch
         };
 
         // Determine user color based on their ID
-        const getUserColor = (userId: string) => {
-            const colors = [
-                "bg-red-500", "bg-blue-500", "bg-green-500",
-                "bg-yellow-500", "bg-purple-500", "bg-pink-500",
-                "bg-indigo-500", "bg-orange-500", "bg-teal-500"
-            ];
+        // const getUserColor = (userId: string) => {
+        //     const colors = [
+        //         "bg-red-500", "bg-blue-500", "bg-green-500",
+        //         "bg-yellow-500", "bg-purple-500", "bg-pink-500",
+        //         "bg-indigo-500", "bg-orange-500", "bg-teal-500"
+        //     ];
 
-            // Simple hash function to consistently map a user ID to a color
-            const hash = userId.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0);
-            return colors[hash % colors.length];
-        };
+        //     // Simple hash function to consistently map a user ID to a color
+        //     const hash = userId.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0);
+        //     return colors[hash % colors.length];
+        // };
 
         return (
             <div className="flex flex-col h-full">
@@ -416,7 +418,7 @@ export default function ChannelDetailPage({ params }: { params: { id: string, ch
                                     </button>
                                 </div>
                             )}
-                            {messages.map(message => (
+                            {[...messages].reverse().map(message => (
                                 <div key={message.id} className="mb-4">
                                     {editingMessage === message.id ? (
                                         <div className="flex flex-col space-y-2 pl-12">
@@ -571,7 +573,7 @@ export default function ChannelDetailPage({ params }: { params: { id: string, ch
                 {/* GroupChat component */}
                 <div className="flex-1 flex flex-col overflow-hidden">
                     <GroupChat
-                        chatId={params.chatId}
+                        chatId={chatId}
                         currentUserId={user?.id || ''}
                         currentUserName={user?.name || 'Anonymous'}
                     />

@@ -5,31 +5,32 @@ import CourseChannels from "@/components/course-channels"
 import ChapterParts from "@/components/chapter-parts"
 import { useCourse } from "@/context/CourseContext"
 import { useRouter } from "next/navigation"
-import { useEffect } from "react"
+import { useEffect, use } from "react"
 
 export default function PartDetailPage({
   params,
 }: {
-  params: { id: string; chapterId: string; partId: string }
+  params: Promise<{ id: string; chapterId: string; partId: string }>
 }) {
+  const { id, chapterId, partId } = use(params)
   const { course, loading, error } = useCourse()
   const router = useRouter()
   // Redirect back to course page if we don't have course data
   useEffect(() => {
     if (!loading && (!course || error)) {
-      router.push(`/course/${params.id}`)
+      router.push(`/course/${id}`)
     }
-  }, [params.id])
+  }, [id])
 
   if (loading) return <div className="flex h-screen items-center justify-center">Loading...</div>
   if (!course) return null
 
   // Find the current section (chapter) based on ID
-  const currentSection = course.sections.find(section => section.id === params.chapterId)
+  const currentSection = course.sections.find(section => section.id === chapterId)
   if (!currentSection) return <div className="flex h-screen items-center justify-center">Chapter not found</div>
   
   // Find the current unit (part) based on ID
-  const currentUnit = currentSection.units.find(unit => unit.id === params.partId)
+  const currentUnit = currentSection.units.find(unit => unit.id === partId)
   if (!currentUnit) return <div className="flex h-screen items-center justify-center">Part not found</div>
   // Map API data to UI structure
   const mappedCourse = {
@@ -49,7 +50,7 @@ export default function PartDetailPage({
   // Current chapter data
   const currentChapter = {
     id: currentSection.id, // Use the actual section ID for navigation
-    title: currentSection.title || `Chapter ${params.chapterId}`,
+    title: currentSection.title || `Chapter ${chapterId}`,
     parts: currentSection.units.map(unit => ({
       id: unit.id,
       title: unit.title || `Part ${unit.order_index}`,
@@ -58,8 +59,8 @@ export default function PartDetailPage({
 
   // Current part data
   const currentPart = {
-    id: currentUnit.order_index || params.partId,
-    title: currentUnit.title || `Part ${params.partId}`,
+    id: currentUnit.order_index || partId,
+    title: currentUnit.title || `Part ${partId}`,
     content: currentUnit.content_url ? currentUnit.content_url : "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4"
 
   }

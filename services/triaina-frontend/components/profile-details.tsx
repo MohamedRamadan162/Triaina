@@ -2,24 +2,15 @@
 import { Plus } from "lucide-react"
 import { useAuth } from "@/context/AuthContext"
 import { useMemo, useCallback } from "react"
+import { getInitials, getUserColor } from "@/lib/generalFuncitons";
 
 export default function ProfileDetails() {
   const { user } = useAuth();
-  
-  // Create initials from name - memoized to prevent recalculation
-  const getInitials = useCallback((name: string) => {
-    return name
-      .split(' ')
-      .map(part => part[0])
-      .join('')
-      .toUpperCase()
-      .slice(0, 2);
-  }, []);
-  
-  // Memoize the initials calculation to prevent re-renders
-  const initials = useMemo(() => {
-    return user?.name ? getInitials(user.name) : "??";
-  }, [user, getInitials]);
+
+
+  // Memoize initials and color calculation to prevent unnecessary re-renders
+  const initials = getInitials(useMemo(() => user?.name || "User", [user]));
+  const userColor = getUserColor(useMemo(() => user?.id || "User", [user]));
 
   return (
     <div className="max-w-2xl">
@@ -30,7 +21,7 @@ export default function ProfileDetails() {
         <h3 className="text-lg font-medium text-gray-900 mb-4">Profile</h3>
         <div className="flex items-center justify-between">
           <div className="flex items-center">
-            <div className="h-12 w-12 rounded-full bg-[#ff00ff] flex items-center justify-center text-white font-bold mr-4">
+            <div className={`h-12 w-12 rounded-full ${userColor} flex items-center justify-center text-white font-bold mr-4`}>
               {initials}
             </div>
             <span className="text-gray-900 font-medium">{user?.name || "Loading..."}</span>

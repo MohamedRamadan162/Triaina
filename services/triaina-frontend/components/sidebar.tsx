@@ -6,6 +6,7 @@ import Link from "next/link"
 import { useState, useCallback, useMemo } from "react"
 import ProfileDropdown from "./profile-dropdown"
 import { useAuth } from "@/context/AuthContext"
+import { getInitials, getUserColor } from "@/lib/generalFuncitons"
 
 export default function Sidebar() {
   const { user } = useAuth();
@@ -18,15 +19,9 @@ export default function Sidebar() {
   })
   
   // Get user initials
-  const userInitials = useMemo(() => {
-    if (!user || !user.name) return "??";
-    return user.name
-      .split(' ')
-      .map(part => part[0])
-      .join('')
-      .toUpperCase()
-      .slice(0, 2);
-  }, [user]);
+  const userInitials = getInitials(useMemo(() => user?.name || "User", [user]));
+  const userColor = getUserColor(useMemo(() => user?.id || "User", [user]));
+  
   
   // Memoize the click handler to prevent unnecessary re-renders
     const handleProfileClick = useCallback((event: React.MouseEvent<HTMLButtonElement>) => {
@@ -96,7 +91,7 @@ export default function Sidebar() {
           <Plus className="h-5 w-5" />
         </button>        <button 
           onClick={handleProfileClick} 
-          className="flex h-10 w-10 items-center justify-center rounded-sm bg-[#ff00ff] p-2 text-white font-bold"
+          className={`flex h-10 w-10 items-center justify-center rounded-sm p-2 text-white font-bold ${userColor}`}
         >
           {userInitials}
         </button>

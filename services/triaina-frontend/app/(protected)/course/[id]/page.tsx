@@ -4,14 +4,14 @@ import Sidebar from "@/components/sidebar"
 import CourseChannels from "@/components/course-channels"
 import ChatMessage from "@/components/chat-message"
 import { courseService } from "@/lib/networkService"
-import { useEffect } from "react"
+import { useEffect, use } from "react"
 import { useCourse } from "@/context/CourseContext"
 
-export default function CourseDetailPage({ params }: { params: { id: string } }) {  const { course, setCourse, chatChannels, setChatChannels, loading, setLoading, error, setError } = useCourse()
-
+export default function CourseDetailPage({ params }: { params: Promise<{ id: string }> }) {  const { course, setCourse, chatChannels, setChatChannels, loading, setLoading, error, setError } = useCourse()
+const { id } = use(params)
   useEffect(() => {
     // Only fetch if we don't already have the course or it's a different course
-    if (!course || course.id !== params.id) {
+    if (!course || course.id !== id) {
       // For now, use the provided id - later you can use params.id
       const courseId = '5cdbd834-204b-4e10-8f2d-53019312f396'
       setLoading(true)
@@ -46,7 +46,7 @@ export default function CourseDetailPage({ params }: { params: { id: string } })
           setLoading(false)
         })
     }
-  }, [params.id]) // Only depend on params.id
+  }, [id]) // Only depend on params.id
 
   if (loading) return <div className="flex h-screen items-center justify-center">Loading...</div>
   if (error) return <div className="flex h-screen items-center justify-center text-red-500">{error}</div>

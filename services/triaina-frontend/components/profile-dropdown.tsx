@@ -4,6 +4,7 @@ import { Settings, LogOut } from "lucide-react"
 import { useRef, useEffect, useMemo, useCallback } from "react"
 import Link from "next/link"
 import { useAuth } from "@/context/AuthContext"
+import { getInitials, getUserColor } from "@/lib/generalFuncitons"
 
 
 interface ProfileDropdownProps {
@@ -16,19 +17,18 @@ export default function ProfileDropdown({ isOpen, onClose, position }: ProfileDr
     const dropdownRef = useRef<HTMLDivElement>(null)
     const { user, logout } = useAuth();
       // Create initials from name - memoized to prevent recalculation on every render
-    const getInitials = useCallback((name: string) => {
-        return name
-            .split(' ')
-            .map(part => part[0])
-            .join('')
-            .toUpperCase()
-            .slice(0, 2);
-    }, []);
+    // const getInitials = useCallback((name: string) => {
+    //     return name
+    //         .split(' ')
+    //         .map(part => part[0])
+    //         .join('')
+    //         .toUpperCase()
+    //         .slice(0, 2);
+    // }, []);
     
-    // Memoize initials calculation to prevent unnecessary re-renders
-    const initials = useMemo(() => {
-        return user?.name ? getInitials(user.name) : "??";
-    }, [user, getInitials]);
+    // Memoize initials and color calculation to prevent unnecessary re-renders
+    const initials = getInitials(useMemo(() => user?.name || "User", [user]));
+    const userColor = getUserColor(useMemo(() => user?.id || "User", [user]));
 
     useEffect(() => {
         const handleClickOutside = (event: MouseEvent) => {
@@ -59,7 +59,7 @@ export default function ProfileDropdown({ isOpen, onClose, position }: ProfileDr
         >
             {/* Header with avatar and name */}
             <div className="flex items-center p-4 border-b border-gray-100">
-                <div className="flex h-12 w-12 items-center justify-center rounded-full bg-[#ff00ff] text-white font-bold mr-3">
+                <div className={`flex h-12 w-12 items-center justify-center rounded-full ${userColor} text-white font-bold mr-3`}>
                     {initials}
                 </div>
                 <div>
