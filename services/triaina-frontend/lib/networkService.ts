@@ -55,6 +55,11 @@ export const courseService = {
         api.put(`/chats/${chatId}/messages/${messageId}`, { content }),
         
     deleteMessage: (chatId: string, messageId: string) =>
-        api.delete(`/chats/${chatId}/messages/${messageId}`)
+        api.delete(`/chats/${chatId}/messages/${messageId}`),
+
+    // Ai features 
+    getTranscription: (courseId:string,sectionId:string, partId: string) => api.get(`/courses/${courseId}/sections/${sectionId}/units/${partId}/transcription`),
+
+    getSummary: (courseId:string,sectionId:string, partId: string) => api.get(`/courses/${courseId}/sections/${sectionId}/units/${partId}/summary`)
 };
 

@@ -13,7 +13,7 @@ export default function ChapterDetailPage({
   params: Promise<{ id: string; chapterId: string }>
 }) {
   const { id, chapterId } = use(params)
-  const { course, loading, error } = useCourse()
+  const { course,chatChannels, loading, error } = useCourse()
   const router = useRouter()
 
   // Redirect back to course page if we don't have course data
@@ -37,13 +37,10 @@ export default function ChapterDetailPage({
       id: section.id, // Always use the actual section ID
       title: section.title || `Section ${section.order_index}`,
     })),
-    channels: [
-      { id: 1, name: "general-chat" },
-      { id: 2, name: "general-chat" },
-      { id: 3, name: "general-chat" },
-      { id: 4, name: "general-chat" },
-      { id: 5, name: "general-chat" },
-    ],
+    channels:chatChannels.map((channel: any, idx: number) => ({
+      id: channel.id, // Always use the actual channel ID
+      name: channel.name || `Chat ${idx + 1}`,
+    })),
   }
 
   // Current chapter data

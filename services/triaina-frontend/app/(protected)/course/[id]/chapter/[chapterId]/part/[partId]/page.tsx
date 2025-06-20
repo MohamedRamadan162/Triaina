@@ -6,6 +6,23 @@ import ChapterParts from "@/components/chapter-parts"
 import { useCourse } from "@/context/CourseContext"
 import { useRouter } from "next/navigation"
 import { useEffect, use } from "react"
+import { useState } from "react"
+import { courseService } from "@/lib/networkService"
+
+interface TranscriptionSegment {
+  id: string;
+  start: number;
+  end: number;
+  text: string;
+}
+
+interface Transcription {
+  language: string;
+  duration: string;
+  text: string;
+  segments:TranscriptionSegment[];
+}
+
 
 export default function PartDetailPage({
   params,
@@ -13,14 +30,39 @@ export default function PartDetailPage({
   params: Promise<{ id: string; chapterId: string; partId: string }>
 }) {
   const { id, chapterId, partId } = use(params)
-  const { course, loading, error } = useCourse()
+  const { course,chatChannels, loading, error } = useCourse()
   const router = useRouter()
+  const [transcription, setTranscription] = useState<Transcription | null>(null);
+  const [summary, setSummary] = useState(null)
+
   // Redirect back to course page if we don't have course data
   useEffect(() => {
     if (!loading && (!course || error)) {
       router.push(`/course/${id}`)
     }
-  }, [id])
+
+    const transcriptionPromise = courseService.getTranscription(id, chapterId, partId)
+    const summaryPromise = courseService.getSummary(id, chapterId, partId)
+    Promise.all([transcriptionPromise, summaryPromise]).then(([transcriptionRes, summaryRes]) => {
+      if (transcriptionRes.data && transcriptionRes.data.transcription) {
+        const transcription: Transcription = {
+          language: transcriptionRes.data.transcription.language,
+          duration: transcriptionRes.data.transcription.duration,
+          text: transcriptionRes.data.transcription.text,        
+          segments: transcriptionRes.data.transcription.segments.map((segment: TranscriptionSegment)=>({
+            id: segment.id,
+            start: segment.start,
+            end: segment.end,
+            text: segment.text
+          }))
+        }
+        setTranscription(transcription)
+      }
+      summaryRes.data && setSummary(summaryRes.data.summary)
+    }).catch(err => {
+      console.error("Failed to fetch transcription or summary:", err)
+    })
+  }, [id,chapterId,partId])
 
   if (loading) return <div className="flex h-screen items-center justify-center">Loading...</div>
   if (!course) return null
@@ -39,13 +81,10 @@ export default function PartDetailPage({
       id: section.id, // Always use the actual section ID
       title: section.title || `Section ${section.order_index}`,
     })),
-    channels: [
-      { id: 1, name: "general-chat" },
-      { id: 2, name: "general-chat" },
-      { id: 3, name: "general-chat" },
-      { id: 4, name: "general-chat" },
-      { id: 5, name: "general-chat" },
-    ],
+    channels: chatChannels.map((channel: any, idx: number) => ({
+      id: channel.id, // Always use the actual channel ID
+      name: channel.name || `Chat ${idx + 1}`,
+    })),
   }
   // Current chapter data
   const currentChapter = {
@@ -61,8 +100,9 @@ export default function PartDetailPage({
   const currentPart = {
     id: currentUnit.order_index || partId,
     title: currentUnit.title || `Part ${partId}`,
-    content: currentUnit.content_url ? currentUnit.content_url : "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4"
-
+    content: currentUnit.content_url ? currentUnit.content_url : "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
+    transcription: transcription,
+    summary: summary,
   }
 
   return (
@@ -100,8 +140,7 @@ export default function PartDetailPage({
               <div className="border-b border-gray-200">
                 <div className="flex">
                   <button className="border-b-2 border-black px-4 py-2 font-medium">Transcript</button>
-                  <button className="px-4 py-2 text-gray-500 hover:text-black">Notes</button>
-                  <button className="px-4 py-2 text-gray-500 hover:text-black">Downloads</button>
+                  <button className="px-4 py-2 text-gray-500 hover:text-black">Summary</button>
                 </div>
               </div>
 
