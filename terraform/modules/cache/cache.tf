@@ -12,7 +12,7 @@ resource "aws_elasticache_replication_group" "triaina_cache" {
   description                = "Triaina Redis Cache"
   engine                     = "redis"
   engine_version             = "7.0"
-  parameter_group_name       = "default.redis7.0" # Use appropriate parameter group
+  parameter_group_name       = "default.redis7" # Use appropriate parameter group
   node_type                  = "cache.t3.micro"
   num_node_groups            = 1    # Number of shards
   replicas_per_node_group    = 1    # One replica per AZ (you can increase this for more replicas)

@@ -1,7 +1,4 @@
 gateway:
-  admin:
-    http:
-      enabled: true
   proxy:
     type: LoadBalancer
     http:

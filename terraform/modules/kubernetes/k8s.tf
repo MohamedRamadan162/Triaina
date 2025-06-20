@@ -33,7 +33,7 @@ resource "aws_iam_role_policy_attachment" "cluster_AmazonEKSServicePolicy" {
 resource "aws_eks_cluster" "triaina_eks_cluster" {
   name     = "triaina-eks-cluster"
   role_arn = aws_iam_role.eks_cluster_role.arn
-   version  = "1.31.2"
+  version  = "1.33"
 
   vpc_config {
     subnet_ids         = var.private_subnet_ids[*]
@@ -86,7 +86,7 @@ resource "aws_eks_node_group" "triaina_eks_cluster_worker_node_group" {
   instance_types = ["t2.micro"]
 
   scaling_config {
-    desired_size = 1
+    desired_size = 5
     max_size     = 5
     min_size     = 1
   }

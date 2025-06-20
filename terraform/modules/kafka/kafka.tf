@@ -1,6 +1,6 @@
 resource "aws_msk_cluster" "triaina_msk" {
   cluster_name  = "triaina-msk-cluster"
-  kafka_version = "3.7"
+  kafka_version = "3.7.x"
 
   number_of_broker_nodes = 3
 
@@ -11,7 +11,7 @@ resource "aws_msk_cluster" "triaina_msk" {
 
     storage_info {
       ebs_storage_info {
-        volume_size = 20
+        volume_size = 1
       }
     }
   }
@@ -35,7 +35,7 @@ resource "aws_msk_cluster" "triaina_msk" {
 
 resource "aws_msk_configuration" "triaina_msk_configuration" {
   name              = "triaina-msk-configuration"
-  kafka_versions    = ["3.7"]
+  kafka_versions    = ["3.7.x"]
   server_properties = <<EOF
 auto.create.topics.enable = true
 delete.topic.enable = true

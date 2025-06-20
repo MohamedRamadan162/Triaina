@@ -6,10 +6,10 @@ metadata:
   annotations:
     konghq.com/strip-path: "false"
     ## For future use (placeholder values for now) / Rate limiting is done per client IP so here every client IP gets 10 req/sec and 100 req/min
-    # konghq.com/plugins: rate-limiting # Apply the rate-limiting plugin
-    # konghq.com/rate-limiting-second: "10" # 10 requests per second
-    # konghq.com/rate-limiting-minute: "100" # 100 requests per minute
-    # konghq.com/load-balancer-strategy: "round-robin"
+    konghq.com/plugins: rate-limiting # Apply the rate-limiting plugin
+    konghq.com/rate-limiting-second: "10" # 10 requests per second
+    konghq.com/rate-limiting-minute: "100" # 100 requests per minute
+    konghq.com/load-balancer-strategy: "round-robin"
 spec:
   parentRefs:
     - name: kong-gateway

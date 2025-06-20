@@ -5,6 +5,4 @@ metadata:
   namespace: triaina
 data:
   AWS_REGION: eu-west-3
-  AWS_RDS_IDENTIFIER: triaina-db
-  AWS_REDIS_CLUSTER_ID: triaina-cache
-  AWS_BUCKET_NAME: triaina-content
+

@@ -28,7 +28,7 @@ resource "aws_db_instance" "triaina_db" {
 
   # Enable automated backups
   skip_final_snapshot       = false
-  final_snapshot_identifier = "triaina-db-snap-${timestamp()}"
+  final_snapshot_identifier = "triaina-db-snap-${formatdate("YYYYMMDDHHmmss", timestamp())}"
   deletion_protection       = false
 
   performance_insights_enabled          = true

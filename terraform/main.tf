@@ -27,7 +27,7 @@ data "aws_availability_zones" "available_zones" {}
 module "vpc" {
   source = "./modules/vpc"
   # only 2 AZs 
-  availability_zones = slice(data.aws_availability_zones.available_zones.names, 0, 2)
+  availability_zones = slice(data.aws_availability_zones.available_zones.names, 0, 3)
 }
 
 ## All security groups
