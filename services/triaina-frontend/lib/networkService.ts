@@ -42,11 +42,11 @@ export const courseService = {
         api.get(`/courses/${courseId}`),
     
     getChatChannels: (courseId: string) =>
-        api.get(`/courses/${courseId}/chat_channels`),
+        api.get(`/courses/${courseId}/course_chats`),
     
     // Chat-specific methods
     getChatMessages: (courseId: string, chatId: string, params: { page?: number, per_page?: number } = {}) => 
-        api.get(`/courses/${courseId}/chat_channels/${chatId}/messages`, { params }),
+        api.get(`/courses/${courseId}/course_chats/${chatId}/messages`, { params }),
         
     sendMessage: (chatId: string, content: string) =>
         api.post(`/chats/${chatId}/messages`, { content }),

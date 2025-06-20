@@ -30,8 +30,8 @@ const { id } = use(params)
         .then((res: any) => {
           if (res.data && res.data.success) {
             // Store the chat channels in context
-            setChatChannels(res.data.chat_channels)
-            console.log('Chat channels loaded:', res.data.chat_channels)
+            setChatChannels(res.data.course_chats)
+            console.log('Chat channels loaded:', res.data.course_chats)
           } else {
             throw new Error('Failed to fetch chat channels')
           }
