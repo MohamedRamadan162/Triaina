@@ -41,11 +41,39 @@ export const courseService = {
     getCourse: (courseId: string) =>
         api.get(`/courses/${courseId}`),
     
+    createCourse: (courseData: any) =>
+        api.post('/courses', courseData),
+
+    updateCourse: (courseId: string, courseData: any) =>
+        api.put(`/courses/${courseId}`, courseData),
+
+    deleteCourse: (courseId: string) =>
+        api.delete(`/courses/${courseId}`),
+
+    createSection: (courseId: string, sectionData: any) =>
+        api.post(`/courses/${courseId}/sections`, sectionData),
+
+    updateSection: (courseId: string, sectionId: string, sectionData: any) =>
+        api.put(`/courses/${courseId}/sections/${sectionId}`, sectionData),
+
+    deleteSection: (courseId: string, sectionId: string) =>
+        api.delete(`/courses/${courseId}/sections/${sectionId}`), 
+
+    createUnit: (courseId: string, sectionId: string, unitData: any) =>
+        api.post(`/courses/${courseId}/sections/${sectionId}/units`, unitData),
+
+    updateUnit: (courseId: string, sectionId: string, unitId: string, unitData: any) =>
+        api.put(`/courses/${courseId}/sections/${sectionId}/units/${unitId}`, unitData),
+
+    deleteUnit: (courseId: string, sectionId: string, unitId: string) =>
+        api.delete(`/courses/${courseId}/sections/${sectionId}/units/${unitId}`),
+    
     getEnrolledCourses: (id: string) => 
         api.get(`/users/${id}/courses`),
 
     getChatChannels: (courseId: string) => 
         api.get(`/courses/${courseId}/course_chats`),
+
     courseEnrollment: (joinCode: string) =>
         api.post(`/courses/enrollments`, { course_join_code: joinCode }),
     
@@ -64,6 +92,7 @@ export const courseService = {
 
     // Ai features 
     getTranscription: (courseId:string,sectionId:string, partId: string) => api.get(`/courses/${courseId}/sections/${sectionId}/units/${partId}/transcription`),
+    
     getSummary: (courseId:string,sectionId:string, partId: string) => api.get(`/courses/${courseId}/sections/${sectionId}/units/${partId}/summary`)
 
 };
