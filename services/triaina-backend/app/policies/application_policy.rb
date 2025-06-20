@@ -52,7 +52,7 @@ class ApplicationPolicy
   end
 
   def normal_user_can_access?
-    normal_user_abilities = [ "users/courses#index", "users#me", "users#update_me", "users#delete_me", "courses/enrollments#create" ]
+    normal_user_abilities = [ "users/courses#index", "users#me", "users#update_me", "users#delete_me", "courses/enrollments#create", "courses#create" ]
     normal_user_abilities.include?("#{@controller}##{@action}") && @user.present?
   end
 
