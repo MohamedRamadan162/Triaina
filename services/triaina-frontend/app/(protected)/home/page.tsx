@@ -49,6 +49,7 @@ export default function Page() {
       setOpen(false) // Close the dialog after successful enrollment
       // You might want to refresh the course list here
       // You could add a fetchCourses function and call it here
+      window.location.reload();
     } catch (error) {
       console.error("Enrollment failed:", error)
       toast.error("Failed to enroll in the course. Please check your join code.")

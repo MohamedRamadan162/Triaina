@@ -363,7 +363,7 @@ export default function ChannelDetailPage({ params }: { params: Promise<{ id: st
         return (
             <div className="flex flex-col h-full">
                 {/* Connection status indicator */}
-                {connectionError && (
+                {/* {connectionError && (
                     <div className="bg-yellow-100 border-l-4 border-yellow-500 text-yellow-700 p-2 mb-2 flex justify-between items-center">
                         <p className="text-sm">{connectionError}</p>
                         <button
@@ -379,10 +379,10 @@ export default function ChannelDetailPage({ params }: { params: Promise<{ id: st
                     <div className="bg-green-100 border-l-4 border-green-500 text-green-700 p-2 mb-2 text-sm">
                         Connected to chat server
                     </div>
-                )}
+                )} */}
 
                 {/* Messages list */}
-                <div className="flex-1 overflow-y-auto px-4">
+                <div className="flex-1 overflow-y-auto px-4 pt-4">
                     {isLoading ? (
                         <div className="flex flex-col justify-center items-center p-4">
                             <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500 mb-2"></div>
