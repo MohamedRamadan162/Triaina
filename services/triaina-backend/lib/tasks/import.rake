@@ -90,7 +90,7 @@ namespace :import do
     instructor.permissions = Permission.where(subject: "course", action: %w[create view manage])
 
     student = Role.find_or_create_by!(name: "student")
-    student.permissions = Permission.where(subject: "course", action: %w[create view])
+    student.permissions = Permission.where(subject: "course", action: %w[view])
 
     puts "Roles created"
   end
