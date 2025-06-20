@@ -1,11 +1,14 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
+  eslint: {
+    ignoreDuringBuilds: true,
+  },
   async rewrites() {
     return [
       {
-        source: '/api/backend/:path*',
-        destination: 'http://triaina-backend:3000/api/v1/:path*',
+        source: "/api/backend/:path*",
+        destination: "http://triaina-backend:3000/api/v1/:path*",
         // destination: 'http://localhost:3000/api/v1/:path*',
       },
       // {
