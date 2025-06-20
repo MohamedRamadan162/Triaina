@@ -40,26 +40,27 @@ export const authService = {
 export const courseService = {
     getCourse: (courseId: string) =>
         api.get(`/courses/${courseId}`),
-    
     getChatChannels: (courseId: string) =>
         api.get(`/courses/${courseId}/course_chats`),
+    courseEnrollment: (joinCode: string) =>
+        api.post(`/courses/enrollments`, { course_join_code: joinCode }),
     
     // Chat-specific methods
     getChatMessages: (courseId: string, chatId: string, params: { page?: number, per_page?: number } = {}) => 
         api.get(`/courses/${courseId}/course_chats/${chatId}/messages`, { params }),
         
-    sendMessage: (chatId: string, content: string) =>
-        api.post(`/chats/${chatId}/messages`, { content }),
+    sendMessage: (courseId: string, chatId: string, content: string) =>
+        api.post(`/courses/${courseId}/course_chats/${chatId}/messages`, { content }),
         
-    updateMessage: (chatId: string, messageId: string, content: string) =>
-        api.put(`/chats/${chatId}/messages/${messageId}`, { content }),
+    updateMessage: (courseId: string, chatId: string, messageId: string, content: string) =>
+        api.put(`/courses/${courseId}/course_chats/${chatId}/messages/${messageId}`, { content }),
         
-    deleteMessage: (chatId: string, messageId: string) =>
-        api.delete(`/chats/${chatId}/messages/${messageId}`),
+    deleteMessage: (courseId: string, chatId: string, messageId: string) =>
+        api.delete(`/courses/${courseId}/course_chats/${chatId}/messages/${messageId}`),
 
     // Ai features 
     getTranscription: (courseId:string,sectionId:string, partId: string) => api.get(`/courses/${courseId}/sections/${sectionId}/units/${partId}/transcription`),
-
     getSummary: (courseId:string,sectionId:string, partId: string) => api.get(`/courses/${courseId}/sections/${sectionId}/units/${partId}/summary`)
+
 };
 
