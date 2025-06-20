@@ -40,8 +40,6 @@ export default function DiscoverPage() {
               key={index}
               title={course.title}
               chapters={course.chapters}
-              members={course.members}
-              progress={undefined} // No progress for discover page
             />
           ))}
         </div>
