@@ -1,16 +1,41 @@
+"use client"
 import { Search } from "lucide-react"
 import Link from "next/link"
 import CourseCard from "@/components/course-card"
 import Sidebar from "@/components/sidebar"
+import { useEffect } from "react"
+import { courseService } from "@/lib/networkService"
+import { useAuth } from "@/context/AuthContext"
+import { Course } from "@/context/CourseContext"
+import { useState } from "react"
+import { start } from "repl"
 
 export default function Page() {
+  const {user}= useAuth()
+  const [courses, setCourses] = useState<Course[]>([])
+
   // Sample course data
-  const courses = Array(6).fill({
-    title: "Computer Network Security",
-    chapters: 20,
-    members: 200,
-    progress: 65
-  })
+  useEffect(() => {
+    if (!user) return;
+    courseService.getEnrolledCourses(user.id).then((res: any) => {
+      if (res.data && res.data.success) {
+        // Map the API response to the Course type
+        const mappedCourses = res.data.courses.map((course: Course) => ({
+          id: course.id,
+          name: course.name,
+          description: course.description ,
+          startDate: course.start_date,
+          endDate: course.end_date,
+          sections: course.sections
+        }))
+        setCourses(mappedCourses)
+      } else {
+        throw new Error('Failed to fetch courses')
+      }
+    })
+
+  }, [user])
+
 
   return (
     <div className="flex h-screen bg-white text-black">
@@ -37,7 +62,7 @@ export default function Page() {
         {/* Course grid */}
         <div className="grid grid-cols-1 gap-4 p-4 md:grid-cols-2 lg:grid-cols-3">
           {courses.map((course, index) => (
-            <CourseCard key={index} title={course.title} chapters={course.chapters} members={course.members} progress={course.progress} />
+            <CourseCard key={index} title={course.name} chapters={course.sections.length} id={course.id} />
           ))}
         </div>
       </div>

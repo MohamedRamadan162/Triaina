@@ -13,7 +13,7 @@ const { id } = use(params)
     // Only fetch if we don't already have the course or it's a different course
     if (!course || course.id !== id) {
       // For now, use the provided id - later you can use params.id
-      const courseId = '5cdbd834-204b-4e10-8f2d-53019312f396'
+      const courseId = id
       setLoading(true)
 
       // Make both API calls

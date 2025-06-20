@@ -41,7 +41,10 @@ export const courseService = {
     getCourse: (courseId: string) =>
         api.get(`/courses/${courseId}`),
     
-    getChatChannels: (courseId: string) =>
+    getEnrolledCourses: (id: string) => 
+        api.get(`/users/${id}/courses`),
+
+    getChatChannels: (courseId: string) => 
         api.get(`/courses/${courseId}/course_chats`),
     
     // Chat-specific methods
