@@ -8,7 +8,7 @@ const nextConfig: NextConfig = {
     return [
       {
         source: "/api/backend/:path*",
-        destination: "http://triaina-backend:3000/api/v1/:path*",
+        destination: "http://triaina-backend.triaina.svc.cluster.local:3000/api/v1/:path*",
         // destination: 'http://localhost:3000/api/v1/:path*',
       },
       // {
