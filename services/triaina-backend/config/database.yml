@@ -13,17 +13,40 @@ development:
   password: <%= ENV.fetch("POSTGRES_PASSWORD") %>
 
 production:
-  primary: &primary_production
+  primary:
     <<: *default
-    database: triaina
+    database: auth_service_production
     host: <%= ENV.fetch("POSTGRES_HOST", "localhost") %>
-    port: <%= ENV.fetch("POSTGRES_PORT", "5432") %>
+    port: <%= ENV.fetch("POSTGRES_PORT", 5432) %>
     username: <%= ENV.fetch("POSTGRES_USERNAME") %>
     password: <%= ENV.fetch("POSTGRES_PASSWORD") %>
-  # cable:
-  #   <<: *primary_production
-  #   database: auth_service_production_cable
-  #   migrations_paths: db/cable_migrate
+
+  cache:
+    <<: *default
+    database: auth_service_production_cache
+    host: <%= ENV.fetch("POSTGRES_HOST", "localhost") %>
+    port: <%= ENV.fetch("POSTGRES_PORT", 5432) %>
+    username: <%= ENV.fetch("POSTGRES_USERNAME") %>
+    password: <%= ENV.fetch("POSTGRES_PASSWORD") %>
+    migrations_paths: db/cache_migrate
+
+  queue:
+    <<: *default
+    database: auth_service_production_queue
+    host: <%= ENV.fetch("POSTGRES_HOST", "localhost") %>
+    port: <%= ENV.fetch("POSTGRES_PORT", 5432) %>
+    username: <%= ENV.fetch("POSTGRES_USERNAME") %>
+    password: <%= ENV.fetch("POSTGRES_PASSWORD") %>
+    migrations_paths: db/queue_migrate
+
+  cable:
+    <<: *default
+    database: auth_service_production_cable
+    host: <%= ENV.fetch("POSTGRES_HOST", "localhost") %>
+    port: <%= ENV.fetch("POSTGRES_PORT", 5432) %>
+    username: <%= ENV.fetch("POSTGRES_USERNAME") %>
+    password: <%= ENV.fetch("POSTGRES_PASSWORD") %>
+    migrations_paths: db/cable_migrate
 
 test:
   <<: *default
