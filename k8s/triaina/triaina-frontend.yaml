@@ -23,7 +23,7 @@ spec:
         - name: ghcr-secret
       containers:
         - name: triaina-frontend
-          image: ghcr.io/ossamatammam/triaina-frontend:latest
+          image: triaina-frontend:latest
           resources:
             requests:
               memory: "64Mi"

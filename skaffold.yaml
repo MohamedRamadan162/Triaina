@@ -4,14 +4,14 @@ metadata:
   name: triaina-backend
 build:
   artifacts:
-    - image: ghcr.io/ossamatammam/triaina-backend
+    - image: triaina-backend
       context: ./services/triaina-backend
       docker:
-        dockerfile: Dockerfile.dev
-    - image: ghcr.io/ossamatammam/triaina-frontend
+        dockerfile: Dockerfile
+    - image: triaina-frontend
       context: ./services/triaina-frontend
       docker:
-        dockerfile: Dockerfile.dev
+        dockerfile: Dockerfile
   tagPolicy:
     customTemplate:
       template: "latest"
@@ -35,3 +35,9 @@ deploy:
         valuesFiles:
           - ./k8s/api-gateway/config/kong-values.yaml
         wait: true
+portForward:
+  - resourceType: Service
+    resourceName: kong-gateway-proxy
+    namespace: kong
+    port: 80
+    localPort: 32060
