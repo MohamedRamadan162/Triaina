@@ -84,4 +84,7 @@ Rails.application.configure do
   #
   # Skip DNS rebinding protection for the default health check endpoint.
   # config.host_authorization = { exclude: ->(request) { request.path == "/up" } }
+  # 
+  config.cache_store = :redis_cache_store, { url: ENV["REDIS_ENDPOINT"], namespace: "triaina_cache", expires_in: 1.day }
+  config.action_controller.perform_caching = true
 end
