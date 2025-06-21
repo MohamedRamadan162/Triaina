@@ -85,6 +85,11 @@ Rails.application.configure do
   # Skip DNS rebinding protection for the default health check endpoint.
   # config.host_authorization = { exclude: ->(request) { request.path == "/up" } }
   # 
-  config.cache_store = :redis_cache_store, { url: ENV["REDIS_ENDPOINT"], namespace: "triaina_cache", expires_in: 1.day }
+  config.cache_store = :redis_cache_store, { url: ENV["REDIS_ENDPOINT"], namespace: "triaina_cache", expires_in: 1.day , timeout: 30,            
+    connect_timeout: 10,     # Connection establishment timeout
+    read_timeout: 30,        # Read operation timeout  
+    write_timeout: 30,       # Write operation timeout
+    reconnect_attempts: 3,   # Retry failed connections
+    }
   config.action_controller.perform_caching = true
 end
