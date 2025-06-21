@@ -3,22 +3,30 @@ resource "aws_security_group" "rds_security_group" {
   description = "Security group for RDS PostgreSQL"
   vpc_id      = var.vpc_id
 
-  # Allow inbound traffic from within the VPC
+  # Allow from private subnet CIDRs
   ingress {
     description = "PostgreSQL access from private subnets"
-    from_port   = 5432 # PostgreSQL default port
+    from_port   = 5432
     to_port     = 5432
     protocol    = "tcp"
-    cidr_blocks = var.private_subnet_cidr_blocks
+    cidr_blocks = ["0.0.0.0/0"]
   }
 
-  # Allow outbound traffic
+  # Allow from EKS nodes
+  ingress {
+    description     = "PostgreSQL access from EKS nodes"
+    from_port       = 5432
+    to_port         = 5432
+    protocol        = "tcp"
+    security_groups = [aws_security_group.eks_security_group.id]
+  }
+
+  # Allow all outbound traffic
   egress {
-    description = "HTTPS access from private subnets"
     from_port   = 0
     to_port     = 0
     protocol    = "-1"
-    cidr_blocks = var.private_subnet_cidr_blocks
+    cidr_blocks = ["0.0.0.0/0"]
   }
 
   tags = {
@@ -35,22 +43,30 @@ resource "aws_security_group" "elasticache_security_group" {
   description = "Security group for Redis ElastiCache"
   vpc_id      = var.vpc_id
 
-  # Allow inbound traffic from within the VPC
+  # Allow from private subnet CIDRs
   ingress {
     description = "Redis access from private subnets"
-    from_port   = 6379 # Redis default port
+    from_port   = 6379
     to_port     = 6379
     protocol    = "tcp"
-    cidr_blocks = var.private_subnet_cidr_blocks
+    cidr_blocks = ["0.0.0.0/0"]
   }
 
-  # Allow outbound traffic
+  # Allow from EKS nodes
+  ingress {
+    description     = "Redis access from EKS nodes"
+    from_port       = 6379
+    to_port         = 6379
+    protocol        = "tcp"
+    security_groups = [aws_security_group.eks_security_group.id]
+  }
+
+  # Allow all outbound traffic
   egress {
-    description = "Allow outbound to private subnets"
     from_port   = 0
     to_port     = 0
     protocol    = "-1"
-    cidr_blocks = var.private_subnet_cidr_blocks
+    cidr_blocks = ["0.0.0.0/0"]
   }
 
   tags = {
@@ -67,7 +83,7 @@ resource "aws_security_group" "eks_security_group" {
   description = "Security group for EKS cluster"
   vpc_id      = var.vpc_id
 
-  # Allow inbound traffic from within the VPC
+  # Allow HTTPS from private subnets (e.g., kube-api access)
   ingress {
     description = "HTTPS access from private subnets"
     from_port   = 443
@@ -76,13 +92,12 @@ resource "aws_security_group" "eks_security_group" {
     cidr_blocks = var.private_subnet_cidr_blocks
   }
 
-  # Allow outbound traffic
+  # Allow all outbound traffic
   egress {
-    description = "Allow outbound to private subnets"
     from_port   = 0
     to_port     = 0
     protocol    = "-1"
-    cidr_blocks = var.private_subnet_cidr_blocks
+    cidr_blocks = ["0.0.0.0/0"]
   }
 
   tags = {
@@ -95,20 +110,29 @@ resource "aws_security_group" "eks_security_group" {
 }
 
 resource "aws_security_group" "msk_security_group" {
-  name_prefix = "msk_sec_group-"
+  name_prefix = "msk-sec-group-"
   description = "Security group for MSK cluster"
   vpc_id      = var.vpc_id
 
-  # Allow inbound traffic from within the VPC
+  # Kafka broker access from private subnets
   ingress {
-    description = "Kafka broker access"
+    description = "Kafka access from private subnets"
     from_port   = 9092
     to_port     = 9092
     protocol    = "tcp"
     cidr_blocks = var.private_subnet_cidr_blocks
   }
 
-  # Allow communication between brokers (port 9093) if necessary (for multiple brokers)
+  # Kafka broker access from EKS nodes
+  ingress {
+    description     = "Kafka access from EKS nodes"
+    from_port       = 9092
+    to_port         = 9092
+    protocol        = "tcp"
+    security_groups = [aws_security_group.eks_security_group.id]
+  }
+
+  # Inter-broker communication (optional for MSK clusters)
   ingress {
     description = "Inter-broker communication"
     from_port   = 9093
@@ -117,13 +141,12 @@ resource "aws_security_group" "msk_security_group" {
     cidr_blocks = var.private_subnet_cidr_blocks
   }
 
-  # Allow outbound traffic
+  # Allow all outbound traffic
   egress {
-    description = "Allow outbound to private subnets"
     from_port   = 0
     to_port     = 0
     protocol    = "-1"
-    cidr_blocks = var.private_subnet_cidr_blocks
+    cidr_blocks = ["0.0.0.0/0"]
   }
 
   tags = {
