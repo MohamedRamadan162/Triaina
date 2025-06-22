@@ -120,7 +120,7 @@ export default function ChannelDetailPage({ params }: { params: Promise<{ id: st
 
                 // Make sure API endpoint is correct
                 // const wsUrl = "ws://triaina-backend-service.triaina.svc.cluster.local:80/cable";
-                const wsUrl = "ws://localhost:3000/cable";
+                const wsUrl = "ws://localhost:32060/cable";
                 debugWebSocket(`Connecting to WebSocket at: ${wsUrl}`);
 
                 const consumer = ActionCable.createConsumer(wsUrl);

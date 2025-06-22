@@ -63,6 +63,7 @@ export default function ChapterParts({ chapter }: ChapterPartsProps) {
         formData.append('content', partData.content)
       }
 
+      console.log(partData.content)
       const response = await courseService.createUnit(courseId, chapter.id, formData)
       if (response.status === 201) {
         toast.success("Part created successfully")

@@ -28,7 +28,11 @@ class Api::V1::Courses::Sections::SectionUnitsController < Api::ApiController
   # POST /api/v1/courses/:course_id/sections/:section_id/units
   ###########################
   def create
-    unit = SectionUnit.create!(create_unit_params)
+    unit = nil
+    ActiveRecord::Base.transaction do
+      unit = SectionUnit.create!(create_unit_params)
+      unit.content.attach(params[:content]) if params[:content].present?
+    end
     Rails.cache.write("unit_#{unit.id}", unit)
     SectionUnitEventProducer.publish_create_unit(unit)
     render_success({ unit: serializer(unit) }, :created)
@@ -99,7 +103,7 @@ class Api::V1::Courses::Sections::SectionUnitsController < Api::ApiController
   end
 
   def create_unit_params
-    params.permit(:title, :description, :section_id, :content)
+    params.permit(:title, :description, :section_id)
   end
 
   def update_unit_params
