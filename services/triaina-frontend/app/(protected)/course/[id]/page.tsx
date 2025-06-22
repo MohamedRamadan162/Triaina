@@ -6,6 +6,7 @@ import ChatMessage from "@/components/chat-message"
 import { courseService } from "@/lib/networkService"
 import { useEffect, use } from "react"
 import { useCourse } from "@/context/CourseContext"
+import { join } from "path"
 
 export default function CourseDetailPage({ params }: { params: Promise<{ id: string }> }) {  const { course, setCourse, chatChannels, setChatChannels, loading, setLoading, error, setError } = useCourse()
 const { id } = use(params)
@@ -55,6 +56,7 @@ const { id } = use(params)
   // Map API data to UI structure
   const mappedCourse = {
     title: course.name,
+    joinCode: course.join_code,
     chapters: (course.sections || []).map((section: any, idx: number) => ({
       id: section.id, // Always use the actual section ID
       title: section.title || `Section ${section.order_index || idx + 1}`,

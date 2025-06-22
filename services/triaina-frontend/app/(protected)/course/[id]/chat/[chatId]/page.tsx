@@ -42,6 +42,7 @@ export default function ChannelDetailPage({ params }: { params: Promise<{ id: st
     // Map API data to UI structure
     const mappedCourse = {
         title: course.name,
+        joinCode: course.join_code,
         chapters: (course.sections || []).map((section: any, idx: number) => ({
             id: section.id, // Always use the actual section ID
             title: section.title || `Section ${section.order_index || idx + 1}`,
@@ -118,7 +119,8 @@ export default function ChannelDetailPage({ params }: { params: Promise<{ id: st
                 }
 
                 // Make sure API endpoint is correct
-                const wsUrl = "ws://triaina-backend-service.triaina.svc.cluster.local:80/cable";
+                // const wsUrl = "ws://triaina-backend-service.triaina.svc.cluster.local:80/cable";
+                const wsUrl = "ws://localhost:3000/cable";
                 debugWebSocket(`Connecting to WebSocket at: ${wsUrl}`);
 
                 const consumer = ActionCable.createConsumer(wsUrl);

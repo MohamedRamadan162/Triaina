@@ -107,6 +107,7 @@ export default function PartDetailPage({
   // Map API data to UI structure
   const mappedCourse = {
     title: course.name,
+    joinCode: course.join_code,
     chapters: course.sections.map((section) => ({
       id: section.id, // Always use the actual section ID
       title: section.title || `Section ${section.order_index}`,
@@ -130,9 +131,7 @@ export default function PartDetailPage({
   const currentPart = {
     id: currentUnit.order_index || partId,
     title: currentUnit.title || `Part ${partId}`,
-    content: currentUnit.content_url
-      ? currentUnit.content_url
-      : "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
+    content: currentUnit.content_url,
     transcription: transcription,
     summary: summary,
   };

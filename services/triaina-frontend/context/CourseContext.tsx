@@ -22,7 +22,7 @@ export interface Chat {
 }
 export interface Unit {
   id: string;
-  content_url: string | null;
+  content_url: string ;
   description: string | null;
   order_index: number;
   section_id: string;

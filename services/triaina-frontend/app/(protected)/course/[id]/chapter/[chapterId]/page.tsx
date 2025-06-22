@@ -33,6 +33,7 @@ export default function ChapterDetailPage({
   // Map API data to UI structure
   const mappedCourse = {
     title: course.name,
+    joinCode: course.join_code,
     chapters: course.sections.map(section => ({
       id: section.id, // Always use the actual section ID
       title: section.title || `Section ${section.order_index}`,

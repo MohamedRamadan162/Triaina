@@ -50,6 +50,9 @@ export const courseService = {
     deleteCourse: (courseId: string) =>
         api.delete(`/courses/${courseId}`),
 
+    createChannel: (courseId: string, channelData: any) =>
+        api.post(`/courses/${courseId}/course_chats`, channelData),
+
     createSection: (courseId: string, sectionData: any) =>
         api.post(`/courses/${courseId}/sections`, sectionData),
 

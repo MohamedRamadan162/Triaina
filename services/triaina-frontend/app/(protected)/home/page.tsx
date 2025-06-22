@@ -92,14 +92,14 @@ export default function Page() {
             <Link href="/home" className="border-b-2 border-black pb-2 font-medium text-black">
               My Courses
             </Link>
-            <Link href="/discover" className="pb-2 text-gray-600 hover:text-black">
+            {/* <Link href="/discover" className="pb-2 text-gray-600 hover:text-black">
               Discover
-            </Link>
+            </Link> */}
           </div>
           <div className="ml-auto">
             <Dialog open={open} onOpenChange={setOpen}>
               <DialogTrigger asChild>
-                <Button variant="outline">Join Course</Button>
+                <Button variant="outline" className="cursor-pointer">Join Course</Button>
               </DialogTrigger>
               <DialogContent className="sm:max-w-md">
                 <DialogHeader>
@@ -124,6 +124,7 @@ export default function Page() {
                     variant="secondary"
                     onClick={handleEnrollment}
                     disabled={isEnrolling}
+                    className="cursor-pointer"
                   >
                     {isEnrolling ? "Enrolling..." : "Enroll"}
                   </Button>
