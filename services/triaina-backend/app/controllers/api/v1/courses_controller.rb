@@ -27,7 +27,11 @@ class Api::V1::CoursesController < Api::ApiController
   # POST /api/v1/courses
   ############################
   def create
-    course = Course.create!(create_course_params.merge(created_by: @current_user.id))
+    course = nil
+    transaction do
+      course = Course.create!(create_course_params.merge(created_by: @current_user.id))
+      Enrollment.create!(user_id: @current_user.id, course_id: course.id, role: 'instructor')
+    end
     Rails.cache.write("course_#{course.id}", course)
     CourseEventProducer.publish_create_course(course)
     render_success({ course: serializer(course) }, :created)
