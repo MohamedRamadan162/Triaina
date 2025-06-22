@@ -16,9 +16,8 @@ class Api::V1::CoursesController < Api::ApiController
   # ############################
   def show
     params.permit(:id)
-    course = Rails.cache.fetch("course_#{params[:id]}") do
-      Course.find(params[:id])
-    end
+    course = Course.find(params[:id])
+
     render_success(course: serializer(course))
   end
 

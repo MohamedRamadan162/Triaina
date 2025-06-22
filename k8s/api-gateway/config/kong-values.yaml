@@ -10,3 +10,6 @@ gateway:
       enabled: true
 config:
   websocket: true
+  connect_timeout: 60000  # milliseconds
+  read_timeout: 60000     # milliseconds
+  send_timeout: 60000     # milliseconds

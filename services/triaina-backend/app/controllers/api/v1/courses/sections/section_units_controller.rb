@@ -28,11 +28,15 @@ class Api::V1::Courses::Sections::SectionUnitsController < Api::ApiController
   # POST /api/v1/courses/:course_id/sections/:section_id/units
   ###########################
   def create
-    unit = nil
-    ActiveRecord::Base.transaction do
-      unit = SectionUnit.create!(create_unit_params)
-      unit.content.attach(params[:content]) if params[:content].present?
+    unit = SectionUnit.create!(create_unit_params)
+    video = params[:content]
+    puts "Video is present: #{video.present?}" 
+    if video.present?
+      unit.content.attach(video)
+      unit.content.blob.update!(filename: video.original_filename, content_type: video.content_type)
     end
+    unit.save!
+    puts "Unit created with link #{unit.content.url}" if unit.content.attached?
     Rails.cache.write("unit_#{unit.id}", unit)
     SectionUnitEventProducer.publish_create_unit(unit)
     render_success({ unit: serializer(unit) }, :created)

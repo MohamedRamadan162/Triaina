@@ -37,11 +37,11 @@ spec:
                 name: triaina-smtp-credentials
           resources:
             requests:
-              memory: "64Mi"
+              memory: "512Mi"
               cpu: "250m"
             limits:
-              memory: "1Gi"
-              cpu: "500m"
+              memory: "3Gi"
+              cpu: "1000m"
           ports:
             - containerPort: 3000
           # Determine if this container is alive and healthy
@@ -58,7 +58,7 @@ spec:
             httpGet:
               path: /health
               port: 3000
-            initialDelaySeconds: 5
+            initialDelaySeconds: 30
             periodSeconds: 5
             timeoutSeconds: 3
             failureThreshold: 3

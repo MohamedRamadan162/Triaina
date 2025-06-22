@@ -7,7 +7,7 @@ build:
     - image: triaina-backend
       context: ./services/triaina-backend
       docker:
-        dockerfile: Dockerfile
+        dockerfile: Dockerfile.dev
     - image: triaina-frontend
       context: ./services/triaina-frontend
       docker:
