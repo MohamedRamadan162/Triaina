@@ -28,7 +28,7 @@ class Api::V1::CoursesController < Api::ApiController
   ############################
   def create
     course = nil
-    transaction do
+    ActiveRecord::Base.transaction do
       course = Course.create!(create_course_params.merge(created_by: @current_user.id))
       Enrollment.create!(user_id: @current_user.id, course_id: course.id, role: 'instructor')
     end
