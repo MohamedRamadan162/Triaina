@@ -30,7 +30,7 @@ class Api::V1::CoursesController < Api::ApiController
     course = nil
     ActiveRecord::Base.transaction do
       course = Course.create!(create_course_params.merge(created_by: @current_user.id))
-      Enrollment.create!(user_id: @current_user.id, course_id: course.id, role: Role.find_by(name: "instructor").id)
+      Enrollment.create!(user: @current_user, course: course, role: Role.find_by(name: "instructor"))
     end
     Rails.cache.write("course_#{course.id}", course)
     CourseEventProducer.publish_create_course(course)
