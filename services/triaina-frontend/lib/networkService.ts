@@ -60,7 +60,11 @@ export const courseService = {
         api.delete(`/courses/${courseId}/sections/${sectionId}`), 
 
     createUnit: (courseId: string, sectionId: string, unitData: any) =>
-        api.post(`/courses/${courseId}/sections/${sectionId}/units`, unitData),
+        api.post(`/courses/${courseId}/sections/${sectionId}/units`, unitData,{
+            headers:{
+                'Content-Type': 'multipart/form-data'
+            }
+        }),
 
     updateUnit: (courseId: string, sectionId: string, unitId: string, unitData: any) =>
         api.put(`/courses/${courseId}/sections/${sectionId}/units/${unitId}`, unitData),
